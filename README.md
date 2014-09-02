@@ -6,4 +6,4 @@ C++ library providing 3D Repo Scene Graph definition and repository management l
 ### Dependencies
 
 - [Assimp v3.1.1](https://github.com/assimp/assimp/tree/v3.1.1)
-- [MongoDB v2.6.4](https://github.com/mongodb/mongo/tree/r2.6.4)
+- [MongoDB 2.6 Compatible C++ Driver 2.6.4](https://github.com/mongodb/mongo-cxx-driver/tree/legacy-0.0-26compat-2.6.4)
