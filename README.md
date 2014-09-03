@@ -1,7 +1,7 @@
 3D Repo Core
 ========
 
-C++ library providing 3D Repo Scene Graph definition and repository management logic
+C++ library providing 3D Repo Scene Graph definition and repository management logic.
 
 ### Dependencies
 
