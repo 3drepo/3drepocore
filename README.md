@@ -34,6 +34,13 @@ Then compile MongoDB running the following:
 scons --64 --mute --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0
 ```
 
+If you want to build a Qt project, first you need to generate MongoDB error codes using python:
+
+```
+cd submodules/mongo-cxx-driver/src/mongo/base
+python generate_error_codes.py error_codes.err error_codes.h error_codes.cpp
+```
+
 ### Assimp
 
 When building using CMake GUI, make sure to disable ASSIMP_ENABLE_BOOST_WORKAROUND variable and instead use +Add Entry button on the right-hand side to include a path to your boost installation as BOOST_ROOT variable. 

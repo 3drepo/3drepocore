@@ -15,11 +15,12 @@
 
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 
+QT -= core gui
+
 TEMPLATE = subdirs
 
 CONFIG += ordered
 
-SUBDIRS += src \
-    submodules/assimp.pro \
-   # submodules/mongo-cxx-driver.pro \
+SUBDIRS += submodules/mongo-cxx-driver.pro \
+    src \
 
