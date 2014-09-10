@@ -19,8 +19,8 @@ QT -= core gui
 
 TEMPLATE = subdirs
 
-CONFIG += ordered
+CONFIG += ordered warn_off
 
-SUBDIRS += submodules/mongo-cxx-driver.pro \
-    src \
+SUBDIRS += src \
+
 

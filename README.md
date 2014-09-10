@@ -27,14 +27,21 @@ Assuming you've installed the 64-bit pre-built boost libraries for VC120 (MSVS20
 
 - Install [Python2x (32-bit)](https://www.python.org/download) and add Python to your PATH variable, e.g. C:\Python27;
 - Install [Scons](http://www.scons.org/download.php) and add Scons to your PATH variable, e.g. C:\Python27\Scripts
+- Install [Pywin32](http://sourceforge.net/projects/pywin32/files/pywin32/)
 
-Then compile MongoDB running the following:
+Then compile MongoDB running the following (modify the boost path to match your setup):
 
 ```
-scons --64 --mute --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0
+scons -j2 --full --64 --mute --sharedclient --dynamic-windows --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0 install-mongoclient
+
+scons -j2 --full --64 --mute --sharedclient --dynamic-windows --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0 --dbg=on --opt=on install-mongoclient
 ```
 
-If you want to build a Qt project, first you need to generate MongoDB error codes using python:
+or include [SCons in your IDE](http://www.scons.org/wiki/IDEIntegration).
+
+Include the WinSock library in your application: Linker > Input > Additional Dependencies. Add ws2_32.lib.
+
+If you want to build a Qt project, first you need to generate MongoDB error codes using Python:
 
 ```
 cd submodules/mongo-cxx-driver/src/mongo/base
