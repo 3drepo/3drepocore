@@ -26,13 +26,16 @@ CONFIG += build_all
 
 DEFINES += REPO_CORE_LIBRARY
 
-SOURCES += repocore.cpp
+
 
 INCLUDEPATH += src \
 
 HEADERS +=  repocoreglobal.h \
             repocore.h\
+            graph/repo_bounding_box.h \
 
+SOURCES +=  repocore.cpp \
+            graph/repo_bounding_box.cpp \
 
 unix {
     target.path = /usr/lib
