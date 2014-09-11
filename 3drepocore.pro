@@ -14,13 +14,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
+# http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
 QT -= core gui
 
 TEMPLATE = subdirs
 
-CONFIG += ordered warn_off
-
-SUBDIRS += src \
+SUBDIRS += src
 
 

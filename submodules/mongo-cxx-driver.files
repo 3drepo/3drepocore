@@ -1,3 +1,5 @@
+mongo-cxx-driver/SConstruct
+mongo-cxx-driver/SConscript.buildinfo
 mongo-cxx-driver/src/mongo/base/disallow_copying.h
 mongo-cxx-driver/src/mongo/base/global_initializer.cpp
 mongo-cxx-driver/src/mongo/base/global_initializer.h
@@ -394,5 +396,3 @@ mongo-cxx-driver/src/third_party/tz/timegm.c
 mongo-cxx-driver/src/third_party/tz/timegm_private.h
 mongo-cxx-driver/src/third_party/tz/timegm_tzfile.h
 mongo-cxx-driver/src/third_party/shim_boost.cpp
-mongo-cxx-driver/SConstruct
-mongo-cxx-driver/SConscript.buildinfo

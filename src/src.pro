@@ -13,12 +13,26 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TARGET = src
+# http://qt-project.org/doc/qt-5/sharedlibrary.html
+
+QT  -= core gui
+
+TARGET = 3drepocore
 TEMPLATE = lib
 
-DEFINES += SRC_LIBRARY
+DESTDIR = 3drepocore
 
-SOURCES += main.cpp
+CONFIG += build_all
+
+DEFINES += REPO_CORE_LIBRARY
+
+SOURCES += repocore.cpp
+
+INCLUDEPATH += src \
+
+HEADERS +=  repocoreglobal.h \
+            repocore.h\
+
 
 unix {
     target.path = /usr/lib

@@ -27,17 +27,16 @@ Assuming you've installed the 64-bit pre-built boost libraries for VC120 (MSVS20
 
 - Install [Python2x (32-bit)](https://www.python.org/download) and add Python to your PATH variable, e.g. C:\Python27;
 - Install [Scons](http://www.scons.org/download.php) and add Scons to your PATH variable, e.g. C:\Python27\Scripts
-- Install [Pywin32](http://sourceforge.net/projects/pywin32/files/pywin32/)
+- Optionally, you can also install [Pywin32](http://sourceforge.net/projects/pywin32/files/pywin32/) to enable parallel compile (the -j2 flag below).
 
-Then compile MongoDB running the following (modify the boost path to match your setup):
+Then compile MongoDB running the following from within the mongo-cxx-driver folder (modify the boost path to match your setup):
 
 ```
 scons -j2 --full --64 --mute --sharedclient --dynamic-windows --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0 install-mongoclient
-
-scons -j2 --full --64 --mute --sharedclient --dynamic-windows --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0 --dbg=on --opt=on install-mongoclient
 ```
+Add --dbg=on --opt=on flags to build a debug version of the library.
 
-or include [SCons in your IDE](http://www.scons.org/wiki/IDEIntegration).
+Alternatively, you can include [SCons in your IDE](http://www.scons.org/wiki/IDEIntegration).
 
 Include the WinSock library in your application: Linker > Input > Additional Dependencies. Add ws2_32.lib.
 
