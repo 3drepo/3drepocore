@@ -16,10 +16,25 @@
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
-QT -= core gui
+QT  -= core gui
 
-TEMPLATE = subdirs
+TEMPLATE = lib
 
-SUBDIRS += src
+CONFIG += build_all
+
+DEFINES += REPO_CORE_LIBRARY
+
+HEADERS +=  RepoCoreGlobal \
+            src/repocore.h\
+            src/repocoreglobal.h \
+            src/graph/repo_bounding_box.h \
+
+SOURCES +=  src/repocore.cpp \
+            src/graph/repo_bounding_box.cpp \
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
 
 
