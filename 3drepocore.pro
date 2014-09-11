@@ -24,6 +24,18 @@ CONFIG += build_all
 
 DEFINES += REPO_CORE_LIBRARY
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
+else:unix: LIBS += -L$$PWD/lib/ -lassimp
+
+INCLUDEPATH += $$PWD/submodules/assimp/include
+DEPENDPATH += $$PWD/submodules/assimp/include
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
+
 HEADERS +=  RepoCoreGlobal \
             src/repocore.h\
             src/repocoreglobal.h \
@@ -31,10 +43,5 @@ HEADERS +=  RepoCoreGlobal \
 
 SOURCES +=  src/repocore.cpp \
             src/graph/repo_bounding_box.cpp \
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
 
 

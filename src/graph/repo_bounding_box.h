@@ -39,14 +39,14 @@ public :
 			std::numeric_limits<float>::max()),
 		max(- std::numeric_limits<float>::max(),
 			- std::numeric_limits<float>::max(), 
-			- std::numeric_limits<float>::max()) {};
+            - std::numeric_limits<float>::max()) {}
 
 	//! Constructs a bounding box out of a mesh as the most min and most max
 	// vertices.
 	RepoBoundingBox(const aiMesh *);
 
 	//! Empty destructor
-	inline ~RepoBoundingBox() {};
+    inline ~RepoBoundingBox() {}
 
 	//! Returns a vector representation as [min, max].
 	std::vector<aiVector3t<float>> toVector() const;
