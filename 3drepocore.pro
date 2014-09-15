@@ -24,12 +24,25 @@ CONFIG += build_all
 
 DEFINES += REPO_CORE_LIBRARY
 
+#-------------------------------------------------------------------------------
+# Assimp
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
 else:unix: LIBS += -L$$PWD/lib/ -lassimp
 
 INCLUDEPATH += $$PWD/submodules/assimp/include
 DEPENDPATH += $$PWD/submodules/assimp/include
+
+#-------------------------------------------------------------------------------
+# MongoDB C++ Driver
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
+else:unix: LIBS += -L$$PWD/lib/ -lmongoclient
+
+INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/src
+DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/src
+
+#-------------------------------------------------------------------------------
 
 unix {
     target.path = /usr/lib
@@ -40,8 +53,34 @@ HEADERS +=  RepoCoreGlobal \
             src/repocore.h\
             src/repocoreglobal.h \
             src/graph/repo_bounding_box.h \
+            src/graph/repo_graph_abstract.h \
+            src/graph/repo_graph_history.h \
+            src/graph/repo_graph_scene.h \
+            src/graph/repo_node_abstract.h \
+            src/graph/repo_node_camera.h \
+            src/graph/repo_node_material.h \
+            src/graph/repo_node_mesh.h \
+            src/graph/repo_node_revision.h \
+            src/graph/repo_node_texture.h \
+            src/graph/repo_node_transformation.h \
+            src/conversion/repo_transcoder_bson.h \
+            src/conversion/repo_transcoder_string.h \
 
 SOURCES +=  src/repocore.cpp \
             src/graph/repo_bounding_box.cpp \
+            src/graph/repo_graph_abstract.cpp \
+            src/graph/repo_graph_history.cpp \
+            src/graph/repo_graph_scene.cpp \
+            src/graph/repo_node_abstract.cpp \
+            src/graph/repo_node_camera.cpp \
+            src/graph/repo_node_material.cpp \
+            src/graph/repo_node_mesh.cpp \
+            src/graph/repo_node_revision.cpp \
+            src/graph/repo_node_texture.cpp \
+            src/graph/repo_node_transformation.cpp \
+            src/conversion/repo_transcoder_bson.cpp \
+            src/conversion/repo_transcoder_string.cpp \
+
+
 
 

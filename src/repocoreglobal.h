@@ -20,6 +20,7 @@
 #ifndef REPO_CORE_GLOBAL_H
 #define REPO_CORE_GLOBAL_H
 
+//------------------------------------------------------------------------------
 #if defined(_WIN32) || defined(_WIN64)
 #   define Q_DECL_EXPORT __declspec(dllexport)
 #   define Q_DECL_IMPORT __declspec(dllimport)
@@ -28,10 +29,12 @@
 #   define Q_DECL_IMPORT
 #endif
 
+//------------------------------------------------------------------------------
 #if defined(REPO_CORE_LIBRARY)
 #   define REPO_CORE_EXPORT Q_DECL_EXPORT
 #else
 #   define REPO_CORE_EXPORT Q_DECL_IMPORT
 #endif
 
+//------------------------------------------------------------------------------
 #endif // REPO_CORE_GLOBAL_H

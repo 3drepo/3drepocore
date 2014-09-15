@@ -19,13 +19,25 @@
 #ifndef REPO_CORE_H
 #define REPO_CORE_H
 
+//------------------------------------------------------------------------------
 #include "RepoCoreGlobal"
+//------------------------------------------------------------------------------
 
+namespace repo {
+namespace core {
+
+//------------------------------------------------------------------------------
 class REPO_CORE_EXPORT RepoCore
 {
 
 public:
     RepoCore();
-};
+
+    ~RepoCore();
+
+}; // end class
+
+} // end namespace core
+} // end namespace repo
 
 #endif // REPO_CORE_H

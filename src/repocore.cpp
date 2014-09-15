@@ -15,10 +15,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "repocore.h"
 
+repo::core::RepoCore::RepoCore()
+{
+}
 
-RepoCore::RepoCore()
+repo::core::RepoCore::~RepoCore()
 {
 }
