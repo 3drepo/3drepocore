@@ -49,9 +49,9 @@ unix {
     INSTALLS += target
 }
 
-HEADERS +=  RepoCoreGlobal \
-            src/repocore.h\
+HEADERS +=  src/repocore.h\
             src/repocoreglobal.h \
+            src/assimpwrapper.h \
             src/graph/repo_bounding_box.h \
             src/graph/repo_graph_abstract.h \
             src/graph/repo_graph_history.h \
@@ -63,10 +63,12 @@ HEADERS +=  RepoCoreGlobal \
             src/graph/repo_node_revision.h \
             src/graph/repo_node_texture.h \
             src/graph/repo_node_transformation.h \
+            src/primitives/repo_vertex.h \
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
 
 SOURCES +=  src/repocore.cpp \
+            src/assimpwrapper.cpp \
             src/graph/repo_bounding_box.cpp \
             src/graph/repo_graph_abstract.cpp \
             src/graph/repo_graph_history.cpp \
@@ -78,6 +80,7 @@ SOURCES +=  src/repocore.cpp \
             src/graph/repo_node_revision.cpp \
             src/graph/repo_node_texture.cpp \
             src/graph/repo_node_transformation.cpp \
+            src/primitives/repo_vertex.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
 
