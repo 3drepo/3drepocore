@@ -45,7 +45,7 @@ public :
     AssimpWrapper();
 
     //--------------------------------------------------------------------------
-	~AssimpWrapper();
+    ~AssimpWrapper() {}
 
     //--------------------------------------------------------------------------
     bool importModel(const std::string &fileName,

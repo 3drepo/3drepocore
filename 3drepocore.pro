@@ -52,6 +52,7 @@ unix {
 HEADERS +=  src/repocore.h\
             src/repocoreglobal.h \
             src/assimpwrapper.h \
+            src/mongoclientwrapper.h \
             src/graph/repo_bounding_box.h \
             src/graph/repo_graph_abstract.h \
             src/graph/repo_graph_history.h \
@@ -69,6 +70,7 @@ HEADERS +=  src/repocore.h\
 
 SOURCES +=  src/repocore.cpp \
             src/assimpwrapper.cpp \
+            src/mongoclientwrapper.cpp \
             src/graph/repo_bounding_box.cpp \
             src/graph/repo_graph_abstract.cpp \
             src/graph/repo_graph_history.cpp \

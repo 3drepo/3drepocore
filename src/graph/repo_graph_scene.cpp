@@ -30,6 +30,15 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	: RepoGraphAbstract()
 {
     //--------------------------------------------------------------------------
+    // Textures
+    std::map<std::string, RepoNodeAbstract*>::const_iterator it;
+    for (it = textures.begin(); it != textures.end(); ++it)
+    {
+        RepoNodeAbstract *texture = it->second;
+        nodesByUniqueID.insert(std::make_pair(texture->getUniqueID(), texture));
+    }
+
+    //--------------------------------------------------------------------------
 	// Materials
 	//
 	// Warning: Default material might not be attached to anything,
