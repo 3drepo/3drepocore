@@ -28,8 +28,9 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <iostream>
 //------------------------------------------------------------------------------
-#include <boost/algorithm/string.hpp>
+//#include <boost/algorithm/string.hpp>
 //------------------------------------------------------------------------------
 
 namespace repo {
@@ -81,7 +82,7 @@ public :
 
     //--------------------------------------------------------------------------
 	// Returns empty string if not found
-    static string getExportFormatID(const std::string &fileExtension);
+    static std::string getExportFormatID(const std::string &fileExtension);
 
 private :
 
@@ -100,6 +101,10 @@ private :
     static void enforceUniqueNames(aiMaterial **materialsArray,
                                    unsigned int arraySize,
                                    std::map<std::string, int> *);
+
+    static std::vector<std::string> splitStringByDelimiter(
+            std::string str,
+            const std::string &delimiter);
 
     //--------------------------------------------------------------------------
     const aiScene *scene;

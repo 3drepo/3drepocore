@@ -62,7 +62,7 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
                                             const unsigned int pFlags)
 {
 	resetScene();
-    Importer importer;
+    Assimp::Importer importer;
 
 	// post processor
 	// http://assimp.sourceforge.net/lib_html/ai_post_process_8h.html#64795260b95f5a4b3f3dc1be4f52e410
@@ -100,7 +100,7 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 	}
 	else 
 	{
-        cerr << std::string(importer.GetErrorString()) << std::endl;
+        std::cerr << std::string(importer.GetErrorString()) << std::endl;
 //		logger->log(repo::REPO_ERROR, string(importer.GetErrorString()));
 		resetScene();
 	} 
@@ -109,9 +109,9 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 
 bool repo::core::AssimpWrapper::exportModel(
         const aiScene *scene,
-        const string &formatId,
-        const string &fullFilePath,
-        const string &embeddedTextureExtension)
+        const std::string &formatId,
+        const std::string &fullFilePath,
+        const std::string &embeddedTextureExtension)
 {
     //--------------------------------------------------------------------------
     // NOTE: This modifies links to textures, so after export, the
@@ -129,7 +129,7 @@ bool repo::core::AssimpWrapper::exportModel(
             while (texFound == AI_SUCCESS)
             {
                 texFound = scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, texIndex, &path);
-                string name(path.data);
+                std::string name(path.data);
                 if (!name.empty())
                 {
                     name = name.substr(1, name.size()) + embeddedTextureExtension; // remove leading '*' char
@@ -142,15 +142,15 @@ bool repo::core::AssimpWrapper::exportModel(
         }
     }
 
-    Exporter exporter;
+    Assimp::Exporter exporter;
     aiReturn ret = exporter.Export(scene, formatId, fullFilePath, scene->mFlags);
     switch (ret)
     {
         case aiReturn_FAILURE :
-            logger->log(repo::REPO_ERROR, "Export failed due to unknown reason.");
+            std::cerr << "Export failed due to unknown reason." << std::endl;
             break;
         case aiReturn_OUTOFMEMORY :
-            logger->log(repo::REPO_ERROR, "Export failed due to running out of memory.");
+            std::cerr << "Export failed due to running out of memory." << std::endl;
             break;
     }
     return (ret == aiReturn_SUCCESS);
@@ -186,7 +186,7 @@ const aiScene* repo::core::AssimpWrapper::getScene()
 
 std::string repo::core::AssimpWrapper::getImportFormats()
 {
-	Importer importer;
+    Assimp::Importer importer;
 	aiString ext;
 	importer.GetExtensionList(ext);
 
@@ -194,7 +194,9 @@ std::string repo::core::AssimpWrapper::getImportFormats()
     std::string all = "All (";
 	std::vector<std::string> strs;
 	std::string str(ext.C_Str());
-	boost::split(strs, str, boost::is_any_of(";"));	
+
+    strs = splitStringByDelimiter(str, ";");
+//	boost::split(strs, str, boost::is_any_of(";"));
 	for (unsigned int i = 0; i < strs.size(); ++i) 
 		all += strs[i] + " ";	
 
@@ -207,7 +209,8 @@ std::string repo::core::AssimpWrapper::getImportFormats()
 		const aiImporterDesc *desc = importer.GetImporterInfo(i);
 		std::vector<std::string> extensions;
 		std::string str(desc->mFileExtensions);
-		boost::split(extensions, str, boost::is_any_of(" "));
+        extensions = splitStringByDelimiter(str, " ");
+//		boost::split(extensions, str, boost::is_any_of(" "));
         individual += ";;" + std::string(desc->mName) + " (";
         for (unsigned int j = 0; j < extensions.size(); ++j)
             individual += "*." + extensions[j] + " ";
@@ -222,7 +225,7 @@ std::string repo::core::AssimpWrapper::getExportFormats()
     std::string all = "All (";
     std::string individual = "";
 
-	Exporter exporter;
+    Assimp::Exporter exporter;
     for (size_t i = 0; i < exporter.GetExportFormatCount(); ++i)
 	{
 		const aiExportFormatDesc* desc = exporter.GetExportFormatDescription(i);
@@ -238,7 +241,7 @@ std::string repo::core::AssimpWrapper::getExportFormatID(
         const std::string &fileExtension)
 {
 	std::string ret;
-	Exporter exporter;
+    Assimp::Exporter exporter;
     for (size_t i = 0; i < exporter.GetExportFormatCount(); ++i)
 	{
 		const aiExportFormatDesc* desc = exporter.GetExportFormatDescription(i);
@@ -281,7 +284,7 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 	else
     {
 		it->second++;
-		node->mName = nodeName + repo::toString(it->second);
+        node->mName = nodeName + std::to_string(it->second);//repo::toString(it->second);
 	}
 
 	//-------------------------------------------------------------------------
@@ -311,7 +314,7 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 		else
 		{
 			it->second++;
-			mesh->mName = meshName + repo::toString(it->second);
+            mesh->mName = meshName + std::to_string(it->second);//repo::toString(it->second);
 		}
 	}
 }
@@ -340,8 +343,22 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 		else
 		{
 			it->second++;
-			materialName = materialName + repo::toString(it->second);
+            materialName = materialName + std::to_string(it->second); //repo::toString(it->second);
 			material->AddProperty(new aiString(materialName), AI_MATKEY_NAME);	
 		}
 	}
+}
+
+std::vector<std::string> repo::core::AssimpWrapper::splitStringByDelimiter(
+    std::string str,
+    const std::string &delimiter)
+{
+    std::vector<std::string> ret;
+    size_t pos = 0;
+    while ((pos = str.find(delimiter)) != std::string::npos) {
+        ret.push_back(str.substr(0, pos));
+        str.erase(0, pos + delimiter.length());
+    }
+    ret.push_back(str);
+    return ret;
 }
