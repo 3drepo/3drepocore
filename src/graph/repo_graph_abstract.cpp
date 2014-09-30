@@ -100,11 +100,11 @@ void repo::core::RepoGraphAbstract::buildGraph(
 	{
 		RepoNodeAbstract* node = it->second;		
 
-        std::set<const boost::uuids::uuid> psi = node->getParentSharedIDs();
-        for (std::set<const boost::uuids::uuid>::iterator::it = psi.begin();
+        std::set<boost::uuids::uuid> psi = node->getParentSharedIDs();
+        for (std::set<boost::uuids::uuid>::iterator it = psi.begin();
              it != psi.end(); ++it)
         {
-            boost::uuids::uuid = *it;
+            boost::uuids::uuid uuid = *it;
             finder = nodesBySharedID.find(uuid);
             if (nodesBySharedID.end() != finder)
             {

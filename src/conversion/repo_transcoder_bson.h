@@ -30,6 +30,8 @@
 #include <assimp/scene.h> // Assimp
 //-----------------------------------------------------------------------------
 
+using namespace std;
+
 namespace repo {
 namespace core {
 
@@ -83,7 +85,7 @@ public :
 	{
 		mongo::BSONObjBuilder array;
 		int i = 0;
-		std::set<T>::const_iterator it = set.begin();
+		typename std::set<T>::const_iterator it = set.begin();
 		for (; it != set.end(); ++it, ++i)
 			append(boost::lexical_cast<string>(i), *it, array);		
 		builder.appendArray(label, array.obj());

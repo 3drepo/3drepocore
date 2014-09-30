@@ -24,6 +24,8 @@ CONFIG += build_all
 
 DEFINES += REPO_CORE_LIBRARY
 
+unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
+
 #-------------------------------------------------------------------------------
 # Assimp
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp

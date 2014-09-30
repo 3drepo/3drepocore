@@ -16,7 +16,6 @@
  */
 
 #include "repo_graph_scene.h"
-#include "repo_ilogger.h"
 
 //------------------------------------------------------------------------------
 //
@@ -31,10 +30,10 @@ repo::core::RepoGraphScene::RepoGraphScene(
 {
     //--------------------------------------------------------------------------
     // Textures
-    std::map<std::string, RepoNodeAbstract*>::const_iterator it;
-    for (it = textures.begin(); it != textures.end(); ++it)
+    std::map<std::string, RepoNodeAbstract*>::const_iterator tex_it;
+    for (tex_it = textures.begin(); tex_it != textures.end(); ++tex_it)
     {
-        RepoNodeAbstract *texture = it->second;
+        RepoNodeAbstract *texture = tex_it->second;
         nodesByUniqueID.insert(std::make_pair(texture->getUniqueID(), texture));
     }
 
@@ -118,10 +117,9 @@ repo::core::RepoGraphScene::RepoGraphScene(
     std::vector<RepoNodeAbstract *>::iterator it;
     for (it = transformations.begin(); it != transformations.end(); ++it)
     {
-        RepoNodeAbstract transformation = *it;
 //	for each (RepoNodeAbstract* transformation in transformations)
-        nodesByUniqueID.insert(std::make_pair(transformation->getUniqueID(),
-                                              transformation));
+        nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(),
+                                              (*it)));
     }
 }
 
@@ -142,7 +140,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 
 	std::map<boost::uuids::uuid, RepoNodeAbstract *> nodesBySharedID;
 	
-    std::vector<mongo::BSONObj>::iterator it;
+    std::vector<mongo::BSONObj>::const_iterator it;
 
     for (it = collection.begin(); it != collection.end(); ++it)
     {
@@ -153,6 +151,9 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		RepoNodeAbstract *node = NULL;
 
 		std::string nodeType = obj.getField(REPO_NODE_LABEL_TYPE).str();
+
+        std::cout << "Found type " << nodeType << std::endl;
+
 		if (REPO_NODE_TYPE_TRANSFORMATION == nodeType)
 		{
 			node = new RepoNodeTransformation(obj);
@@ -243,7 +244,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 	// Textures
 	std::map<const RepoNodeAbstract *, std::string> texturesMapping;
 
-    for (std::vector<RepoNodeTexture *>::iterator it = textures.begin();
+    for (std::vector<RepoNodeTexture *>::const_iterator it = textures.begin();
          it != textures.end(); ++it)
     {
         RepoNodeAbstract *texture = *it;

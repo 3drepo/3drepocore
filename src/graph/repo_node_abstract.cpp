@@ -63,7 +63,7 @@ repo::core::RepoNodeAbstract::RepoNodeAbstract(const mongo::BSONObj &obj)
 				obj.getField(REPO_NODE_LABEL_PARENTS));
 
         std::vector<boost::uuids::uuid>::iterator it;
-        for (it = parentIDs.begin()(); it != parentIDs.end(); ++it)
+        for (it = parentIDs.begin(); it != parentIDs.end(); ++it)
         {
            boost::uuids::uuid id = *it;
 //		for each (boost::uuids::uuid id in parentIDs)
@@ -78,16 +78,16 @@ repo::core::RepoNodeAbstract::RepoNodeAbstract(const mongo::BSONObj &obj)
 //
 //------------------------------------------------------------------------------
 
-std::vector<std::vector<const boost::uuids::uuid>>
+std::vector<std::vector<boost::uuids::uuid>>
 	repo::core::RepoNodeAbstract::getPaths(const RepoNodeAbstract * node)
 {
-	std::vector<std::vector<const boost::uuids::uuid>> ret;
+	std::vector<std::vector<boost::uuids::uuid>> ret;
 		
 	if (node->isRoot())
 	{	
         //----------------------------------------------------------------------
 		// Base case
-		std::vector<const boost::uuids::uuid> vec;
+		std::vector<boost::uuids::uuid> vec;
 		vec.push_back(node->sharedID);
 		ret.push_back(vec);
 	}
@@ -101,16 +101,16 @@ std::vector<std::vector<const boost::uuids::uuid>>
             const RepoNodeAbstract *parent = *it;
 //		for each (const RepoNodeAbstract * parent in node->parents)
 //		{
-			std::vector<std::vector<const boost::uuids::uuid>> paths = 
+			std::vector<std::vector<boost::uuids::uuid> > paths = 
 				getPaths(parent);			
 			
             //------------------------------------------------------------------
 			// Store the current node in all the so far accumulated paths
 
-            std::vector<std::vector<const boost::uuids::uuid>>::iterator itt;
+            std::vector<std::vector<boost::uuids::uuid> >::iterator itt;
             for (itt = paths.begin(); itt != paths.end(); ++itt)
             {
-                std::vector<const boost::uuids::uuid> vec = *itt;
+                std::vector<boost::uuids::uuid> vec = *itt;
 //			for each (std::vector<const boost::uuids::uuid> vec in paths)
 //			{
 				vec.push_back(node->sharedID);
@@ -135,7 +135,7 @@ void repo::core::RepoNodeAbstract::getSubNodes(
     }
 }
 
-std::set<const boost::uuids::uuid> repo::core::RepoNodeAbstract::
+std::set<boost::uuids::uuid> repo::core::RepoNodeAbstract::
 	getParentSharedIDs() 
 {
 	if (parents.size() > parentSharedIDs.size())
@@ -144,9 +144,8 @@ std::set<const boost::uuids::uuid> repo::core::RepoNodeAbstract::
         std::set<const RepoNodeAbstract *>::iterator it;
         for (it = parents.begin(); it != parents.end(); ++it)
         {
-            const RepoNodeAbrastract *parent = *it;
 //		for each (const RepoNodeAbstract * parent in parents)
-			parentSharedIDs.insert(parent->sharedID);
+			parentSharedIDs.insert((*it)->sharedID);
         }
 	}
 	return parentSharedIDs;
@@ -173,7 +172,7 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
 	// Paths
 	// 
 	// Paths are stored as array of arrays of shared_id (uuids)
-	const std::vector<std::vector<const boost::uuids::uuid>> paths = 
+	const std::vector<std::vector<boost::uuids::uuid>> paths = 
 		getPaths(this);
 	if (paths.size() > 0)
 		RepoTranscoderBSON::append(REPO_NODE_LABEL_PATHS, paths, builder);
@@ -191,14 +190,13 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
 	// Parents
 	if (!isRoot()) 
 	{
-		std::vector<const boost::uuids::uuid> parentalUUIDs;
+		std::vector<boost::uuids::uuid> parentalUUIDs;
         std::set<const RepoNodeAbstract *>::iterator it;
         for (it = parents.begin(); it != parents.end(); ++it)
         {
-            const RepoNodeAbrastract *parent = *it;
 //		for each (const RepoNodeAbstract * node in parents)
 //			parentalUUIDs.push_back(node->sharedID);
-            parentalUUIDs.push_back(parent->sharedID);
+            parentalUUIDs.push_back((*it)->sharedID);
         }
 
 		RepoTranscoderBSON::append(REPO_NODE_LABEL_PARENTS,

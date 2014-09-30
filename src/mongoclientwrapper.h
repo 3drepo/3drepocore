@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 //------------------------------------------------------------------------------
 #include <mongo/client/dbclient.h> // mongo c++ driver
 //------------------------------------------------------------------------------
@@ -282,7 +283,7 @@ public:
     bool fetchRevision(std::vector<mongo::BSONObj> &/* ret */,
                        std::string dbName,
                        std::string collection,
-                       const std::set<__int64> &revisionNumbersAncestralArray);
+                       const std::set<int64_t> &revisionNumbersAncestralArray);
     void getRevision(std::string dbName, std::string collection, int revNumber,
                      int ancestor);
 

@@ -100,10 +100,12 @@ std::set<boost::uuids::uuid> repo::core::RepoTranscoderBSON::
 	std::set<std::string> fields;
     array.getFieldNames(fields);
 
+    std::set<std::string>::iterator it;
+
     for (it = fields.begin(); it != fields.end(); ++it)
-        uuids.push_back(retrieve(array.getField(*it)));
+        //uuids.push_back(retrieve(array.getField(*it)));
 //	for each (std::string field in fields)
-//		uuids.insert(retrieve(array.getField(field)));
+		uuids.insert(retrieve(array.getField(*it)));
 	return uuids;
 }
 

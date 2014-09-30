@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 #include "repo_node_abstract.h"
 #include "repo_bounding_box.h"
-#include "..\primitives\repo_vertex.h"
+#include "../primitives/repo_vertex.h"
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 

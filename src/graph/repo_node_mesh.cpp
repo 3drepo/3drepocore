@@ -524,11 +524,9 @@ void repo::core::RepoNodeMesh::toAssimp(
     std::set<const RepoNodeAbstract *>::iterator childrenIt;
     for (childrenIt = children.begin(); childrenIt != children.end(); ++childrenIt)
     {
-        const RepoNodeAbstract *child = *it;
-
 //	for each (const RepoNodeAbstract * child in children)
 //	{
-		it = materialMapping.find(child);
+		it = materialMapping.find(*childrenIt);
 		if (materialMapping.end() != it)
 		{
 			mesh->mMaterialIndex = it->second;

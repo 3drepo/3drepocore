@@ -253,7 +253,7 @@ void repo::core::RepoNodeTransformation::toAssimp(
             const RepoNodeAbstract *child = *childrenIt;
 //		for each (const RepoNodeAbstract * child in children)
 //		{
-//			it = nodesMapping.find(child);
+			it = nodesMapping.find(child);
 			if (nodesMapping.end() != it)
 			{
 				childrenNodes.push_back(it->second);

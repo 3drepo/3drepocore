@@ -326,15 +326,13 @@ void repo::core::RepoNodeMaterial::toAssimp(
 	// Diffuse texture
 	// 3D Repo supports only diffuse textures at the moment
 	std::map<const RepoNodeAbstract *, std::string>::const_iterator it;
+    std::set<const RepoNodeAbstract *>::iterator childrenIt;
 
-    std::set<const RepoNodeAbstract *>::childrenIt;
-    for (childrenIt = children.begin();chidrenIt !=children.end();++childrenIt)
+    for (childrenIt = children.begin(); childrenIt !=children.end();++childrenIt)
     {
-        const RepoNodeAbstract * child = *childrenIt;
-
 //	for each (const RepoNodeAbstract * child in children)
 //	{
-		it = texturesMapping.find(child);
+		it = texturesMapping.find(*childrenIt);
 		if (texturesMapping.end() != it)
 		{
 			aiString * texName = new aiString(it->second);

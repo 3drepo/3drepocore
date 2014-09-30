@@ -162,7 +162,32 @@ public :
 		T zDiff = (a.z - b.z);
 		return xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
     }
+    
+	//-------------------------------------------------------------------------
+	//
+	// Point to triangle distance
+	//
+	//-------------------------------------------------------------------------
+	//! Returns Euclidean distance of a point to a triangle.
+	template <typename T>
+	static T distancePointToTriangle(
+		const aiVector3t<T> & pointP,
+		const aiVector3t<T> & trianglePointA,
+		const aiVector3t<T> & trianglePointB,
+		const aiVector3t<T> & trianglePointC)
+	{
+		return std::sqrt(distancePointToTriangleSquared<T>(
+			pointP, trianglePointA, trianglePointB, trianglePointC));
+	}
 
+	//! Returns squared Euclidean distance of a point to a triangle.
+	template <typename T>
+	static T distancePointToTriangleSquared(		
+		const aiVector3t<T> & pointP,
+		const aiVector3t<T> & trianglePointA,
+		const aiVector3t<T> & trianglePointB,
+		const aiVector3t<T> & trianglePointC);
+		
     //--------------------------------------------------------------------------
 	//
 	// Point to face distance
@@ -175,6 +200,25 @@ public :
 		const unsigned int & faceIndex)
 	{
         return std::sqrt(distancePointToFaceSquared<T>(pointP, mesh,faceIndex));
+	}
+
+	template <typename T>
+	static T distancePointToFaceSquared(		
+		const aiVector3t<T> & pointP,
+		const aiMesh * mesh,
+		const unsigned int & faceIndex)
+	{
+		T distance = std::numeric_limits<T>::max();
+		const aiFace face = mesh->mFaces[faceIndex];
+		if (face.mNumIndices == 3)
+		{
+			distance = distancePointToTriangleSquared<T>(
+				pointP,
+				mesh->mVertices[face.mIndices[0]], 
+				mesh->mVertices[face.mIndices[1]],
+				mesh->mVertices[face.mIndices[2]]);
+		}						
+		return distance;
 	}
 
     //--------------------------------------------------------------------------

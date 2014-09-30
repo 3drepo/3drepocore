@@ -1,11 +1,12 @@
 //------------------------------------------------------------------------------
 
 #include "mongoclientwrapper.h"
+#include "conversion/repo_transcoder_string.h"
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <cstring>
-
+#include <cstdint>
 
 // http://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
 #pragma warning(disable : 4996) 
@@ -447,7 +448,7 @@ std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::listAllTail
         log("db."
 			+ collection 
 			+ ".find().limit(0).skip("
-			+ repo::toString(skip)
+			+ repo::core::RepoTranscoderString::toString(skip)
 			+ ");");
 					
         cursor = clientConnection.query(
@@ -529,7 +530,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneByUniqueID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
-		appendUUID(ID, repo::stringToUUID(uuid), queryBuilder);
+		appendUUID(ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
 		bson = clientConnection.findOne(getNamespace(database, collection),
 			mongo::Query(queryBuilder.obj()), &fieldsToReturn(fields));
 	}
@@ -551,7 +552,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
-		appendUUID("shared_id", repo::stringToUUID(uuid), queryBuilder);
+		appendUUID("shared_id", repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
         //----------------------------------------------------------------------
 		bson = clientConnection.findOne(
 			getNamespace(database, collection),
@@ -629,7 +630,7 @@ bool repo::core::MongoClientWrapper::fetchRevision(
     std::vector<mongo::BSONObj> &ret,
     std::string dbName,
     std::string collection,
-    const std::set<__int64> &revisionNumbersAncestralArray)
+    const std::set<int64_t> &revisionNumbersAncestralArray)
 {
 
 	/////////////////////////////////////////////////////////////////////
@@ -648,9 +649,9 @@ bool repo::core::MongoClientWrapper::fetchRevision(
 	// Build array of all possible revisions where to look for the nodes
 	/////////////////////////////////////////////////////////////////////
 	mongo::BSONArrayBuilder arrayBuilder;
-	std::set<__int64>::iterator setElement;
+	std::set<int64_t>::iterator setElement;
 	for (setElement = revisionNumbersAncestralArray.begin(); setElement != revisionNumbersAncestralArray.end(); setElement++)
-		arrayBuilder.append(*setElement);
+		arrayBuilder.append((long long)(*setElement));
 	mongo::BSONArray ancestralArray = arrayBuilder.arr();
 
 	/////////////////////////////////////////////////////////////////////
@@ -696,7 +697,7 @@ bool repo::core::MongoClientWrapper::deleteRecord(
 	try {	
 		std::string idVal = recordID.toString();
 		if (mongo::BinData == recordID.type() && mongo::bdtUUID == recordID.binDataType())
-			idVal = repo::toString(MongoClientWrapper::retrieveUUID(recordID));
+			idVal = repo::core::RepoTranscoderString::toString(MongoClientWrapper::retrieveUUID(recordID));
 	
         log("db."
 			+ collection 
