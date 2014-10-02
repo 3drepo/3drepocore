@@ -54,6 +54,9 @@ public :
 	//! Returns a polygon outline as a bounding rectangle in XY plane.
 	void toOutline(std::vector<aiVector2t<float>> * vec) const;
 
+    const aiVector3t<float>& getMin() { return min; } const;
+    const aiVector3t<float>& getMax() { return max; } const;
+
 private :
 
 	aiVector3t<float> min; //!< min bounding box vertex

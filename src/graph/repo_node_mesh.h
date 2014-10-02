@@ -162,6 +162,24 @@ public :
 	const std::vector<aiVector3t<float>> * getVertices() const 
 	{ return vertices; }
 
+	//! Returns the texcoord vector.
+	const std::vector<aiVector3t<float>> * getUVChannel(int channel = 0) const 
+	{ 
+        std::vector<aiVector3t<float>> *tmp = NULL;
+
+        if ((uvChannels != NULL) && (uvChannels->size() > 0))
+        {
+            tmp = (*uvChannels)[channel]; 
+        }
+
+        return tmp;
+    }
+
+    const RepoBoundingBox &getBoundingBox() const
+    {
+        return boundingBox;
+    }
+
 	//! Returns the area of a face identified by its index.
 	double getFaceArea(const unsigned int & index) const;
 
