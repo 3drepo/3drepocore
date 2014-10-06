@@ -26,6 +26,7 @@
 namespace repo {
 namespace core {
 
+
 //! Axis-aligned bounding box represented as a min and max vertices
 class RepoBoundingBox
 {
@@ -34,10 +35,10 @@ public :
 
 	//! Basic constructor, initialized with max float for min and vice versa.
 	inline RepoBoundingBox() : 
-		min(std::numeric_limits<float>::max(), 
+        min(std::numeric_limits<float>::max(),
 			std::numeric_limits<float>::max(), 
 			std::numeric_limits<float>::max()),
-		max(- std::numeric_limits<float>::max(),
+        max(- std::numeric_limits<float>::max(),
 			- std::numeric_limits<float>::max(), 
             - std::numeric_limits<float>::max()) {}
 
@@ -54,14 +55,14 @@ public :
 	//! Returns a polygon outline as a bounding rectangle in XY plane.
 	void toOutline(std::vector<aiVector2t<float>> * vec) const;
 
-    const aiVector3t<float>& getMin() { return min; } const;
-    const aiVector3t<float>& getMax() { return max; } const;
+    const aiVector3t<float> getMin() const { return min; }
+    const aiVector3t<float> getMax() const { return max; }
 
 private :
 
-	aiVector3t<float> min; //!< min bounding box vertex
+    aiVector3t<float> min; //!< min bounding box vertex
 
-	aiVector3t<float> max; //!< max bounding box vertex
+    aiVector3t<float> max; //!< max bounding box vertex
 
 }; // end class
 

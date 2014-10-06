@@ -27,6 +27,14 @@ DEFINES += REPO_CORE_LIBRARY
 unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
 
 #-------------------------------------------------------------------------------
+# Boost
+
+win32: LIBS += -LC:/local/boost_1_56_0/lib64-msvc-12.0/
+
+INCLUDEPATH += C:/local/boost_1_56_0/
+DEPENDPATH += C:/local/boost_1_56_0/
+
+#-------------------------------------------------------------------------------
 # Assimp
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
@@ -87,7 +95,6 @@ SOURCES +=  src/repocore.cpp \
             src/primitives/repo_vertex.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
-
 
 
 
