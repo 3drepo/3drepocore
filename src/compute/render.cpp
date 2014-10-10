@@ -13,6 +13,14 @@
 
 #include "conversion/repo_transcoder_bson.h"
 
+#include <bitset>
+
+inline void bufferWrite(char *buf, int position, uint16_t val)
+{
+	buf[position]     = (char)(val & 0xFF);
+	buf[position + 1] = (char)(val >> 8);
+}
+
 void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 {
     const std::vector<RepoNodeAbstract *> &alias = scene->getMeshes();
@@ -137,10 +145,10 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
                 prev_added_verts = added_verts;
                 buf_offset += vert_buf_ptr;
 
-
                 while((new_vertex_id < num_verts) && (lod < 16))
                 {
-				  std::cout << "NV: " << new_vertex_id << ", V#: " << num_verts << std::endl;
+				  vert_buf_ptr = 0;
+				  idx_buf_ptr = 0;
 
                   idx_buf  = new char[2 * 3 * num_faces];
                   vert_buf = new char[stride * num_verts];
@@ -189,17 +197,13 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 
                                     // Store quantized coordinates
                                     for (unsigned int comp_idx = 0; comp_idx < 3; comp_idx++) {
-                                        vert_buf[vert_buf_ptr]     = vertex_quant[vert_num][comp_idx] & 0x00ff;
-                                        vert_buf_ptr++;
-                                        vert_buf[vert_buf_ptr] = vertex_quant[vert_num][comp_idx] & 0xff00;
-                                        vert_buf_ptr++;
+										bufferWrite(vert_buf, vert_buf_ptr, vertex_quant[vert_num][comp_idx]);
+										vert_buf_ptr+=2;
                                     }
 
                                     // Padding to align with 4 bytes
-                                    vert_buf[vert_buf_ptr] = 0;
-                                    vert_buf_ptr++;
-                                    vert_buf[vert_buf_ptr] = 0;
-                                    vert_buf_ptr++;
+									bufferWrite(vert_buf, vert_buf_ptr, 0);
+									vert_buf_ptr += 2;
 
                                     // Write normals in 8-bit
                                     for (unsigned int comp_idx = 0; comp_idx < 3; comp_idx++) {
@@ -222,11 +226,9 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
                                                 wrap_tex = (wrap_tex - min_texcoordv) / (max_texcoordv - min_texcoordv);
 
                                             uint16_t comp = (uint16_t)(floor((wrap_tex * 65535) + 0.5));
-                                            
-                                            vert_buf[vert_buf_ptr] = comp & 0x00ff;
-                                            vert_buf_ptr++;
-                                            vert_buf[vert_buf_ptr] = comp & 0xff00;
-                                            vert_buf_ptr++;
+                                           
+											bufferWrite(vert_buf, vert_buf_ptr, comp);
+											vert_buf_ptr += 2;
                                         }
                                     }
 
@@ -240,10 +242,8 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
                                 int vert_num = (*faces)[tri_num].mIndices[vert_idx];
                                 uint16_t mapped_id = (uint16_t)vertex_map[vert_num];
 
-                                idx_buf[idx_buf_ptr] = mapped_id & 0x00ff;
-                                idx_buf_ptr++;
-                                idx_buf[idx_buf_ptr] = mapped_id & 0xff00;
-                                idx_buf_ptr++;
+								bufferWrite(idx_buf, idx_buf_ptr, mapped_id);
+								idx_buf_ptr+=2;
                             }
 
                             num_indices += 3;

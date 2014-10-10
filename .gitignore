@@ -3,3 +3,8 @@ lib3drepocore.so
 lib3drepocore.so.1
 lib3drepocore.so.1.0
 lib3drepocore.so.1.0.0
+*.o
+Makefile
+Makefile.*
+repo_cli
+
