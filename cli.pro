@@ -16,42 +16,17 @@
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
-HEADERS +=  :src/repocore.h\
-            src/repocoreglobal.h \
-            src/assimpwrapper.h \
-            src/mongoclientwrapper.h \
-            src/graph/repo_bounding_box.h \
-            src/graph/repo_graph_abstract.h \
-            src/graph/repo_graph_history.h \
-            src/graph/repo_graph_scene.h \
-            src/graph/repo_node_abstract.h \
-            src/graph/repo_node_camera.h \
-            src/graph/repo_node_material.h \
-            src/graph/repo_node_mesh.h \
-            src/graph/repo_node_revision.h \
-            src/graph/repo_node_texture.h \
-            src/graph/repo_node_transformation.h \
-            src/primitives/repo_vertex.h \
-            src/conversion/repo_transcoder_bson.h \
-            src/conversion/repo_transcoder_string.h \
+include(header.pri)
 
-SOURCES +=  src/repocore.cpp \
-            src/assimpwrapper.cpp \
-            src/mongoclientwrapper.cpp \
-            src/graph/repo_bounding_box.cpp \
-            src/graph/repo_graph_abstract.cpp \
-            src/graph/repo_graph_history.cpp \
-            src/graph/repo_graph_scene.cpp \
-            src/graph/repo_node_abstract.cpp \
-            src/graph/repo_node_camera.cpp \
-            src/graph/repo_node_material.cpp \
-            src/graph/repo_node_mesh.cpp \
-            src/graph/repo_node_revision.cpp \
-            src/graph/repo_node_texture.cpp \
-            src/graph/repo_node_transformation.cpp \
-            src/primitives/repo_vertex.cpp \
-            src/conversion/repo_transcoder_bson.cpp \
-            src/conversion/repo_transcoder_string.cpp \
+TEMPLATE = app
+INCLUDEPATH += .
 
+TARGET = repo_cli
 
+QT += core
+LIBS += -lboost_system -L. -l3drepocore
+INCLUDEPATH += src
 
+# Input
+HEADERS += src/compute/render.h
+SOURCES += src/compute/render.cpp src/cli.cpp
