@@ -183,6 +183,16 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
     //--------------------------------------------------------------------------
 	// Bounding box
 
+    if (obj.hasField(REPO_NODE_LABEL_BOUNDING_BOX))
+    {
+		std::pair<aiVector3D, aiVector3D> min_max = RepoTranscoderBSON::retrieveBBox(
+			obj.getField(REPO_NODE_LABEL_BOUNDING_BOX)
+			);
+
+		this->boundingBox.setMin(min_max.first);
+		this->boundingBox.setMax(min_max.second);
+    }
+
     //--------------------------------------------------------------------------
 	// UV channels
 	if (obj.hasField(REPO_NODE_LABEL_UV_CHANNELS) &&

@@ -139,3 +139,28 @@ aiVector3D repo::core::RepoTranscoderBSON::
 		(float) vector.getField("1").numberDouble(),  // Y
 		(float) vector.getField("2").numberDouble()); // Z
 }
+
+std::pair<aiVector3D, aiVector3D> repo::core::RepoTranscoderBSON::
+    retrieveBBox(const mongo::BSONElement &bse)
+{
+    std::vector<mongo::BSONElement> subArr = bse.Array();
+
+    aiVector3D min, max;
+
+
+    // Minimum
+	mongo::BSONObj min_obj = subArr[0].embeddedObject();
+
+    min.x = min_obj.getField("0").numberDouble();
+    min.y = min_obj.getField("1").numberDouble();
+    min.z = min_obj.getField("2").numberDouble();
+
+    // Maximum
+	mongo::BSONObj max_obj = subArr[1].embeddedObject();
+
+    max.x = max_obj.getField("0").numberDouble();
+    max.y = max_obj.getField("1").numberDouble();
+    max.z = max_obj.getField("2").numberDouble();
+
+    return std::make_pair(min, max);
+}

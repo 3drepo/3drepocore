@@ -61,7 +61,8 @@ public :
 	 * \param type repository object type such as 'material', 'mesh', etc.
 	 * \param api API level of this object, information used to decode it in 
 	 *            clients
-	 * \param uuid unique identifier, randomly generated if not given
+	 
+	 head_bson.append("_id", * \param uuid unique identifier, randomly generated if not given
 	 * \param name optional name of this object, empty string if not specified,
 	 *             does not have to be unique
 	 * \sa RepoNodeAbstract() and ~RepoNodeAbstract()

@@ -20,6 +20,7 @@
 
 #include <set>
 #include <vector>
+#include <utility>
 //-----------------------------------------------------------------------------
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid.hpp> 
@@ -209,6 +210,9 @@ public :
 
 	//! Returns a 3D vector.
 	static aiVector3D retrieveVector3D(const mongo::BSONElement &bse);
+
+    //! Returns a bounding box
+    static std::pair<aiVector3D, aiVector3D> retrieveBBox(const mongo::BSONElement &bse);
 
 	//! Retrieves binary array into a given vector.
 	/*!
