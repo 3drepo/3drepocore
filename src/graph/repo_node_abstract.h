@@ -30,6 +30,7 @@
 //------------------------------------------------------------------------------
 
 #include "repo_node_types.h"
+#include "../repocoreglobal.h"
 
 namespace repo {
 namespace core {
@@ -42,7 +43,7 @@ namespace core {
  * required to decode it. Name of this object is optional information which
  * might or might not be present. It is assumed a graph may have only one root.
  */
-class RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeAbstract
 {
 
 public :

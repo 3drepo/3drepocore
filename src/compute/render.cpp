@@ -1,22 +1,5 @@
 #include "render.h"
 
-#include <cstdint>
-#include <cmath>
-#include <set>
-#include <iostream>
-
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-
-#include "graph/repo_node_abstract.h"
-#include "graph/repo_node_mesh.h"
-
-#include "conversion/repo_transcoder_bson.h"
-
-#include "mongo/bson/bsontypes.h"
-
-#include <bitset>
-
 inline void bufferWrite(char *buf, int position, uint16_t val)
 {
 	buf[position]     = (char)(val & 0xFF);
@@ -45,7 +28,7 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 
         if (verts != NULL)
         {
-            unsigned int num_verts = verts->size();
+            size_t num_verts = verts->size();
 
             std::vector<int> vertex_map(num_verts, -1);
             std::vector<int64_t> vertex_quant_idx(num_verts, 0);

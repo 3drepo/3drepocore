@@ -16,18 +16,9 @@
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
-include(header.pri)
+TEMPLATE = subdirs
 
-TEMPLATE = app
-INCLUDEPATH += .
+CONFIG += ordered
 
-release: TARGET = repo_cli
-debug: TARGET = repo_cli_debug
-
-QT += core gui
-LIBS += -lboost_system -L. -l3drepocore
-INCLUDEPATH += src
-
-# Input
-HEADERS += src/compute/render.h
-SOURCES += src/compute/render.cpp src/cli.cpp
+SUBDIRS += 3drepocore.pro \
+           3drepocli.pro

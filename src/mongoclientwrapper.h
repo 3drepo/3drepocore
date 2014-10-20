@@ -30,10 +30,12 @@
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc
 //------------------------------------------------------------------------------
 
+#include "repocoreglobal.h"
+
 namespace repo {
 namespace core {
 
-class MongoClientWrapper
+class REPO_CORE_EXPORT MongoClientWrapper
 {
 
 public:

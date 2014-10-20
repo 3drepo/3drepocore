@@ -24,6 +24,8 @@
 #include "assimp/scene.h"
 #include "repo_node_abstract.h"
 
+#include "../repocoreglobal.h"
+
 
 namespace repo {
 namespace core {
@@ -32,7 +34,7 @@ namespace core {
 /*!
  * 3D Repo directed acyclic graph is assumed to have a single root node only.
  */
-class RepoGraphAbstract
+class REPO_CORE_EXPORT RepoGraphAbstract
 {
 
 public :

@@ -16,38 +16,27 @@
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
-QT  -= core gui
+include(header.pri)
 
-#DEFINES += REPO_CORE_LIBRARY
+TEMPLATE = app
+#CONFIG += debug_and_release
+#release: TARGET = repo_cli
+#debug: TARGET = repo_cli_debug
 
-unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
-unix:QMAKE_CXXFLAGS_DEBUG -= -O1
-unix:QMAKE_CXXFLAGS_DEBUG += -O0
-
-#-------------------------------------------------------------------------------
-# Boost
-
-win32: LIBS += -LC:/local/boost_1_56_0/lib64-msvc-12.0/
-
-INCLUDEPATH += C:/local/boost_1_56_0/
-DEPENDPATH += C:/local/boost_1_56_0/
+QT += core gui # TODO: remove Qt dependencies, ie it should be -=
 
 #-------------------------------------------------------------------------------
-# Assimp
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
-else:unix: LIBS += -L$$PWD/lib/ -lassimp
+# 3drepocore
 
-INCLUDEPATH += $$PWD/submodules/assimp/include
-DEPENDPATH += $$PWD/submodules/assimp/include
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/release/ -l3drepocore
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/debug/ -l3drepocore
+else:unix: LIBS += -L$$OUT_PWD/ -l3drepocore
+
+INCLUDEPATH += $$PWD/src
+DEPENDPATH += $$PWD/src
 
 #-------------------------------------------------------------------------------
-# MongoDB C++ Driver
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
-else:unix: LIBS += -L$$PWD/lib/ -lmongoclient
-
-INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/src
-DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/src
-
+# Input
+#HEADERS +=
+SOURCES += src/cli.cpp
 #-------------------------------------------------------------------------------

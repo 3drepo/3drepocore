@@ -31,6 +31,8 @@
 #include <assimp/scene.h> // Assimp
 //-----------------------------------------------------------------------------
 
+#include "../repocoreglobal.h"
+
 using namespace std;
 
 namespace repo {
@@ -40,7 +42,7 @@ namespace core {
  * Static class that appends various data types to BSON builders in order
  * to store data in MongoDB.
  */
-class RepoTranscoderBSON
+class __declspec(dllexport) RepoTranscoderBSON
 {
 
 public :

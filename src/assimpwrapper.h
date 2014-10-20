@@ -33,12 +33,14 @@
 //#include <boost/algorithm/string.hpp>
 //------------------------------------------------------------------------------
 
+#include "repocoreglobal.h"
+
 namespace repo {
 namespace core {
 
 //------------------------------------------------------------------------------
 // TODO: transcode to and from 3D Repo scene graph directly not to expose Assimp
-class AssimpWrapper
+class REPO_CORE_EXPORT AssimpWrapper
 {
 public :
 
