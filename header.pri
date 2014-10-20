@@ -16,21 +16,15 @@
 # http://qt-project.org/doc/qt-5/qmake-variable-reference.html
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
-QT  -= core gui
-
-#DEFINES += REPO_CORE_LIBRARY
-
 unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
 unix:QMAKE_CXXFLAGS_DEBUG -= -O1
 unix:QMAKE_CXXFLAGS_DEBUG += -O0
 
 #-------------------------------------------------------------------------------
 # Boost
-
 win32: LIBS += -LC:/local/boost_1_56_0/lib64-msvc-12.0/
-
-INCLUDEPATH += C:/local/boost_1_56_0/
-DEPENDPATH += C:/local/boost_1_56_0/
+win32:INCLUDEPATH += C:/local/boost_1_56_0/
+win32:DEPENDPATH += C:/local/boost_1_56_0/
 
 #-------------------------------------------------------------------------------
 # Assimp
@@ -43,6 +37,9 @@ DEPENDPATH += $$PWD/submodules/assimp/include
 
 #-------------------------------------------------------------------------------
 # MongoDB C++ Driver
+
+win32:LIBS += -lws2_32
+
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
 else:unix: LIBS += -L$$PWD/lib/ -lmongoclient
