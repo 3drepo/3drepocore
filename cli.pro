@@ -21,9 +21,10 @@ include(header.pri)
 TEMPLATE = app
 INCLUDEPATH += .
 
-TARGET = repo_cli
+release: TARGET = repo_cli
+debug: TARGET = repo_cli_debug
 
-QT += core
+QT += core gui
 LIBS += -lboost_system -L. -l3drepocore
 INCLUDEPATH += src
 

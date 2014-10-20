@@ -21,6 +21,12 @@
 
 repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 {
+	if (mesh->mNumVertices)
+	{
+		min = mesh->mVertices[0];
+		max = mesh->mVertices[0];
+	}
+
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) 
 	{	
 		aiVector3t<float> tmp = mesh->mVertices[i];
@@ -33,7 +39,6 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 		max.y = std::max(max.y,tmp.y);
 		max.z = std::max(max.z,tmp.z);
 	}
-
     std::cout << "BBMIN: " << min.x << " " << min.y << " " << min.z << std::endl;
     std::cout << "BBMAX: " << max.x << " " << max.y << " " << max.z << std::endl;
 }

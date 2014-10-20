@@ -18,11 +18,13 @@
 
 QT  -= core gui
 
-CONFIG += build_all
+CONFIG += build_all debug_and_release
 
 DEFINES += REPO_CORE_LIBRARY
 
 unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
+unix:QMAKE_CXXFLAGS_DEBUG -= -O1
+unix:QMAKE_CXXFLAGS_DEBUG += -O0
 
 #-------------------------------------------------------------------------------
 # Boost
