@@ -13,6 +13,8 @@
 
 #include "conversion/repo_transcoder_bson.h"
 
+#include "mongo/bson/bsontypes.h"
+
 #include <bitset>
 
 inline void bufferWrite(char *buf, int position, uint16_t val)
@@ -23,11 +25,11 @@ inline void bufferWrite(char *buf, int position, uint16_t val)
 
 void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 {
-    const std::vector<RepoNodeAbstract *> &alias = scene->getMeshes();
+    const std::vector<RepoNodeAbstract *> &meshesAlias = scene->getMeshes();
 
     // Process all the meshes and compute PopBuffers
-    for(std::vector<RepoNodeAbstract *>::const_iterator it = alias.begin();
-        it != alias.end(); ++it)
+    for(std::vector<RepoNodeAbstract *>::const_iterator it = meshesAlias.begin();
+        it != meshesAlias.end(); ++it)
     {
         RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*it);
 
@@ -43,18 +45,18 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 
         if (verts != NULL)
         {
-            int num_verts = verts->size();
+            unsigned int num_verts = verts->size();
 
             std::vector<int> vertex_map(num_verts, -1);
             std::vector<int64_t> vertex_quant_idx(num_verts, 0);
             std::vector<aiVector3t<uint16_t> > vertex_quant;
             vertex_quant.resize(num_verts);
 
-            int vert_buf_ptr = 0;
-            int idx_buf_ptr = 0;
-            int buf_offset = 0;
+            unsigned int vert_buf_ptr = 0;
+            unsigned int idx_buf_ptr = 0;
+            unsigned int buf_offset = 0;
 
-            std::vector<aiVector3t<float> > *uvChannel = mesh->getUVChannel(0);
+            const std::vector<aiVector3t<float> > *uvChannel = mesh->getUVChannel(0);
 
             const unsigned int max_bits = 16;
             float max_quant = powf(2.0f, (float)max_bits) - 1.0f;
@@ -109,22 +111,24 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 
 			}
 
-            std::vector<aiFace> *faces = mesh->getFaces();
-            std::vector<aiVector3t<float> > *normals = mesh->getNormals();
+            const std::vector<aiFace> *faces = mesh->getFaces();
+            const std::vector<aiVector3t<float> > *normals = mesh->getNormals();
         
             if (faces != NULL)
             {
                 unsigned int num_faces = faces->size();
+		
+				//std::cout << "#FACES " << num_faces << std::endl;
 
                 std::vector<bool> valid_tri(num_faces, false);
-                int new_vertex_id = 0;
-                int added_verts = 0;
-                int prev_added_verts = 0;
+                unsigned int new_vertex_id = 0;
+                unsigned int added_verts = 0;
+                unsigned int prev_added_verts = 0;
 
                 char *idx_buf;
                 char *vert_buf;
 
-                unsigned lod = 0;
+                unsigned int lod = 0;
                 mongo::BSONObjBuilder head_bson;
 
                 repo::core::RepoTranscoderBSON::append("mesh_id", mesh->getUniqueID(), head_bson);
@@ -157,26 +161,29 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 
                   float dim = powf(2.0, (float)(max_bits - lod));
 
-                  for(int vert_num = 0; vert_num < num_verts; vert_num++)
+                  for(unsigned int vert_num = 0; vert_num < num_verts; vert_num++)
                   {
 					float vert_x = floor((float)vertex_quant[vert_num][0] / dim) * dim;
 					float vert_y = floor((float)vertex_quant[vert_num][1] / dim) * dim;
 					float vert_z = floor((float)vertex_quant[vert_num][2] / dim) * dim;
 
-					int64_t quant_idx = (int64_t)(vert_x + vert_y * dim + vert_z * dim * dim);
+					uint64_t quant_idx = (uint64_t)(vert_x + vert_y * dim + vert_z * dim * dim);
 
 					vertex_quant_idx[vert_num] = quant_idx;
                   }
 
                   for(unsigned int tri_num = 0; tri_num < num_faces; tri_num++)
                   {
+					const aiFace &curr_face = (*faces)[tri_num];
+
                     if (!valid_tri[tri_num])
                     {
-                        std::set<int64_t> quant_map;
+                        std::set<uint64_t> quant_map;
                         bool is_valid = true;
                         
-                        for(int vert_idx = 0; vert_idx < 3; vert_idx++) {
-                            int64_t curr_quant = vertex_quant_idx[(*faces)[tri_num].mIndices[vert_idx]];
+                        for(unsigned int vert_idx = 0; vert_idx < 3; vert_idx++) {
+							unsigned int vert_num = curr_face.mIndices[vert_idx];
+                            uint64_t curr_quant = vertex_quant_idx[vert_num];
 
                             if (quant_map.find(curr_quant) != quant_map.end())
                             {
@@ -191,7 +198,7 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
                             valid_tri[tri_num] = true;
 
                             for(unsigned int vert_idx = 0; vert_idx < 3; vert_idx++){
-                                unsigned int vert_num = (*faces)[tri_num].mIndices[vert_idx];
+                                unsigned int vert_num = curr_face.mIndices[vert_idx];
 
                                 if (vertex_map[vert_num] == -1) {
 
@@ -231,20 +238,32 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 											vert_buf_ptr += 2;
                                         }
                                     }
-
-                                    vertex_map[vert_num] = new_vertex_id;
+									
+									//std::cout << "VN [" << vert_num << "] = [" << new_vertex_id << "];" << std::endl;
+									//std::cout << "v " << vertex_quant[vert_num][0] << " " << vertex_quant[vert_num][1] << " " << vertex_quant[vert_num][2] << std::endl;
+									vertex_map[vert_num] = new_vertex_id;
                                     new_vertex_id += 1;
                                     added_verts += 1;
                                 }
                             }
 
+							//std::cout << "f ";
+
                             for(unsigned int vert_idx = 0; vert_idx < 3; vert_idx++) {
-                                int vert_num = (*faces)[tri_num].mIndices[vert_idx];
+                                unsigned int vert_num = curr_face.mIndices[vert_idx];
+								//std::cout << "(" << vert_num << ")";
+								//if (vertex_map[vert_num] > 65535)
+								//	std::cout << "Not WebGL compatible = " << vertex_map[vert_num] << std::endl;
+
+								//std::cout << (vertex_map[vert_num] + 1) << " ";
+
                                 uint16_t mapped_id = (uint16_t)vertex_map[vert_num];
 
 								bufferWrite(idx_buf, idx_buf_ptr, mapped_id);
 								idx_buf_ptr+=2;
                             }
+
+							//std::cout << std::endl;
 
                             num_indices += 3;
                         }
@@ -259,8 +278,8 @@ void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 				  lod_bson.append("level", lod);
                   lod_bson.append("num_idx", num_indices);
                   lod_bson.append("type", "PopGeometryLevel");
-                  lod_bson.append("vert_buf", mongo::BSONBinData((void *)vert_buf, vert_buf_ptr, 0));
-                  lod_bson.append("idx_buf", mongo::BSONBinData((void *)idx_buf, idx_buf_ptr, 0));
+                  lod_bson.append("vert_buf", mongo::BSONBinData((void *)vert_buf, vert_buf_ptr, mongo::BinDataGeneral));
+                  lod_bson.append("idx_buf", mongo::BSONBinData((void *)idx_buf, idx_buf_ptr, mongo::BinDataGeneral));
                   lod_bson.append("vert_buf_offset", buf_offset);
                   lod_bson.append("num_vertices", prev_added_verts);
                   prev_added_verts = added_verts;

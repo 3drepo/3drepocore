@@ -7,4 +7,7 @@ lib3drepocore.so.1.0.0
 Makefile
 Makefile.*
 repo_cli
+repo_cli_debug
+*.obj
+*.mtl
 
