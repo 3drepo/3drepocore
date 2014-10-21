@@ -21,6 +21,7 @@ include(boost.pri)
 include(assimp.pri)
 include(mongo.pri)
 
+#-------------------------------------------------------------------------------
 
 QT  -= core gui
 

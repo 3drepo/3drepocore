@@ -154,15 +154,8 @@ bool repo::core::MongoClientWrapper::connect(
     const mongo::HostAndPort &hostAndPort)
 {
 	bool ret = false;
-
-   // mongo::client::initialize();
-
-    std::cout<< "initialisation2" << std::endl;
-
-
 	try 
 	{		
-        std::cout << "Host   -- Port: " << hostAndPort.toString() << std::endl;
 		clientConnection.connect(hostAndPort);
 		ret = true;
 	}
@@ -179,8 +172,6 @@ bool repo::core::MongoClientWrapper::connect(const std::string &host, int port)
 {
 	// -1 uses default port
 	hostAndPort = mongo::HostAndPort(host, port >= 0 ? port : -1);
-
-
 	return connect(hostAndPort);
 }
 
