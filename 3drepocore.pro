@@ -17,6 +17,10 @@
 # http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
 
 include(header.pri)
+include(boost.pri)
+include(assimp.pri)
+include(mongo.pri)
+
 
 QT  -= core gui
 

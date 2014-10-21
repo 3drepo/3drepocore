@@ -17,7 +17,10 @@ const std::string repo::core::MongoClientWrapper::UU_ID	= "uuid";
 const std::string repo::core::MongoClientWrapper::ADMIN_DATABASE = "admin";
 //------------------------------------------------------------------------------
 
-repo::core::MongoClientWrapper::MongoClientWrapper() {}
+repo::core::MongoClientWrapper::MongoClientWrapper()
+{
+    mongo::client::initialize();
+}
 
 repo::core::MongoClientWrapper::MongoClientWrapper(
     const MongoClientWrapper &other)
@@ -63,8 +66,7 @@ repo::core::MongoClientWrapper& repo::core::MongoClientWrapper::operator=(
 
 repo::core::MongoClientWrapper::~MongoClientWrapper() {}
 
-void repo::core::MongoClientWrapper::log(
-	const std::string &message)
+void repo::core::MongoClientWrapper::log(const std::string &message)
 {
     std::cout << message << std::endl;
 }
@@ -152,8 +154,15 @@ bool repo::core::MongoClientWrapper::connect(
     const mongo::HostAndPort &hostAndPort)
 {
 	bool ret = false;
+
+   // mongo::client::initialize();
+
+    std::cout<< "initialisation2" << std::endl;
+
+
 	try 
 	{		
+        std::cout << "Host   -- Port: " << hostAndPort.toString() << std::endl;
 		clientConnection.connect(hostAndPort);
 		ret = true;
 	}
@@ -170,6 +179,8 @@ bool repo::core::MongoClientWrapper::connect(const std::string &host, int port)
 {
 	// -1 uses default port
 	hostAndPort = mongo::HostAndPort(host, port >= 0 ? port : -1);
+
+
 	return connect(hostAndPort);
 }
 

@@ -13,10 +13,15 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# http://qt-project.org/doc/qt-5/qmake-variable-reference.html
-# http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
-
-unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
-unix:QMAKE_CXXFLAGS_DEBUG -= -O1
-unix:QMAKE_CXXFLAGS_DEBUG += -O0
 #-------------------------------------------------------------------------------
+# MongoDB C++ Driver
+
+win32:DEFINES += WIN32_LEAN_AND_MEAN VC_EXTRALEAN
+win32:LIBS += -lws2_32
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
+else:unix: LIBS += -L$$PWD/lib/ -lmongoclient
+
+INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/src
+DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/src

@@ -13,10 +13,8 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# http://qt-project.org/doc/qt-5/qmake-variable-reference.html
-# http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
-
-unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
-unix:QMAKE_CXXFLAGS_DEBUG -= -O1
-unix:QMAKE_CXXFLAGS_DEBUG += -O0
 #-------------------------------------------------------------------------------
+# Boost
+win32: LIBS += -LC:/local/boost_1_56_0/lib64-msvc-12.0/
+win32:INCLUDEPATH += C:/local/boost_1_56_0/
+win32:DEPENDPATH += C:/local/boost_1_56_0/

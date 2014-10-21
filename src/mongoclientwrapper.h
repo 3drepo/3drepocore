@@ -24,6 +24,7 @@
 #include <cstdint>
 //------------------------------------------------------------------------------
 #include <mongo/client/dbclient.h> // mongo c++ driver
+#include <mongo/bson/bson.h>
 //------------------------------------------------------------------------------
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators

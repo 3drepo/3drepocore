@@ -13,10 +13,11 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# http://qt-project.org/doc/qt-5/qmake-variable-reference.html
-# http://google-styleguide.googlecode.com/svn/trunk/cppguide.html
-
-unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
-unix:QMAKE_CXXFLAGS_DEBUG -= -O1
-unix:QMAKE_CXXFLAGS_DEBUG += -O0
 #-------------------------------------------------------------------------------
+# Assimp
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
+else:unix: LIBS += -L$$PWD/lib/ -lassimp
+
+INCLUDEPATH += $$PWD/submodules/assimp/include
+DEPENDPATH += $$PWD/submodules/assimp/include
