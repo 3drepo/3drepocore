@@ -19,7 +19,7 @@ const std::string repo::core::MongoClientWrapper::ADMIN_DATABASE = "admin";
 
 repo::core::MongoClientWrapper::MongoClientWrapper()
 {
-    mongo::client::initialize();
+   // mongo::client::initialize();
 }
 
 repo::core::MongoClientWrapper::MongoClientWrapper(
@@ -123,6 +123,14 @@ boost::uuids::uuid repo::core::MongoClientWrapper::retrieveUUID(
 	if (obj.hasField(UU_ID.c_str()))
 		uuID = retrieveUUID(obj.getField(UU_ID));
 	return uuID;
+}
+
+std::string repo::core::MongoClientWrapper::uuidToString(
+        const boost::uuids::uuid &uuid)
+{
+    std::stringstream stream;
+    stream << uuid;
+    return stream.str();
 }
 
 //------------------------------------------------------------------------------

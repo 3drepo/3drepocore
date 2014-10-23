@@ -27,6 +27,9 @@
 #include "assimp/scene.h"
 
 
+#include "../repocoreglobal.h"
+
+
 namespace repo {
 namespace core {
 
@@ -63,7 +66,7 @@ namespace core {
  * 'n' is the number of consecutive vertex indices 'v' that contribute to a 
  * single face.
  */
-class RepoNodeMesh : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
 {
 
 public :

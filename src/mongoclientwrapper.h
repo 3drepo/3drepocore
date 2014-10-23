@@ -99,6 +99,8 @@ public:
 	
     static boost::uuids::uuid retrieveUUID(const mongo::BSONObj &obj);
 
+    static std::string uuidToString(const boost::uuids::uuid &);
+
     //--------------------------------------------------------------------------
 	// TODO: remove
 	static int retrieveRevisionNumber(const mongo::BSONObj& obj);

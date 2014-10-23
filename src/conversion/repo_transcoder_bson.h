@@ -42,7 +42,7 @@ namespace core {
  * Static class that appends various data types to BSON builders in order
  * to store data in MongoDB.
  */
-class __declspec(dllexport) RepoTranscoderBSON
+class REPO_CORE_EXPORT RepoTranscoderBSON
 {
 
 public :

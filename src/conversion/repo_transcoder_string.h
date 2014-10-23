@@ -29,10 +29,13 @@
 #include "assimp/scene.h"
 //-----------------------------------------------------------------------------
 
+
+#include "../repocoreglobal.h"
+
 namespace repo {
 namespace core {
 	
-class RepoTranscoderString
+class REPO_CORE_EXPORT RepoTranscoderString
 {
 
 public :
