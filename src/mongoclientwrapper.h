@@ -184,6 +184,12 @@ public:
 	//! Returns a list of all available collections
     std::list<std::string> getCollections(const std::string &database);
 	
+    //! Returns connection status on a given database.
+    mongo::BSONObj getConnectionStatus(const std::string &database);
+
+    //! Returns connection status on admin database.
+    mongo::BSONObj getConnectionStatus();
+
 	//! Returns stats for collection
     mongo::BSONObj getCollectionStats(
             const std::string &database,
@@ -310,7 +316,8 @@ public:
 		const std::string& /* database */, 
 		const std::string& /* collection */);
 
-	bool deleteDatabase(const std::string& database);
+    //! Drops given database.
+    bool dropDatabase(const std::string& database);
 
     //--------------------------------------------------------------------------
 	//

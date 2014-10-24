@@ -217,7 +217,7 @@ bool repo::core::MongoClientWrapper::authenticate(
                 passwordDigest,
                 errmsg,
                 false);
-	if (success || ADMIN_DATABASE == database) // needs to store username for admin DB even if auth fails (non-protected DB)
+    if (success) // || ADMIN_DATABASE == database) // needs to store username for admin DB even if auth fails (non-protected DB)
 	{
         //----------------------------------------------------------------------
 		// Preserve authentication details for connection duplication
@@ -325,6 +325,28 @@ std::list<std::string> repo::core::MongoClientWrapper::getCollections(
 {
     log("use " + database + "; show collections;");
 	return clientConnection.getCollectionNames(database);
+}
+
+mongo::BSONObj repo::core::MongoClientWrapper::getConnectionStatus()
+{
+    return getConnectionStatus(ADMIN_DATABASE);
+}
+
+mongo::BSONObj repo::core::MongoClientWrapper::getConnectionStatus(
+        const std::string &database)
+{
+    mongo::BSONObj info;
+    try {
+        mongo::BSONObjBuilder builder;
+        builder.append("connectionStatus", 1);
+        log("use " + database + ";\n" + "db.runCommand({connectionStatus: 1});");
+        clientConnection.runCommand(database, builder.obj(), info);
+    }
+    catch (mongo::DBException &e)
+    {
+        log(std::string(e.what()));
+    }
+    return info;
 }
 
 //------------------------------------------------------------------------------
@@ -742,18 +764,17 @@ bool repo::core::MongoClientWrapper::deleteAllRecords(
 
 //------------------------------------------------------------------------------
 
-bool repo::core::MongoClientWrapper::deleteDatabase(const std::string &database)
+bool repo::core::MongoClientWrapper::dropDatabase(const std::string &database)
 {
 	try {	
         log("use " + database + ";");
 		std::string command = "db.dropDatabase()";
         log(command);
 
-		mongo::BSONObj info;
-		mongo::BSONElement retVal;
-		clientConnection.eval(database, command, info, retVal);
+        mongo::BSONObj info;
+        clientConnection.dropDatabase(database, &info);
         log(info.toString());
-        log(retVal.toString());
+
 	}
 	catch (mongo::DBException& e)
 	{
