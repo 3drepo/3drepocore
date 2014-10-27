@@ -90,6 +90,31 @@ repo::core::RepoNodeAbstract* repo::core::RepoGraphAbstract::addNodeByUniqueID(
 }
 
 //------------------------------------------------------------------------------
+
+void repo::core::RepoGraphAbstract::printDAG(
+        const RepoNodeAbstract *node,
+        std::string delimiter) const
+{
+    if (node)
+    {
+        std::cout << delimiter << node->getName() << std::endl;
+        std::set<const RepoNodeAbstract *> children = node->getChildren();
+        std::set<const RepoNodeAbstract *>::const_iterator it;
+        for (it = children.begin();
+             it != children.end(); ++it)
+        {
+            const RepoNodeAbstract *child = *it;
+            printDAG(child, delimiter + "\t");
+        }
+    }
+}
+
+void repo::core::RepoGraphAbstract::printDAG() const
+{
+    printDAG(getRoot());
+}
+
+//------------------------------------------------------------------------------
 void repo::core::RepoGraphAbstract::buildGraph(
 	const std::map<boost::uuids::uuid, RepoNodeAbstract*>& nodesBySharedID) const
 {

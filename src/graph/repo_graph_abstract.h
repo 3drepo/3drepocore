@@ -65,6 +65,9 @@ public :
 	// Getters
 	//
     //--------------------------------------------------------------------------
+
+    //! Returns the root node of the graph.
+    virtual RepoNodeAbstract* getRoot() const { return rootNode; }
 		
 	//! Returns a set of all unique nodes that make up the graph hierarchy.
 	virtual std::set<const RepoNodeAbstract *> getNodesRecursively() const;
@@ -90,13 +93,20 @@ public :
 	 */
 	virtual RepoNodeAbstract* addNodeByUniqueID(RepoNodeAbstract*);
 
-protected :
+    //--------------------------------------------------------------------------
+    //
+    // Helpers
+    //
+    //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-	//
-	// Helpers
-	//
-    //--------------------------------------------------------------------------
+    //! Recursively prints out a representation of the entire DAG hierarchy.
+    virtual void printDAG(
+            const RepoNodeAbstract *node,
+            std::string delimiter = "") const;
+
+    virtual void printDAG() const;
+
+protected :
 		
 	/*! 
 	 * Populates parental information in given nodes based on the uuid mapping.
@@ -115,7 +125,7 @@ protected :
     RepoNodeAbstract *rootNode;
 
 	//! A lookup map for the all nodes the graph contains.
-	std::map<boost::uuids::uuid, RepoNodeAbstract*> nodesByUniqueID;
+    std::map<boost::uuids::uuid, RepoNodeAbstract*> nodesByUniqueID;
 
 }; // end class
 
