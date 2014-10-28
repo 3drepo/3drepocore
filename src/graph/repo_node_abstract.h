@@ -100,7 +100,7 @@ public :
 	/*!
 	 * \sa RepoNodeAbstract()
 	 */
-    virtual ~RepoNodeAbstract() {};
+    virtual ~RepoNodeAbstract() {}
 
 
     //--------------------------------------------------------------------------
@@ -165,6 +165,8 @@ public :
 
 	//! Returns the api level of the node.
     inline unsigned int getApi() const { return api; }
+
+    inline std::set<const RepoNodeAbstract *> getChildren() const { return children; }
 
     //--------------------------------------------------------------------------
 	//
