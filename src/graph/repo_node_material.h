@@ -50,7 +50,7 @@ namespace core {
 /*!
  * 3D Repo material currently supports only a single diffuse texture per mat.
  */
-class RepoNodeMaterial : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeMaterial : public RepoNodeAbstract
 {
 
 public :

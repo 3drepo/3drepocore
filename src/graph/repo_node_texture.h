@@ -43,7 +43,7 @@ namespace core {
 
 
 
-class RepoNodeTexture : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeTexture : public RepoNodeAbstract
 {
 
 public :

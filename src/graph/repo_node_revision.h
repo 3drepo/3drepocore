@@ -53,7 +53,7 @@ namespace core {
  * name of the branch. Note that this can change over the lifetime of a branch,
  * the only fixed property of a branch is its SID.
  */
-class RepoNodeRevision : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeRevision : public RepoNodeAbstract
 {
 
 public :

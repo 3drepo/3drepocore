@@ -22,13 +22,14 @@
 #include <vector>
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
+#include "../repocoreglobal.h"
 
 namespace repo {
 namespace core {
 
 
 //! Axis-aligned bounding box represented as a min and max vertices
-class RepoBoundingBox
+class REPO_CORE_EXPORT RepoBoundingBox
 {
 
 public :
