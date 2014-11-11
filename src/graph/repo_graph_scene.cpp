@@ -231,9 +231,7 @@ repo::core::RepoGraphScene::~RepoGraphScene()
 
 void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 {
-	if (!scene)
-		scene = new aiScene();
-
+    assert(NULL != scene);
 
     //--------------------------------------------------------------------------
 	// Textures

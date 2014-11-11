@@ -328,14 +328,14 @@ void repo::core::RepoNodeMaterial::toAssimp(
 	std::map<const RepoNodeAbstract *, std::string>::const_iterator it;
     std::set<const RepoNodeAbstract *>::iterator childrenIt;
 
-    for (childrenIt = children.begin(); childrenIt !=children.end();++childrenIt)
+    for (childrenIt = children.begin(); childrenIt!=children.end();++childrenIt)
     {
 //	for each (const RepoNodeAbstract * child in children)
 //	{
 		it = texturesMapping.find(*childrenIt);
 		if (texturesMapping.end() != it)
 		{
-			aiString * texName = new aiString(it->second);
+            aiString *texName = new aiString(it->second);
 			material->AddProperty(texName, 
 				AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0));
 			break;
