@@ -266,11 +266,11 @@ mongo::BSONObj repo::core::RepoNodeMaterial::toBSONObj() const
 
 void repo::core::RepoNodeMaterial::toAssimp(
 	std::map<const RepoNodeAbstract *, std::string> texturesMapping,
-	aiMaterial * material) const
+    aiMaterial *material) const
 {
     //--------------------------------------------------------------------------
 	// Name
-	material->AddProperty(new aiString(name), AI_MATKEY_NAME);	
+    material->AddProperty(new aiString(name), AI_MATKEY_NAME);
 
     //--------------------------------------------------------------------------
 	// Ambient

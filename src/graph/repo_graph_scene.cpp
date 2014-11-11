@@ -218,21 +218,16 @@ repo::core::RepoGraphScene::~RepoGraphScene()
     std::set<RepoNodeAbstract*>::iterator it;
     for (it = nodes.begin(); it != nodes.end(); ++it)
     {
-        RepoNodeAbstract *node = *it;
-//	for each (RepoNodeAbstract *node in getNodes())
-//	{
-		if (node)
-			delete node;
-		node = NULL;
+        delete *it;
 	}
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // Export
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 {
@@ -240,19 +235,17 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 		scene = new aiScene();
 
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Textures
 	std::map<const RepoNodeAbstract *, std::string> texturesMapping;
-
     for (std::vector<RepoNodeTexture *>::const_iterator it = textures.begin();
          it != textures.end(); ++it)
     {
         RepoNodeAbstract *texture = *it;
-//	for each (RepoNodeAbstract *texture in textures)
 		texturesMapping.insert(std::make_pair(texture, texture->getName()));
     }
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Materials
 	aiMaterial **mMaterials = new aiMaterial*[materials.size()];
 	
@@ -261,7 +254,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 	std::map<const RepoNodeAbstract *, unsigned int> materialsMapping;
 	if (NULL != mMaterials)
 	{
-		for (unsigned int i = 0; i < materials.size(); ++i)
+        for (size_t i = 0; i < materials.size(); ++i)
 		{
 			aiMaterial *material = new aiMaterial();
 			((RepoNodeMaterial *) materials[i])->toAssimp(texturesMapping, 
@@ -273,7 +266,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 		scene->mNumMaterials = materials.size();
 	}
 	
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Meshes
 	aiMesh **mMeshes = new aiMesh*[meshes.size()];
 
@@ -295,7 +288,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 
 
 
-	//----------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Cameras
 	// Unlike meshes, cameras are not pointed to by index from transformations.
 	// Instead, corresponding camera shares the same name with transformation in Assimp.
@@ -317,7 +310,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 
 	
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Transformations
 	std::map<const RepoNodeAbstract *, aiNode *> nodesMapping;
 	for (unsigned int i = 0; i < transformations.size(); ++i)
@@ -329,11 +322,11 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 	}
 
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Recursively populate the tree hierarchy to aiNodes
 	((RepoNodeTransformation*) rootNode)->toAssimp(nodesMapping, 0);
 
-	//---------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	// Assign root node if any
     std::map<const RepoNodeAbstract*, aiNode*>::iterator it =
             nodesMapping.find(rootNode);
@@ -341,11 +334,11 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 		scene->mRootNode = it->second;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // Getters
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 std::vector<repo::core::RepoNodeAbstract *> 
 	repo::core::RepoGraphScene::getMaterials() const
