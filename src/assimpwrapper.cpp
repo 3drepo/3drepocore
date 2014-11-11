@@ -62,7 +62,6 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
                                             const unsigned int pFlags)
 {
 	resetScene();
-    Assimp::Importer importer;
 
 	// post processor
 	// http://assimp.sourceforge.net/lib_html/ai_post_process_8h.html#64795260b95f5a4b3f3dc1be4f52e410
@@ -84,6 +83,10 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, 
 		aiPrimitiveType_LINE | aiPrimitiveType_POINT | aiPrimitiveType_POLYGON);
 
+
+
+
+    std::cerr << "File path " <<  fullFilePath << std::endl;
 	//-------------------------------------------------------------------------
 	scene = importer.ReadFile(fullFilePath, pFlags);
 
@@ -104,6 +107,9 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 //		logger->log(repo::REPO_ERROR, string(importer.GetErrorString()));
 		resetScene();
 	} 
+
+    std::cerr << "Any errors? " << std::string(importer.GetErrorString()) << std::endl;
+
 	return isSuccessful;
 }
 
@@ -180,6 +186,7 @@ const aiScene* repo::core::AssimpWrapper::getScene()
         enforceUniqueNames(scene->mMaterials, scene->mNumMaterials,
                            occurenceCounter);
 		delete occurenceCounter;
+
 	}	
 	return scene;
 }

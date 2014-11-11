@@ -114,6 +114,8 @@ private :
     std::string fileName;
 
     std::string fullFolderPath;
+
+    Assimp::Importer importer;
 		
 }; // end class
 
