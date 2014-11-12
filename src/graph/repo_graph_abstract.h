@@ -34,7 +34,7 @@ namespace core {
 /*!
  * 3D Repo directed acyclic graph is assumed to have a single root node only.
  */
-class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoGraphAbstract
+class REPO_CORE_EXPORT RepoGraphAbstract
 {
 
 public :

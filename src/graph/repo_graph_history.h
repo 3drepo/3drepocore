@@ -74,7 +74,7 @@ public :
     std::vector<RepoNodeAbstract *> getRevisions() const { return revisions; }
 
 	//! Returns the revision that is the be committed.
-    RepoNodeRevision * getCommitRevision() const { return commitRevision; }
+    RepoNodeRevision *getCommitRevision() const { return commitRevision; }
 
     //--------------------------------------------------------------------------
 	//
@@ -92,7 +92,7 @@ protected :
 	std::vector<RepoNodeAbstract *> revisions; 
 
 	//! Revision node that is to be committed.
-	RepoNodeRevision* commitRevision;
+    RepoNodeRevision *commitRevision;
 
 }; // end class
 
