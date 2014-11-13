@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------------
 #include "repocoreglobal.h"
-//#include "primitives/repointerceptor.h"
+#include "primitives/repointerceptor.h"
 #include "primitives/repostreambuffer.h"
 
 //------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ namespace core {
  * Basic logger buffer which redirects std::cout and std::cerr to a file
  * See: http://stackoverflow.com/questions/533038/redirect-stdcout-to-a-custom-writer
  */
-class REPO_CORE_EXPORT RepoLogger //: RepoInterceptor
+class REPO_CORE_EXPORT RepoLogger : RepoInterceptor
 {
 
 public:
@@ -47,7 +47,7 @@ public:
 
     ~RepoLogger();
 
-    void intercept(std::ostream &, const std::string &);
+    void intercept(const std::ostream *sender, const std::string &message);
 
 
 }; // end class

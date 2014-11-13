@@ -19,7 +19,7 @@
 
 repo::core::RepoLogger::RepoLogger()
 {
-   // RepoStreamBuffer *sb = new RepoStreamBuffer(this, std::cout);
+    RepoStreamBuffer *sb = new RepoStreamBuffer(this, std::cout);
 }
 
 repo::core::RepoLogger::~RepoLogger()
@@ -28,7 +28,10 @@ repo::core::RepoLogger::~RepoLogger()
 }
 
 
-void repo::core::RepoLogger::intercept(std::ostream &, const std::string &)
+void repo::core::RepoLogger::intercept(
+        const std::ostream *sender,
+        const std::string &message)
 {
-
+    if (sender == &(std::cout))
+        std::cerr << message << std::endl;
 }

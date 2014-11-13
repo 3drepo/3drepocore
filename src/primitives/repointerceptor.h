@@ -57,7 +57,7 @@ public:
      */
     virtual ~RepoInterceptor();
 
-    virtual void intercept(std::ostream &, const std::string &) = 0;
+    virtual void intercept(const std::ostream *, const std::string &) = 0;
 
 
 }; // end class

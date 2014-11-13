@@ -63,7 +63,7 @@ std::streamsize repo::core::RepoStreamBuffer::xsputn(
         *(redirectStream) << message << std::endl;
 
     //--------------------------------------------------------------------------
-    //interceptor->intercept(originalStream, message);
+    interceptor->intercept(&originalStream, message);
 
     return count;
 }
