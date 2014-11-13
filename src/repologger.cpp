@@ -15,15 +15,20 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repocore.h"
 #include "repologger.h"
 
-repo::core::RepoCore::RepoCore()
+repo::core::RepoLogger::RepoLogger()
 {
-
-    RepoLogger *logger = new RepoLogger();
+   // RepoStreamBuffer *sb = new RepoStreamBuffer(this, std::cout);
 }
 
-repo::core::RepoCore::~RepoCore()
+repo::core::RepoLogger::~RepoLogger()
 {
+
+}
+
+
+void repo::core::RepoLogger::intercept(std::ostream &, const std::string &)
+{
+
 }

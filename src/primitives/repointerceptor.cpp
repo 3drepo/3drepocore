@@ -15,15 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repocore.h"
-#include "repologger.h"
+#include "repointerceptor.h"
 
-repo::core::RepoCore::RepoCore()
-{
-
-    RepoLogger *logger = new RepoLogger();
-}
-
-repo::core::RepoCore::~RepoCore()
-{
-}
+//------------------------------------------------------------------------------
+repo::core::RepoInterceptor::~RepoInterceptor() {}
