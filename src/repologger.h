@@ -86,7 +86,7 @@ private:
     //! ".log"
     static const std::string LOG_EXTENSION;
 
-    std::vector<RepoStreamBuffer *> notifiers;
+    std::vector<RepoStreamBuffer *> streamBuffers;
 
 
 }; // end class
