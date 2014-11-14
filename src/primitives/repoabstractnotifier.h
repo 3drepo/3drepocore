@@ -16,22 +16,21 @@
  */
 
 
-#ifndef REPO_INTERCEPTOR_H
-#define REPO_INTERCEPTOR_H
+#ifndef REPO_ABSTRACT_NOTIFIER_H
+#define REPO_ABSTRACT_NOTIFIER_H
 
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
+#include "repoabstractlistener.h"
 //------------------------------------------------------------------------------
-
-#include <iostream>
-
+#include <set>
 
 namespace repo {
 namespace core {
 
 //------------------------------------------------------------------------------
-//! Pure abstract class that provides intercept call for standard buffer messages.
-class REPO_CORE_EXPORT RepoInterceptor
+
+class REPO_CORE_EXPORT RepoAbstractNotifier
 {
 
 public:
@@ -43,7 +42,7 @@ public:
     //--------------------------------------------------------------------------
 
     //! Default empty constructor.
-    inline RepoInterceptor() {}
+    inline RepoAbstractNotifier() {}
 
     //--------------------------------------------------------------------------
     //
@@ -53,11 +52,19 @@ public:
 
     //! Empty pure virtual destructor for proper cleanup.
     /*!
-     * \sa RepoInterceptor()
+     * \sa RepoAbstractNotifier()
      */
-    virtual ~RepoInterceptor();
+    virtual ~RepoAbstractNotifier() = 0;
 
-    virtual void intercept(const std::ostream *, const std::string &) = 0;
+    virtual void addListener(RepoAbstractListener *);
+
+    virtual void removeListener(RepoAbstractListener *);
+
+    virtual void notifyListeners(const std::string &);
+
+private:
+
+    std::set<RepoAbstractListener*> listeners;
 
 
 }; // end class
@@ -65,4 +72,5 @@ public:
 } // end namespace core
 } // end namespace repo
 
-#endif // REPO_INTERCEPTOR_H
+#endif // REPO_ABSTRACT_NOTIFIER_H
+

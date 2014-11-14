@@ -55,7 +55,9 @@ HEADERS +=  src/repocore.h\
             src/graph/repo_node_transformation.h \
             src/primitives/repo_vertex.h \
             src/primitives/repostreambuffer.h \
-            src/primitives/repointerceptor.h \
+            src/primitives/repoabstractlistener.h \
+            src/primitives/repoabstractnotifier.h \
+            src/primitives/reposeverity.h \
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
@@ -77,7 +79,9 @@ SOURCES +=  src/repocore.cpp \
             src/graph/repo_node_transformation.cpp \
             src/primitives/repo_vertex.cpp \
             src/primitives/repostreambuffer.cpp \
-            src/primitives/repointerceptor.cpp \
+            src/primitives/repoabstractlistener.cpp \
+            src/primitives/repoabstractnotifier.cpp \
+            src/primitives/reposeverity.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
             src/compute/render.cpp \

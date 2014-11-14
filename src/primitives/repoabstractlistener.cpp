@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repointerceptor.h"
+#include "repoabstractlistener.h"
 
 //------------------------------------------------------------------------------
-repo::core::RepoInterceptor::~RepoInterceptor() {}
+repo::core::RepoAbstractListener::~RepoAbstractListener() {}

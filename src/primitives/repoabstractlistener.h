@@ -15,56 +15,55 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repostreambuffer.h"
 
-repo::core::RepoStreamBuffer::RepoStreamBuffer(
-        RepoAbstractListener *interceptor,
-        std::ostream &stream,
-        bool redirect)
-    : listener(interceptor)
-    , originalStream(stream)
-    , redirect(redirect)
-    , originalBuffer(0)
-    , redirectStream(0)
-{
-    originalBuffer = originalStream.rdbuf(this);
-    redirectStream = new std::ostream(originalBuffer);
-}
-
-
-repo::core::RepoStreamBuffer::~RepoStreamBuffer()
-{
-    // Revert back as it was originally
-    originalStream.rdbuf(originalBuffer);
-
-    // Delete redundant stream
-    delete redirectStream;
-}
+#ifndef REPO_ABSTRACT_LISTENER_H
+#define REPO_ABSTRACT_LISTENER_H
 
 //------------------------------------------------------------------------------
-//
-// Protected
-//
+#include "../repocoreglobal.h"
 //------------------------------------------------------------------------------
 
-int repo::core::RepoStreamBuffer::overflow(int_type c)
-{
-    return c;
-}
+#include <iostream>
 
-std::streamsize repo::core::RepoStreamBuffer::xsputn(
-        const char *msg,
-        std::streamsize count)
+
+namespace repo {
+namespace core {
+
+//------------------------------------------------------------------------------
+//! Pure abstract class that provides intercept call for standard messages.
+class REPO_CORE_EXPORT RepoAbstractListener
 {
-    std::string message(msg, count);
+
+public:
 
     //--------------------------------------------------------------------------
-    if (redirect)
-        *(redirectStream) << message << std::endl;
+    //
+    // Constructor
+    //
+    //--------------------------------------------------------------------------
+
+    //! Default empty constructor.
+    inline RepoAbstractListener() {}
 
     //--------------------------------------------------------------------------
-    listener->messageGenerated(&originalStream, message);
+    //
+    // Destructor
+    //
+    //--------------------------------------------------------------------------
 
-    return count;
-}
+    //! Empty pure virtual destructor for proper cleanup.
+    /*!
+     * \sa RepoInterceptor()
+     */
+    virtual ~RepoAbstractListener() = 0;
 
+    virtual void messageGenerated(const std::string &) {}
+
+    virtual void messageGenerated(const std::ostream *, const std::string &) {}
+
+}; // end class
+
+} // end namespace core
+} // end namespace repo
+
+#endif // REPO_ABSTRACT_LISTENER_H

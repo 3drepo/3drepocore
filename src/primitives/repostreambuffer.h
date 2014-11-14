@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
-#include "repointerceptor.h"
+#include "repoabstractlistener.h"
 //------------------------------------------------------------------------------
 #include <streambuf>
 #include <string>
@@ -47,7 +47,7 @@ public:
      * all messages to itself (this).
      */
     RepoStreamBuffer(
-            RepoInterceptor *interceptor,
+            RepoAbstractListener *listener,
             std::ostream &stream,
             bool redirect = true);
 
@@ -64,7 +64,7 @@ protected :
 
 private :
 
-    RepoInterceptor *interceptor;
+    RepoAbstractListener *listener;
 
     //! Original buffer to reset on deconstructor.
     std::streambuf *originalBuffer;
