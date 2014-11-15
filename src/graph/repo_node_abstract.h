@@ -166,6 +166,8 @@ public :
 	//! Returns the api level of the node.
     inline unsigned int getApi() const { return api; }
 
+    std::set<const RepoNodeAbstract *> getChildren() const { return children; }
+
     //--------------------------------------------------------------------------
 	//
 	// Family matters
