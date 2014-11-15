@@ -44,7 +44,7 @@ namespace core {
  * aiNode in Assimp: http://assimp.sourceforge.net/lib_html/structai_node.html
  * The transformation is relative to its parent and is always row major.
  */
-class RepoNodeTransformation : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeTransformation : public RepoNodeAbstract
 {
 
 public :

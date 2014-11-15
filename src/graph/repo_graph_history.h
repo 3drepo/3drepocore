@@ -30,7 +30,7 @@ namespace core {
 #define REPO_COLLECTION_HISTORY "history" //!< Name of a DB table
 
 //! 3D Repo scene graph as directed acyclic graph with single root node.
-class RepoGraphHistory : public RepoGraphAbstract
+class REPO_CORE_EXPORT RepoGraphHistory : public RepoGraphAbstract
 {
 
 public :
@@ -74,7 +74,7 @@ public :
     std::vector<RepoNodeAbstract *> getRevisions() const { return revisions; }
 
 	//! Returns the revision that is the be committed.
-    RepoNodeRevision * getCommitRevision() const { return commitRevision; }
+    RepoNodeRevision *getCommitRevision() const { return commitRevision; }
 
     //--------------------------------------------------------------------------
 	//
@@ -92,7 +92,7 @@ protected :
 	std::vector<RepoNodeAbstract *> revisions; 
 
 	//! Revision node that is to be committed.
-	RepoNodeRevision* commitRevision;
+    RepoNodeRevision *commitRevision;
 
 }; // end class
 

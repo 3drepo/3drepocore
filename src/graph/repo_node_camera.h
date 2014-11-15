@@ -44,7 +44,7 @@ namespace core {
 #define REPO_NODE_UUID_SUFFIX_CAMERA		"04" //!< uuid suffix
 //------------------------------------------------------------------------------
 	
-class RepoNodeCamera : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeCamera : public RepoNodeAbstract
 {
 
 public :

@@ -38,7 +38,7 @@ namespace core {
 #define REPO_COLLECTION_SCENE "scene" //!< Name of a DB table
 
 //! 3D Repo scene graph as directed acyclic graph with a single root node.
-class REPO_CORE_EXPORT RepoGraphScene : public RepoGraphAbstract
+class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoGraphScene : public RepoGraphAbstract
 {
 
 public :

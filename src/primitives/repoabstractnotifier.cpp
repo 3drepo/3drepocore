@@ -15,15 +15,29 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repocore.h"
-#include "repologger.h"
+#include "repoabstractnotifier.h"
 
-repo::core::RepoCore::RepoCore()
+//------------------------------------------------------------------------------
+repo::core::RepoAbstractNotifier::~RepoAbstractNotifier() {}
+
+void repo::core::RepoAbstractNotifier::addListener(
+        RepoAbstractListener *l)
 {
-
-    RepoLogger *logger = new RepoLogger();
+    listeners.insert(l);
 }
 
-repo::core::RepoCore::~RepoCore()
+void repo::core::RepoAbstractNotifier::removeListener(
+        RepoAbstractListener *l)
 {
+    listeners.erase(l);
+}
+
+void repo::core::RepoAbstractNotifier::notifyListeners(const std::string &msg)
+{
+    std::set<RepoAbstractListener*>::iterator it;
+    for (it = listeners.begin(); it != listeners.end(); ++it)
+    {
+        RepoAbstractListener *l = *it;
+        l->messageGenerated(msg);
+    }
 }

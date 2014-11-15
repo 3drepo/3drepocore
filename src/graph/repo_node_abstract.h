@@ -43,7 +43,7 @@ namespace core {
  * required to decode it. Name of this object is optional information which
  * might or might not be present. It is assumed a graph may have only one root.
  */
-class REPO_CORE_EXPORT RepoNodeAbstract
+class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoNodeAbstract
 {
 
 public :
@@ -100,7 +100,7 @@ public :
 	/*!
 	 * \sa RepoNodeAbstract()
 	 */
-    virtual ~RepoNodeAbstract() {};
+    virtual ~RepoNodeAbstract() {}
 
 
     //--------------------------------------------------------------------------
@@ -166,7 +166,7 @@ public :
 	//! Returns the api level of the node.
     inline unsigned int getApi() const { return api; }
 
-    std::set<const RepoNodeAbstract *> getChildren() const { return children; }
+    inline std::set<const RepoNodeAbstract *> getChildren() const { return children; }
 
     //--------------------------------------------------------------------------
 	//

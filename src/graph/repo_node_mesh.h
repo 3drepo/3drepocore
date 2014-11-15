@@ -66,7 +66,7 @@ namespace core {
  * 'n' is the number of consecutive vertex indices 'v' that contribute to a 
  * single face.
  */
-class REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
+class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
 {
 
 public :
