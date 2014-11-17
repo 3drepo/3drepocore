@@ -44,6 +44,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
 repo::core::RepoNodeReference::RepoNodeReference(
         const mongo::BSONObj &obj)
     : RepoNodeAbstract(obj)
+    , isUniqueID(false)
 {
     //--------------------------------------------------------------------------
     // Owner
@@ -57,17 +58,17 @@ repo::core::RepoNodeReference::RepoNodeReference(
 
     //--------------------------------------------------------------------------
     // Revision ID (specific revision if UID, branch if SID)
-    if (obj.hasField(REPO_NODE_LABEL_REVISION_UNIQUE_ID))
+    if (obj.hasField(REPO_NODE_LABEL_REFERENCE_ID))
     {
         revisionID = RepoTranscoderBSON::retrieve(
-                    obj.getField(REPO_NODE_LABEL_REVISION_UNIQUE_ID));
-        isUniqueID = true;
+                    obj.getField(REPO_NODE_LABEL_REFERENCE_ID));
     }
-    else if (obj.hasField(REPO_NODE_LABEL_REVISION_SHARED_ID))
+
+    //--------------------------------------------------------------------------
+    // Unique
+    if (obj.hasField(REPO_NODE_LABEL_UNIQUE))
     {
-        revisionID = RepoTranscoderBSON::retrieve(
-                    obj.getField(REPO_NODE_LABEL_REVISION_SHARED_ID));
-        isUniqueID = false;
+        isUniqueID = obj.getField(REPO_NODE_LABEL_UNIQUE).Bool();
     }
 
 }
@@ -93,16 +94,15 @@ mongo::BSONObj repo::core::RepoNodeReference::toBSONObj() const
 
     //--------------------------------------------------------------------------
     // Revision ID (specific revision if UID, branch if SID)
+    RepoTranscoderBSON::append(
+                REPO_NODE_LABEL_REFERENCE_ID,
+                revisionID,
+                builder);
+
+    //--------------------------------------------------------------------------
+    // Unique set if the revisionID is UID, not set if SID (branch)
     if (isUniqueID)
-        RepoTranscoderBSON::append(
-                    REPO_NODE_LABEL_REVISION_UNIQUE_ID,
-                    revisionID,
-                    builder);
-    else
-        RepoTranscoderBSON::append(
-                    REPO_NODE_LABEL_REVISION_SHARED_ID,
-                    revisionID,
-                    builder);
+        builder << REPO_NODE_LABEL_UNIQUE << isUniqueID;
 
     return builder.obj();
 }

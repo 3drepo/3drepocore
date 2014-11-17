@@ -30,6 +30,7 @@
 #include "repo_node_texture.h"
 #include "repo_node_camera.h"
 #include "repo_node_reference.h"
+#include "repo_node_metadata.h"
 #include "../repocoreglobal.h"
 //------------------------------------------------------------------------------
 
@@ -112,6 +113,9 @@ public :
     //! Returns a vector of reference nodes.
     inline std::vector<RepoNodeAbstract *> getReferences() const { return references; }
 
+    //! Returns a vector of metadata nodes.
+    inline std::vector<RepoNodeAbstract *> getMetadata() const { return metadata; }
+
 	//! Returns a list of names of meshes.
 	std::vector<std::string> getNamesOfMeshes() const;
 
@@ -128,6 +132,8 @@ protected :
 	std::vector<RepoNodeAbstract *> cameras; //!< Cameras
 
     std::vector<RepoNodeAbstract *> references; //!< References
+
+    std::vector<RepoNodeAbstract *> metadata; //!< Metadata
 
 }; // end class
 

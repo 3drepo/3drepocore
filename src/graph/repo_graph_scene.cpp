@@ -179,6 +179,11 @@ repo::core::RepoGraphScene::RepoGraphScene(
             node = new RepoNodeReference(obj);
             references.push_back(node);
         }
+        else if (REPO_NODE_TYPE_METADATA == nodeType)
+        {
+            node = new RepoNodeMetadata(obj);
+            metadata.push_back(node);
+        }
 		
         //----------------------------------------------------------------------
 		if (!obj.hasField(REPO_NODE_LABEL_PARENTS))

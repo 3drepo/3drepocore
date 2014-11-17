@@ -15,8 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef REPO_NODE_REFERENCE_H
-#define REPO_NODE_REFERENCE_H
+#ifndef REPO_NODE_METADATA_H
+#define REPO_NODE_METADATA_H
 
 //------------------------------------------------------------------------------
 #include "repo_node_abstract.h"
@@ -28,22 +28,19 @@ namespace core {
 
 //------------------------------------------------------------------------------
 //
-// Fields specific to reference only
+// Fields specific to metadata only
 //
 //------------------------------------------------------------------------------
-#define REPO_NODE_TYPE_REFERENCE    			"ref"
-#define REPO_NODE_LABEL_REFERENCE_ID            "_rid"
-#define REPO_NODE_LABEL_UNIQUE                  "unique"
-#define REPO_NODE_LABEL_PROJECT                 "project"
-#define REPO_NODE_LABEL_OWNER                   "owner"
-#define REPO_NODE_UUID_SUFFIX_REFERENCE			"13" //!< uuid suffix
+#define REPO_NODE_TYPE_METADATA     			"meta"
+#define REPO_NODE_LABEL_METADATA     			"metadata"
+#define REPO_NODE_UUID_SUFFIX_METADATA			"14" //!< uuid suffix
 //------------------------------------------------------------------------------
 
 /*!
  * 3D Repo referenece for model federation. Reference can point to a specific
  * revision by its unique ID or to a head of a branch by its shared ID.
  */
-class REPO_CORE_EXPORT RepoNodeReference : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeMetadata : public RepoNodeAbstract
 {
 
 public :
@@ -55,30 +52,27 @@ public :
     //--------------------------------------------------------------------------
 
     //! Basic constructor, uuid will be randomly generated.
-    inline RepoNodeReference() :
-        RepoNodeAbstract(REPO_NODE_TYPE_REFERENCE, REPO_NODE_API_LEVEL_1) {}
+    inline RepoNodeMetadata() :
+        RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1) {}
 
     //! Constructs a reference node.
     /*!
-     * \sa RepoNodeReference()
+     * \sa RepoNodeMetadata()
      */
-    RepoNodeReference(
-            const std::string &project,
-            const std::string &owner,
-            const boost::uuids::uuid &revisionID,
-            bool isUniqueID,
-            const std::string &name = "");
+    RepoNodeMetadata(
+            const mongo::BSONObj &metadata,
+            const std::string &name);
 
 
-    //! Constructs reference scene graph component from a BSON object.
+    //! Constructs metadata scene graph component from a BSON object.
     /*!
      * Same as all other components, it has to have a uuid, type, api
      * and optional name.
      *
      * \param obj BSON representation
-     * \sa RepoNodeReference()
+     * \sa RepoNodeMetadata()
      */
-    RepoNodeReference(const mongo::BSONObj &obj);
+    RepoNodeMetadata(const mongo::BSONObj &obj);
 
     //--------------------------------------------------------------------------
     //
@@ -87,7 +81,7 @@ public :
     //--------------------------------------------------------------------------
 
     //! Destructor
-    ~RepoNodeReference() {}
+    ~RepoNodeMetadata() {}
 
     //--------------------------------------------------------------------------
     //
@@ -97,7 +91,7 @@ public :
 
     //! BSONObj representation.
     /*!
-     * Returns a BSON representation of this reference object suitable for a
+     * Returns a BSON representation of this metadata object suitable for a
      * direct MongoDB storage.
      *
      * \return BSON representation
@@ -112,31 +106,12 @@ protected :
     //
     //--------------------------------------------------------------------------
 
-    //! Compulsory project name that is being linked against.
-    std::string project;
-
-    //! Compulsory organisation or individual name that the project belongs to.
-    std::string owner;
-
-    //! Optional unique or shared revision ID of the project.
-    /*!
-     * If unique ID, this points to a specific revisin. If shared ID, this
-     * points to a head of a specific branch. NULL uuid (all zeros) is reserved
-     * for the master branch.
-     * \brief revisionID
-     */
-    boost::uuids::uuid revisionID;
-
-    /*!
-     * True if the revisionID is unique ID (revision), false if it is a shared
-     * ID (branch) by default.
-     */
-    bool isUniqueID;
-
+    mongo::BSONObj metadata; //!< Metadata subobject
 
 }; // end class
 
 } // end namespace core
 } // end namespace repo
 
-#endif // end REPO_NODE_REFERENCE_H
+#endif // end REPO_NODE_METADATA_H
+

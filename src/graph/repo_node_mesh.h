@@ -104,8 +104,8 @@ public :
 	 */
 	RepoNodeMesh(
 		const unsigned int api,
-		const aiMesh * mesh, 
-		const std::vector<RepoNodeAbstract *> & materials);
+        const aiMesh *mesh,
+        const std::vector<RepoNodeAbstract *> &materials);
 
 	//! Constructs mesh scene graph component from a BSON object.
 	/*!

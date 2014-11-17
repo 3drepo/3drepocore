@@ -52,6 +52,7 @@ HEADERS +=  src/repocore.h\
             src/graph/repo_node_mesh.h \
             src/graph/repo_node_revision.h \
             src/graph/repo_node_reference.h \
+            src/graph/repo_node_metadata.h \
             src/graph/repo_node_texture.h \
             src/graph/repo_node_transformation.h \
             src/primitives/repo_vertex.h \
@@ -77,6 +78,7 @@ SOURCES +=  src/repocore.cpp \
             src/graph/repo_node_mesh.cpp \
             src/graph/repo_node_revision.cpp \
             src/graph/repo_node_reference.cpp \
+            src/graph/repo_node_metadata.cpp \
             src/graph/repo_node_texture.cpp \
             src/graph/repo_node_transformation.cpp \
             src/primitives/repo_vertex.cpp \
