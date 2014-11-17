@@ -152,8 +152,6 @@ repo::core::RepoGraphScene::RepoGraphScene(
 
 		std::string nodeType = obj.getField(REPO_NODE_LABEL_TYPE).str();
 
-        std::cout << "Found type " << nodeType << std::endl;
-
 		if (REPO_NODE_TYPE_TRANSFORMATION == nodeType)
 		{
 			node = new RepoNodeTransformation(obj);
@@ -195,7 +193,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		}
 		else
 		{
-			std::cout << "Unrecognized node type" << std::endl;
+			std::cerr << "Unrecognized node type" << std::endl;
 			//RepoILogger::getInstance().log(repo::REPO_WARNING, "Node of unrecognized type.");
 		}
 	}

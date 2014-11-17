@@ -57,16 +57,19 @@ typedef enum
 private:
 
     //! Private constructor.
-    RepoSeverity(const std::string &level, int);
+    RepoSeverity(const std::string &color, const std::string &level, int);
 
 public :
 
     //! Default constructor creates INFO-level severity.
-    RepoSeverity() : level("INFO"), value(REPO_INFO_NUM) {}
+    RepoSeverity();
 
     //! Equality comparison based on the underlying severity level strings.
     inline bool operator==(const RepoSeverity &s) const
-    {   return this->level == s.level && this->value == s.value;  }
+    {   return
+                this->color == s.color &&
+                this->level == s.level &&
+                this->value == s.value;  }
 
     //! Orders severity levels in descending order from PANIC to DEBUG
     inline bool operator<(const RepoSeverity &s) const
@@ -74,10 +77,16 @@ public :
 
     //! Enable streaming of the severity level string representation.
     friend std::ostream& operator<<(std::ostream& os, const RepoSeverity &s)
-    {   os << s.str(); return os;  }
+    {   os << s.toString(); return os;  }
 
     //! Returns a string representation of the severity level.
-    std::string str() const { return level; }
+    std::string toString() const { return level; }
+
+    //! Returns the color associated with this severity level.
+    std::string getColor() const { return color;}
+
+    //! Returns numerical value of the severity.
+    int getValue() const { return value; }
 
     /*!
      * Returns an integer representation of the severity level to use with
@@ -110,6 +119,9 @@ public :
     static const RepoSeverity REPO_DEBUG;
 
 private:
+
+    //! Color assigned to the severity level.
+    std::string color;
 
     //! String representation of the severity level.
     std::string level;

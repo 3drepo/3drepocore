@@ -20,8 +20,6 @@
 
 repo::core::RepoCore::RepoCore()
 {
-
-    RepoLogger *logger = new RepoLogger();
 }
 
 repo::core::RepoCore::~RepoCore()

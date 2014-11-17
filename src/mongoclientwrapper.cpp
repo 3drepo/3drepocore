@@ -2,6 +2,9 @@
 
 #include "mongoclientwrapper.h"
 #include "conversion/repo_transcoder_string.h"
+#include "repologger.h"
+#include "primitives/reposeverity.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -68,7 +71,7 @@ repo::core::MongoClientWrapper::~MongoClientWrapper() {}
 
 void repo::core::MongoClientWrapper::log(const std::string &message)
 {
-    std::cout << message << std::endl;
+    RepoLogger::instance().log(message, RepoSeverity::REPO_DEBUG);
 }
 
 //------------------------------------------------------------------------------

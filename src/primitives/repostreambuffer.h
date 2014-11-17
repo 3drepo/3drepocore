@@ -48,11 +48,13 @@ public:
      */
     RepoStreamBuffer(
             RepoAbstractListener *listener,
-            std::ostream &stream,
-            bool redirect = true);
+            std::ostream &stream);
 
     //! Resets the original buffer to the original stream and deletes detour.
     ~RepoStreamBuffer();
+
+    //! Returns redirected stream that replaces the original in the constructor.
+    std::ostream &getRedirectStream() const;
 
 protected :
 
@@ -71,9 +73,6 @@ private :
 
     //! Original stream such as std::cout, std::cerr, std::clog, etc.
     std::ostream &originalStream;
-
-    //! True if to redirect to the original stream, false otherwise.
-    bool redirect;
 
     //! Replacement stream to push messages to the original output if desired.
     std::ostream *redirectStream;

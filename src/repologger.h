@@ -41,52 +41,76 @@ namespace core {
 
 //------------------------------------------------------------------------------
 /*!
- * Basic logger buffer which redirects std::cout and std::cerr to a file
+ * Singleton logger which redirects std::cout and std::cerr to a file.
  * See: http://stackoverflow.com/questions/533038/redirect-stdcout-to-a-custom-writer
  */
-class REPO_CORE_EXPORT RepoLogger : public RepoAbstractListener, public RepoAbstractNotifier
+class REPO_CORE_EXPORT RepoLogger
+        : public RepoAbstractListener
+        , public RepoAbstractNotifier
 {
+
+private :
+
+    //! Singleton constructor redirects std::cout and std::cerr to itself.
+    RepoLogger();
+
+    //! Singleton destructor removes all stream buffers.
+    ~RepoLogger();
+
+    //! Singleton copy constructor.
+    RepoLogger(const RepoLogger &);
+
+    //! Singleton comparator.
+    void operator = (RepoLogger const&);
 
 public :
 
-    //! Default constructor redirects std::cout and std::cerr to itself.
-    RepoLogger();
+    //! Returns a singleton instance of the logger class.
+    static RepoLogger &instance();
 
-    //! Destructor removes all stream buffer notifiers.
-    ~RepoLogger();
-
+    //! Returns a formatted log message.
     std::string getHtmlFormattedMessage(
             const std::string &message,
-            const RepoSeverity &severity);
+            const RepoSeverity &severity) const;
 
     //! Returns a log filename based on the current date.
-    static std::string getFilename(
-            const std::string &extension = LOG_EXTENSION);
+    std::string getFilename(
+            const std::string &extension = DEFAULT_LOG_EXTENSION);
 
-    static std::string getWorkingDirectory();
+    //! Returns a full cannonical path to the log file.
+    std::string getFullFilePath();
+
+    //! Returns a current working directory where the log file is located.
+    std::string getWorkingDirectory();
 
     //! Intercepts stream messages such as from std::cout
     void messageGenerated(
             const std::ostream *sender,
             const std::string &message);
 
+    //! Logs a message using given severity level.
     void log(const std::string &message,
              const RepoSeverity &severity = RepoSeverity::REPO_INFO);
 
     //! Returns a 2-digit representation of a number by pre-pending 0 if needed.
-    static std::string normalize(const int &);
+    static std::string normalize(int);
 
 private:
 
     //! Name of the currently set filename together with the extension
     std::string filename;
 
-    std::ofstream file;
+    //! Log file
+    std::ofstream logFile;
 
-    //! ".log"
-    static const std::string LOG_EXTENSION;
+    //! Default log file extension ".log"
+    static const std::string DEFAULT_LOG_EXTENSION;
 
-    std::vector<RepoStreamBuffer *> streamBuffers;
+    //! Cout stream buffer that is being redirected by the logger.
+    RepoStreamBuffer * coutStreamBuffer;
+
+    //! Cerr stream buffer that is being redirected by the logger.
+    RepoStreamBuffer * cerrStreamBuffer;
 
 
 }; // end class

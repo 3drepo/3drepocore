@@ -16,31 +16,66 @@
  */
 
 #include "repologger.h"
+//------------------------------------------------------------------------------
 #include <ctime>
+#include <stdio.h>
+//------------------------------------------------------------------------------
+#ifdef _WIN32 || _WIN64
+#   include <direct.h>
+#   define getcwd _getcwd
+#   define PATH_SEPARATOR "\\"
+#else
+#   include <unistd.h>
+#   define PATH_SEPARATOR "/"
+#endif
 
-const std::string repo::core::RepoLogger::LOG_EXTENSION = ".log";
+//------------------------------------------------------------------------------
+
+const std::string repo::core::RepoLogger::DEFAULT_LOG_EXTENSION = ".log";
+
+//------------------------------------------------------------------------------
+//
+// Private
+//
+//------------------------------------------------------------------------------
 
 repo::core::RepoLogger::RepoLogger()
+    : coutStreamBuffer(0)
+    , cerrStreamBuffer(0)
 {
-    streamBuffers.push_back(new RepoStreamBuffer(this, std::cout, false));
-    streamBuffers.push_back(new RepoStreamBuffer(this, std::cerr, false));
+    coutStreamBuffer = new RepoStreamBuffer(this, std::cout);
+    //freopen(getFilename().c_str(), "a", stdout);
+
+    cerrStreamBuffer = new RepoStreamBuffer(this, std::cerr);
+    //freopen(getFilename().c_str(), "a", stderr);
 }
 
 repo::core::RepoLogger::~RepoLogger()
-{
-    file.close();
+{    
+    // Clean up allocated memory
+    delete coutStreamBuffer;
+    //fclose(stdout);
 
-    // Cleanup allocated memory
-    for (unsigned int i = 0; i < streamBuffers.size(); ++i)
-    {
-        delete streamBuffers[i];
-        streamBuffers[i] = 0;
-    }
+    delete cerrStreamBuffer;
+    //fclose(stderr);
+}
+
+//------------------------------------------------------------------------------
+//
+// Public
+//
+//------------------------------------------------------------------------------
+
+repo::core::RepoLogger &repo::core::RepoLogger::instance()
+{
+    // Static variable is created and destroyed only once.
+    static RepoLogger instance;
+    return instance;
 }
 
 std::string repo::core::RepoLogger::getHtmlFormattedMessage(
         const std::string &message,
-        const RepoSeverity &severity)
+        const RepoSeverity &severity) const
 {
     std::stringstream formatted;
 
@@ -55,142 +90,93 @@ std::string repo::core::RepoLogger::getHtmlFormattedMessage(
     formatted << normalize(now->tm_sec);
     formatted << " - ";
 
-    //--------------------------------------------------------------------------
-    // Colour and type selection
-    std::string color;
-    switch(severity)
-    {
-        case RepoSeverity::REPO_DEBUG_NUM :
-            color = "purple";
-            break;
-        case RepoSeverity::REPO_INFO_NUM :
-            color = "green";
-            break;
-        case RepoSeverity::REPO_NOTICE_NUM :
-            color = "blue";
-            break;
-        case RepoSeverity::REPO_WARNING_NUM :
-            color = "orange";
-            break;
-        case RepoSeverity::REPO_ERROR_NUM :
-        case RepoSeverity::REPO_CRITICAL_NUM :
-        case RepoSeverity::REPO_ALERT_NUM :
-        case RepoSeverity::REPO_PANIC_NUM :
-            color = "red";
-            break;
-        default :
-            color = "black";
-    }
-
-
     //-------------------------------------------------------------------------
     // HTML formatting
     formatted << "<span style='color:";
-    formatted << color;
+    formatted << severity.getColor();
     formatted << "'>";
     formatted << severity;
     formatted << "</span> - ";
 
     //--------------------------------------------------------------------------
-    // Code formatting
-    if (RepoSeverity::REPO_DEBUG == severity)
+    // Code formatting for debug severity level only
+    if (severity.getValue() == RepoSeverity::REPO_DEBUG_NUM)
         formatted << "<code>" << message << "</code>";
     else
         formatted << message;
 
+    formatted << "<br/>";
     return formatted.str();
 }
 
 std::string repo::core::RepoLogger::getFilename(
         const std::string &extension)
 {
-    std::stringstream fileName;
-    time_t t = time(0);   // get time now
+    std::stringstream fileNameStream;
+    time_t t = time(0);
     const struct tm *now = localtime(&t);
-    fileName << (now->tm_year + 1900);
-    fileName << "-";
-    fileName << normalize(now->tm_mon + 1);
-    fileName << "-";
-    fileName << normalize(now->tm_mday);
-    fileName << extension;
-    return fileName.str();
+    fileNameStream << (now->tm_year + 1900);
+    fileNameStream << "-";
+    fileNameStream << normalize(now->tm_mon + 1);
+    fileNameStream << "-";
+    fileNameStream << normalize(now->tm_mday);
+    fileNameStream << extension;
+
+    std::string generated = fileNameStream.str();
+    if (generated != filename)
+    {
+        filename = generated;
+        log("Log: " + getFullFilePath(),
+            RepoSeverity::REPO_NOTICE);
+    }
+    return filename;
+}
+
+std::string repo::core::RepoLogger::getFullFilePath()
+{
+    return getWorkingDirectory() + PATH_SEPARATOR + getFilename();
+}
+
+std::string repo::core::RepoLogger::getWorkingDirectory()
+{
+    char temp[FILENAME_MAX];
+    return (getcwd(temp, FILENAME_MAX) ? std::string(temp) : std::string());
 }
 
 void repo::core::RepoLogger::log(
         const std::string &msg,
         const RepoSeverity &severity)
 {
-    //--------------------------------------------------------------------------
-    // Check if the log file name has changed and if so, log this information.
-    std::string currentFilename = getFilename();
-    if (currentFilename != filename)
-    {
-        filename = currentFilename;
-        file.close();
-        file.open(filename, std::ios::app);
-        log("Log file located at " + getWorkingDirectory() + filename,
-            RepoSeverity::REPO_NOTICE);
-    }
-
-    /*
-    std::string first;
-    std::istringstream iss{msg};
-    iss >> first;
-
-    if (first == RepoSeverity::DEBUG.str() ||
-        first == RepoSeverity::INFO.str() ||
-        first == RepoSeverity::NOTICE.str() ||
-        first == RepoSeverity::WARNING.str() ||
-        first == RepoSeverity::ERROR.str() ||
-        first == RepoSeverity::CRITICAL.str() ||
-        first == RepoSeverity::ALERT.str() ||
-        first == RepoSeverity::PANIC.str())
-        severity = RepoSeverity(first);
-
-    std::ostringstream oss;
-       oss << iss.rdbuf();
-    std::cout << oss.str(); // remove first word
-    */
-
-    //--------------------------------------------------------------------------
-    // Write log message to the log file and notify the listeners
+    std::string filename = getFilename();
     std::string formattedMessage = getHtmlFormattedMessage(msg, severity);
-    file << formattedMessage << "\n";
 
     notifyListeners(formattedMessage);
-}
 
-std::string repo::core::RepoLogger::getWorkingDirectory()
-{
-    // See http://msdn.microsoft.com/en-us/library/sf98bd4y%28VS.80%29.aspx
-//    char* buffer;
-//    std::string path;
-//    if((buffer = getcwd( NULL, 0 )))
-//    {
-//        path = std::string(buffer);
-//        free(buffer);
-//    }
-//    return path;
-
-//    int MAXPATHLEN = 255;
-//    char temp[255];
-//    return ( getcwd(temp, MAXPATHLEN) ? std::string( temp ) : std::string("") );
-    return "path";
+    std::ofstream file(filename, std::ios::app);
+    if (!file.is_open())
+    {
+        notifyListeners(
+                    getHtmlFormattedMessage(
+                        "Cannot write to log file: " + getFullFilePath(),
+                        RepoSeverity::REPO_CRITICAL));
+    }
+    else
+    {
+        file << formattedMessage << std::endl;
+        file.close();
+    }
 }
 
 void repo::core::RepoLogger::messageGenerated(
         const std::ostream *sender,
         const std::string &message)
 {
-    if (sender == &(std::cout))
-       log(message, RepoSeverity::REPO_INFO);
-    else if (sender == &(std::cerr))
-       log(message, RepoSeverity::REPO_ERROR);
-    else
-        log(message);
+    log(message, sender == &(std::cerr)
+        ? RepoSeverity::REPO_ERROR
+        : RepoSeverity::REPO_INFO);
 }
 
-std::string repo::core::RepoLogger::normalize(const int &n)
+std::string repo::core::RepoLogger::normalize(int n)
 {
     std::stringstream str;
     if (n < 10)
