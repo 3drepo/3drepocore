@@ -44,7 +44,7 @@ namespace core {
  * Basic logger buffer which redirects std::cout and std::cerr to a file
  * See: http://stackoverflow.com/questions/533038/redirect-stdcout-to-a-custom-writer
  */
-class REPO_CORE_EXPORT RepoLogger : RepoAbstractListener, RepoAbstractNotifier
+class REPO_CORE_EXPORT RepoLogger : public RepoAbstractListener, public RepoAbstractNotifier
 {
 
 public :

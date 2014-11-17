@@ -22,8 +22,8 @@ const std::string repo::core::RepoLogger::LOG_EXTENSION = ".log";
 
 repo::core::RepoLogger::RepoLogger()
 {
-    streamBuffers.push_back(new RepoStreamBuffer(this, std::cout));
-    streamBuffers.push_back(new RepoStreamBuffer(this, std::cerr));
+    streamBuffers.push_back(new RepoStreamBuffer(this, std::cout, false));
+    streamBuffers.push_back(new RepoStreamBuffer(this, std::cerr, false));
 }
 
 repo::core::RepoLogger::~RepoLogger()
