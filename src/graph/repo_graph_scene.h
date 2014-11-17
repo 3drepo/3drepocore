@@ -29,6 +29,7 @@
 #include "repo_node_material.h"
 #include "repo_node_texture.h"
 #include "repo_node_camera.h"
+#include "repo_node_reference.h"
 #include "../repocoreglobal.h"
 //------------------------------------------------------------------------------
 
@@ -94,19 +95,22 @@ public :
     //--------------------------------------------------------------------------
 
 	//! Returns a vector of material nodes.
-	std::vector<RepoNodeAbstract *> getMaterials() const;
+    inline std::vector<RepoNodeAbstract *> getMaterials() const { return materials; }
 
 	//! Returns a vector of mesh nodes.
-	std::vector<RepoNodeAbstract *> getMeshes() const;
+    inline std::vector<RepoNodeAbstract *> getMeshes() const { return meshes; }
 			
 	//! Returns a vector of transformation nodes.
-	std::vector<RepoNodeAbstract *> getTransformations() const;
+    inline std::vector<RepoNodeAbstract *> getTransformations() const { return transformations; }
 
 	//! Returns a vector of texture nodes.
-	std::vector<RepoNodeTexture *> getTextures() const;
+    inline std::vector<RepoNodeTexture *> getTextures() const { return textures; }
 
 	//! Returns a vector of camera nodes.
-	std::vector<RepoNodeAbstract *> getCameras() const;
+    inline std::vector<RepoNodeAbstract *> getCameras() const { return cameras; }
+
+    //! Returns a vector of reference nodes.
+    inline std::vector<RepoNodeAbstract *> getReferences() const { return references; }
 
 	//! Returns a list of names of meshes.
 	std::vector<std::string> getNamesOfMeshes() const;
@@ -122,6 +126,8 @@ protected :
 	std::vector<RepoNodeTexture *> textures; //!< Textures
 
 	std::vector<RepoNodeAbstract *> cameras; //!< Cameras
+
+    std::vector<RepoNodeAbstract *> references; //!< References
 
 }; // end class
 

@@ -138,16 +138,5 @@ void repo::core::RepoGraphAbstract::buildGraph(
                 node->addParent(parent);
             }
         }
-
-//		for each (const boost::uuids::uuid uuid in node->getParentSharedIDs())
-//		{
-//			finder = nodesBySharedID.find(uuid);
-//			if (nodesBySharedID.end() != finder)
-//			{
-//				RepoNodeAbstract* parent = finder->second;
-//				parent->addChild(node);
-//				node->addParent(parent);
-//			}
-//		}
 	}
 }

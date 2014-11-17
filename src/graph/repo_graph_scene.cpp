@@ -138,16 +138,12 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// collection of objects and is referenced the most times by the nodes.
 	// set_intersection on paths can deliver the most occurrences.
 
-	std::map<boost::uuids::uuid, RepoNodeAbstract *> nodesBySharedID;
-	
-    std::vector<mongo::BSONObj>::const_iterator it;
-
-    for (it = collection.begin(); it != collection.end(); ++it)
+    std::map<boost::uuids::uuid, RepoNodeAbstract *> nodesBySharedID;
+    for (std::vector<mongo::BSONObj>::const_iterator it = collection.begin();
+         it != collection.end();
+         ++it)
     {
-         mongo::BSONObj obj = *it;
-
-//	for each (const mongo::BSONObj obj in collection)
-//	{
+        mongo::BSONObj obj = *it;
 		RepoNodeAbstract *node = NULL;
 
 		std::string nodeType = obj.getField(REPO_NODE_LABEL_TYPE).str();
@@ -169,7 +165,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		}
 		else if (REPO_NODE_TYPE_TEXTURE == nodeType)
 		{
-			RepoNodeTexture * tex = new RepoNodeTexture(obj);
+            RepoNodeTexture *tex = new RepoNodeTexture(obj);
 			textures.push_back(tex);
 			node = tex;
 		}
@@ -178,6 +174,11 @@ repo::core::RepoGraphScene::RepoGraphScene(
 			node = new RepoNodeCamera(obj);
 			cameras.push_back(node);
 		}
+        else if (REPO_NODE_TYPE_REFERENCE == nodeType)
+        {
+            node = new RepoNodeReference(obj);
+            references.push_back(node);
+        }
 		
         //----------------------------------------------------------------------
 		if (!obj.hasField(REPO_NODE_LABEL_PARENTS))
@@ -335,36 +336,6 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 // Getters
 //
 //------------------------------------------------------------------------------
-
-std::vector<repo::core::RepoNodeAbstract *> 
-	repo::core::RepoGraphScene::getMaterials() const
-{
-	return materials;
-}
-
-std::vector<repo::core::RepoNodeAbstract *> 
-	repo::core::RepoGraphScene::getMeshes() const
-{
-	return meshes;
-}
-
-std::vector<repo::core::RepoNodeAbstract *> 
-	repo::core::RepoGraphScene::getTransformations() const
-{
-	return transformations;
-}
-
-std::vector<repo::core::RepoNodeTexture *> 
-	repo::core::RepoGraphScene::getTextures() const
-{
-	return textures;
-}
-
-std::vector<repo::core::RepoNodeAbstract *>
-	repo::core::RepoGraphScene::getCameras() const
-{
-	return cameras;
-}
 
 std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 {
