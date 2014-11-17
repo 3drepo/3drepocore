@@ -19,11 +19,9 @@
 
 repo::core::RepoStreamBuffer::RepoStreamBuffer(
         RepoAbstractListener *interceptor,
-        std::ostream &stream,
-        bool redirect)
+        std::ostream &stream)
     : listener(interceptor)
     , originalStream(stream)
-    , redirect(redirect)
     , originalBuffer(0)
     , redirectStream(0)
 {
@@ -39,6 +37,11 @@ repo::core::RepoStreamBuffer::~RepoStreamBuffer()
 
     // Delete redundant stream
     delete redirectStream;
+}
+
+std::ostream &repo::core::RepoStreamBuffer::getRedirectStream() const
+{
+    return *(redirectStream);
 }
 
 //------------------------------------------------------------------------------
@@ -57,10 +60,6 @@ std::streamsize repo::core::RepoStreamBuffer::xsputn(
         std::streamsize count)
 {
     std::string message(msg, count);
-
-    //--------------------------------------------------------------------------
-    if (redirect)
-        *(redirectStream) << message << std::endl;
 
     //--------------------------------------------------------------------------
     listener->messageGenerated(&originalStream, message);

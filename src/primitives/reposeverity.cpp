@@ -20,16 +20,38 @@
 using namespace repo::core;
 
 RepoSeverity::RepoSeverity(
+        const std::string &color,
         const std::string &level,
         int value)
-    :level(level)
+    : color(color)
+    , level(level)
     , value(value) {}
 
-const RepoSeverity RepoSeverity::REPO_PANIC      = RepoSeverity("PANIC",    REPO_PANIC_NUM);
-const RepoSeverity RepoSeverity::REPO_ALERT      = RepoSeverity("ALERT",    REPO_ALERT_NUM);
-const RepoSeverity RepoSeverity::REPO_CRITICAL   = RepoSeverity("CRITICAL", REPO_CRITICAL_NUM);
-const RepoSeverity RepoSeverity::REPO_ERROR      = RepoSeverity("ERROR",    REPO_ERROR_NUM);
-const RepoSeverity RepoSeverity::REPO_WARNING    = RepoSeverity("WARNING",  REPO_WARNING_NUM);
-const RepoSeverity RepoSeverity::REPO_NOTICE     = RepoSeverity("NOTICE",   REPO_NOTICE_NUM);
-const RepoSeverity RepoSeverity::REPO_INFO       = RepoSeverity("INFO",     REPO_INFO_NUM);
-const RepoSeverity RepoSeverity::REPO_DEBUG      = RepoSeverity("DEBUG",    REPO_DEBUG_NUM);
+RepoSeverity::RepoSeverity()
+    : color("green")
+    , level("INFO")
+    , value(REPO_INFO_NUM) {}
+
+const RepoSeverity RepoSeverity::REPO_PANIC =
+        RepoSeverity("red", "PANIC", REPO_PANIC_NUM);
+
+const RepoSeverity RepoSeverity::REPO_ALERT =
+        RepoSeverity("red", "ALERT", REPO_ALERT_NUM);
+
+const RepoSeverity RepoSeverity::REPO_CRITICAL =
+        RepoSeverity("red", "CRITICAL", REPO_CRITICAL_NUM);
+
+const RepoSeverity RepoSeverity::REPO_ERROR =
+        RepoSeverity("red", "ERROR", REPO_ERROR_NUM);
+
+const RepoSeverity RepoSeverity::REPO_WARNING =
+        RepoSeverity("orange", "WARNING", REPO_WARNING_NUM);
+
+const RepoSeverity RepoSeverity::REPO_NOTICE =
+        RepoSeverity("blue", "NOTICE", REPO_NOTICE_NUM);
+
+const RepoSeverity RepoSeverity::REPO_INFO =
+        RepoSeverity("green", "INFO", REPO_INFO_NUM);
+
+const RepoSeverity RepoSeverity::REPO_DEBUG =
+        RepoSeverity("purple", "DEBUG", REPO_DEBUG_NUM);
