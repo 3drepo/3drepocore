@@ -53,10 +53,12 @@ repo::core::RepoLogger::RepoLogger()
 repo::core::RepoLogger::~RepoLogger()
 {    
     // Clean up allocated memory
-    delete coutStreamBuffer;
+    if (coutStreamBuffer)
+        delete coutStreamBuffer;
     //fclose(stdout);
 
-    delete cerrStreamBuffer;
+    if (cerrStreamBuffer)
+        delete cerrStreamBuffer;
     //fclose(stderr);
 }
 
