@@ -103,12 +103,12 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 	}
 	else 
 	{
-        std::cerr << std::string(importer.GetErrorString()) << std::endl;
-//		logger->log(repo::REPO_ERROR, string(importer.GetErrorString()));
 		resetScene();
 	} 
 
-    std::cerr << "Any errors? " << std::string(importer.GetErrorString()) << std::endl;
+	std::string importErrors = std::string(importer.GetErrorString());
+    if (!importErrors.empty())
+            std::cerr << "Assimp: " << importErrors << std::endl;
 
 	return isSuccessful;
 }
