@@ -20,32 +20,31 @@
 
 //------------------------------------------------------------------------------
 repo::core::RepoNodeTexture::RepoNodeTexture(
-		const std::string name,
-		const char * data,
+        const std::string &name,
+        const char *data,
 		const unsigned int byteCount,
 		const unsigned int width,
-		const unsigned int height/*,
-		const unsigned int bitDepth,
-		const std::string format */) : 
-		RepoNodeAbstract (
+        const unsigned int height)
+    : RepoNodeAbstract (
 			REPO_NODE_TYPE_TEXTURE, 
 			REPO_NODE_API_LEVEL_1,
 			repo::core::RepoTranscoderString::stringToUUID(
 				name, 
 				REPO_NODE_UUID_SUFFIX_TEXTURE),
-			name), 
-		width(width),
-		height(height) /*,
+            name)
+    , width(width)
+    , height(height) /*,
 		bitDepth(bitDepth),
 		format(format) */
 {
-	// TODO: propagate error message if memory allocation failed (out of ram)
-	// Vector is now guaranteed to be continuous block of memory, hence it is
+    // Vector is now guaranteed to be continuous block of memory, hence it is
 	// used as a convenient way of keep track of the number of bytes pointed
 	// by the data pointer.
 	this->data = new std::vector<char>(byteCount);
-	if (NULL != this->data)
-		memcpy(&(this->data->at(0)), data, byteCount);		
+    if (!this->data)
+        std::cerr << "Memory allocation for texture " << name << " failed." << std::endl;
+    else
+        memcpy(&(this->data->at(0)), data, byteCount);
 		
 	this->name = boost::filesystem::path(name).stem().string();
 	this->extension = boost::filesystem::extension(name);
@@ -56,9 +55,9 @@ repo::core::RepoNodeTexture::RepoNodeTexture(
 
 //------------------------------------------------------------------------------
 
-repo::core::RepoNodeTexture::RepoNodeTexture(
-	const mongo::BSONObj &obj) : RepoNodeAbstract(obj),
-		data(NULL)
+repo::core::RepoNodeTexture::RepoNodeTexture(const mongo::BSONObj &obj)
+    : RepoNodeAbstract(obj)
+    , data(NULL)
 {
 	//
 	// Width

@@ -60,8 +60,8 @@ public :
             REPO_NODE_API_LEVEL_1) {}
 
 	RepoNodeTexture(
-		const std::string name,
-		const char * data,
+        const std::string &name,
+        const char *data,
 		const unsigned int byteCount,
 		const unsigned int width,
 		const unsigned int height);

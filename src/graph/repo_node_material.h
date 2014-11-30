@@ -64,10 +64,10 @@ public :
 	//! Basic constructor, uuid will be randomly generated.
 	inline RepoNodeMaterial() : 
 		RepoNodeAbstract(REPO_NODE_TYPE_MATERIAL, REPO_NODE_API_LEVEL_1),
-		ambient(NULL),
-		diffuse(NULL),
-		emissive(NULL),
-		specular(NULL),
+        ambient(0),
+        diffuse(0),
+        emissive(0),
+        specular(0),
 		opacity(std::numeric_limits<float>::quiet_NaN()),
 		shininess(std::numeric_limits<float>::quiet_NaN()),
         shininessStrength(std::numeric_limits<float>::quiet_NaN()) {}
@@ -84,9 +84,9 @@ public :
 	 * \sa RepoNodeMaterial()
 	 */
 	RepoNodeMaterial(
-		const aiMaterial * material, 
-		const std::map<std::string, RepoNodeAbstract *> & textures,
-		const std::string & name = "");
+        const aiMaterial *material,
+        const std::map<std::string, RepoNodeAbstract *> &textures,
+        const std::string &name = "");
 
 
 	//! Constructs material scene graph component from a BSON object.
@@ -97,7 +97,7 @@ public :
 	 * \param obj BSON representation
 	 * \sa RepoNodeMaterial()
 	 */
-	RepoNodeMaterial(const mongo::BSONObj & obj);
+    RepoNodeMaterial(const mongo::BSONObj &obj);
 
     //--------------------------------------------------------------------------
 	//

@@ -104,8 +104,8 @@ public :
 	 */
 	RepoNodeMesh(
 		const unsigned int api,
-		const aiMesh * mesh, 
-		const std::vector<RepoNodeAbstract *> & materials);
+        const aiMesh *mesh,
+        const std::vector<RepoNodeAbstract *> &materials);
 
 	//! Constructs mesh scene graph component from a BSON object.
 	/*!
@@ -158,17 +158,17 @@ public :
 	{ return faces; }
 
 	//! Return the normals vector.
-	const std::vector<aiVector3t<float>> * getNormals() const
+	const std::vector<aiVector3t<float> > * getNormals() const
 	{ return normals; }
 
 	//! Returns the vertices vector.
-	const std::vector<aiVector3t<float>> * getVertices() const 
+	const std::vector<aiVector3t<float> > * getVertices() const 
 	{ return vertices; }
 
 	//! Returns the texcoord vector.
-	const std::vector<aiVector3t<float>> * getUVChannel(int channel = 0) const 
+	const std::vector<aiVector3t<float> > * getUVChannel(int channel = 0) const 
 	{ 
-        std::vector<aiVector3t<float>> *tmp = NULL;
+        std::vector<aiVector3t<float> > *tmp = NULL;
 
         if ((uvChannels != NULL) && (uvChannels->size() > 0))
         {
@@ -234,16 +234,16 @@ protected :
 	/*!
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
-    std::vector<aiVector3t<float>> *normals;
+    std::vector<aiVector3t<float> > *normals;
 
-    std::vector<aiVector3t<float>> *vertices; //!< Vertices of this mesh.
+    std::vector<aiVector3t<float> > *vertices; //!< Vertices of this mesh.
 
 	//! 2D outline of this mesh.
 	/*!
 	 * Outline is a XY orthographic projection of the mesh. The simplest 
 	 * example is a bounding rectangle.
 	 */
-    std::vector<aiVector2t<float>> *outline;
+    std::vector<aiVector2t<float> > *outline;
 
 	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box. 
 
@@ -252,7 +252,7 @@ protected :
 	 * A mesh can have multiple UV channels per vertex, each channel
 	 * is the length of the number of vertices.
 	 */
-    std::vector<std::vector<aiVector3t<float>>*> *uvChannels;
+    std::vector<std::vector<aiVector3t<float> >*> *uvChannels;
 
 }; // end class
 

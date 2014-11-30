@@ -60,7 +60,7 @@ public:
 	MongoClientWrapper(const MongoClientWrapper&);
 
 	//! Move constructor
-	MongoClientWrapper (MongoClientWrapper&&);
+	MongoClientWrapper (MongoClientWrapper &&);
 
 	//! Copy assignment. Requires separate reconnection and reauthentication.
 	MongoClientWrapper& operator= (const MongoClientWrapper&);
@@ -398,7 +398,7 @@ private :
      * value. User can be authenticated on any number of databases on a single
      * connection.
      */
-	std::map<std::string, std::pair<std::string, std::string>> databasesAuthentication;
+	std::map<std::string, std::pair<std::string, std::string> > databasesAuthentication;
 };
 
 } // end of core namespace
