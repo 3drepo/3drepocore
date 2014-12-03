@@ -54,7 +54,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
     //--------------------------------------------------------------------------
     // Project
     if (obj.hasField(REPO_NODE_LABEL_PROJECT))
-        project = obj.getField(REPO_NODE_LABEL_OWNER).String();
+        project = obj.getField(REPO_NODE_LABEL_PROJECT).String();
 
     //--------------------------------------------------------------------------
     // Revision ID (specific revision if UID, branch if SID)

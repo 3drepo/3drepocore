@@ -119,6 +119,9 @@ public :
 	//! Returns a list of names of meshes.
 	std::vector<std::string> getNamesOfMeshes() const;
 
+    //! Returns true if refrences are present, false otherwise.
+    bool hasReferences() const { return references.size() > 0; }
+
 protected :
 
 	std::vector<RepoNodeAbstract *> materials; //!< Materials

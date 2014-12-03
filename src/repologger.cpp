@@ -43,10 +43,10 @@ repo::core::RepoLogger::RepoLogger()
     : coutStreamBuffer(0)
     , cerrStreamBuffer(0)
 {
-    coutStreamBuffer = new RepoStreamBuffer(this, std::cout);
+//    coutStreamBuffer = new RepoStreamBuffer(this, std::cout);
     //freopen(getFilename().c_str(), "a", stdout);
 
-    cerrStreamBuffer = new RepoStreamBuffer(this, std::cerr);
+//    cerrStreamBuffer = new RepoStreamBuffer(this, std::cerr);
     //freopen(getFilename().c_str(), "a", stderr);
 }
 
