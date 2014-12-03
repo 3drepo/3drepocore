@@ -51,10 +51,10 @@ public :
     inline ~RepoBoundingBox() {}
 
 	//! Returns a vector representation as [min, max].
-	std::vector<aiVector3t<float>> toVector() const;
+	std::vector<aiVector3t<float> > toVector() const;
 
 	//! Returns a polygon outline as a bounding rectangle in XY plane.
-	void toOutline(std::vector<aiVector2t<float>> * vec) const;
+	void toOutline(std::vector<aiVector2t<float> > * vec) const;
 
     void setMin(aiVector3t<float> &min) { this->min = min; }
     void setMax(aiVector3t<float> &max) { this->max = max; }
