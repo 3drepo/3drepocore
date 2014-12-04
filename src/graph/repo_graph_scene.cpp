@@ -226,6 +226,13 @@ repo::core::RepoGraphScene::~RepoGraphScene()
 	}
 }
 
+//void repo::core::RepoGraphScene::append(RepoGraphAbstract *graph, RepoNodeAbstract *node)
+//{
+//    node->addChild(graph->rootNode());
+
+//    // TODO: copy over nodesByUniqueID
+//}
+
 
 //------------------------------------------------------------------------------
 //

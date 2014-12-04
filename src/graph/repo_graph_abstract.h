@@ -60,6 +60,12 @@ public :
 	 */
 	virtual ~RepoGraphAbstract() = 0;
 
+    /*! Appends a given graph to a given node by copying over pointers.
+     * Removes all of the pointers from the given scene graph (so that it can be
+     * safely deleted without losing the scene node objects from the memory).
+     */
+   // void append(RepoGraphAbstract *graph, RepoNodeAbstract *node);
+
     //--------------------------------------------------------------------------
 	//
 	// Getters

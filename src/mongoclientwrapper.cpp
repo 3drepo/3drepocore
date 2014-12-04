@@ -587,7 +587,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
-		appendUUID("shared_id", repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
+        appendUUID("shared_id", RepoTranscoderString::stringToUUID(uuid), queryBuilder);
         //----------------------------------------------------------------------
 		bson = clientConnection.findOne(
 			getNamespace(database, collection),
