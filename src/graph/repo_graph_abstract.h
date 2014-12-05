@@ -64,7 +64,7 @@ public :
      * Removes all of the pointers from the given scene graph (so that it can be
      * safely deleted without losing the scene node objects from the memory).
      */
-   // void append(RepoGraphAbstract *graph, RepoNodeAbstract *node);
+    void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
 
     //--------------------------------------------------------------------------
 	//

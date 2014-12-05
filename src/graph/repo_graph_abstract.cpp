@@ -27,6 +27,30 @@
 //------------------------------------------------------------------------------
 repo::core::RepoGraphAbstract::~RepoGraphAbstract() {}
 
+void repo::core::RepoGraphAbstract::append(
+        RepoNodeAbstract *thisNode,
+        RepoGraphAbstract *thatGraph)
+{
+    // TODO: make this work instead of the for loop underneath.
+    // Reasoning: at the moment the creation of Assimp scene and/or glcWorld
+    // cannot handle reference nodes, hence the only way
+//    thisNode->addChild(thatGraph->rootNode);
+//    thatGraph->rootNode->addChild(thisNode);
+
+    std::set<const RepoNodeAbstract *> thisNodeParents = thisNode->getParents();
+    std::set<const RepoNodeAbstract *>::iterator it;
+    for (it = thisNodeParents.begin(); it != thisNodeParents.end(); ++it)
+    {
+        RepoNodeAbstract *thisNodeParent = const_cast<RepoNodeAbstract*>(*it);
+        thisNodeParent->addChild(thatGraph->rootNode);
+        thatGraph->rootNode->addParent(thisNodeParent);
+    }
+
+    nodesByUniqueID.insert(
+                thatGraph->nodesByUniqueID.begin(),
+                thatGraph->nodesByUniqueID.end());
+}
+
 //------------------------------------------------------------------------------
 std::set<const repo::core::RepoNodeAbstract*> 
 	repo::core::RepoGraphAbstract::getNodesRecursively() const

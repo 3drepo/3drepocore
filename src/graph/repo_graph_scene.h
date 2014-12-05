@@ -80,6 +80,9 @@ public :
 	 */
 	~RepoGraphScene();
 
+    //! Append a graph to this node.
+    void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
+
     //--------------------------------------------------------------------------
 	//
 	// Export
