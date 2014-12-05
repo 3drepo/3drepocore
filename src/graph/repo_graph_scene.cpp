@@ -239,7 +239,9 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
         cameras.insert(cameras.end(), thatScene->cameras.begin(), thatScene->cameras.end());
         references.insert(references.end(), thatScene->references.begin(), thatScene->references.end());
         metadata.insert(metadata.end(), thatScene->metadata.begin(), thatScene->metadata.end());
+        thatScene->clear();
     }
+    thatGraph->clear();
 }
 
 
@@ -364,4 +366,23 @@ std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 	for (unsigned int i = 0; i < names.size(); ++i)
 		names[i] = meshes[i]->getName();
 	return names;
+}
+
+//------------------------------------------------------------------------------
+//
+// Protected
+//
+//------------------------------------------------------------------------------
+
+void repo::core::RepoGraphScene::clear()
+{
+    RepoGraphAbstract::clear();
+
+    materials.clear();
+    meshes.clear();
+    textures.clear();
+    transformations.clear();
+    cameras.clear();
+    references.clear();
+    metadata.clear();
 }

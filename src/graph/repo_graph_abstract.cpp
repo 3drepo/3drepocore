@@ -164,3 +164,18 @@ void repo::core::RepoGraphAbstract::buildGraph(
         }
 	}
 }
+
+
+void repo::core::RepoGraphAbstract::clear()
+{
+    rootNode = NULL;
+    std::map<boost::uuids::uuid, RepoNodeAbstract*>::iterator it;
+    for (it = nodesByUniqueID.begin(); it != nodesByUniqueID.end(); ++it)
+    {
+        //nodesByUniqueID;
+        it->first;
+        it->second = NULL;
+    }
+    nodesByUniqueID.clear();
+}
+

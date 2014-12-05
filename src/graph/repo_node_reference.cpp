@@ -44,6 +44,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
 repo::core::RepoNodeReference::RepoNodeReference(
         const mongo::BSONObj &obj)
     : RepoNodeAbstract(obj)
+    , revisionID(boost::uuids::uuid())
     , isUniqueID(false)
 {
     //--------------------------------------------------------------------------
@@ -70,7 +71,6 @@ repo::core::RepoNodeReference::RepoNodeReference(
     {
         isUniqueID = obj.getField(REPO_NODE_LABEL_UNIQUE).Bool();
     }
-
 }
 
 mongo::BSONObj repo::core::RepoNodeReference::toBSONObj() const

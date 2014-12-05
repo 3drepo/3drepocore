@@ -112,6 +112,11 @@ public :
 
     virtual void printDAG() const;
 
+    /*!
+     * Clears all containers and root node. Warning: does not deallocate memory!
+     */
+    void clear();
+
 protected :
 		
 	/*! 
@@ -120,6 +125,8 @@ protected :
 	 */
 	virtual void buildGraph(
         const std::map<boost::uuids::uuid, RepoNodeAbstract*> &idMapping) const;
+
+protected :
 
     //--------------------------------------------------------------------------
 	//

@@ -29,8 +29,8 @@ boost::uuids::uuid repo::core::RepoTranscoderString::stringToUUID(
 		try 
 		{ 
 			boost::uuids::string_generator gen;
-            //if ((text.find("{")) == std::string::npos)
-            if (text.substr(0,1) != "{")
+           // if ((text.find("{")) == std::string::npos)
+           if (text.substr(0,1) != "{")
                 uuid = gen("{" + text + "}");
             else
                 uuid = gen(text);

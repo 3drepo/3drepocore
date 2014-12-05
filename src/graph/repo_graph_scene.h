@@ -80,8 +80,11 @@ public :
 	 */
 	~RepoGraphScene();
 
-    //! Append a graph to this node.
+    /*!
+     * Appends a graph to this node and takes ownership of thatGraph memory.
+     */
     void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
+
 
     //--------------------------------------------------------------------------
 	//
@@ -124,6 +127,9 @@ public :
 
     //! Returns true if refrences are present, false otherwise.
     bool hasReferences() const { return references.size() > 0; }
+
+    //! Clears contents but does not deallocate memory!
+    void clear();
 
 protected :
 

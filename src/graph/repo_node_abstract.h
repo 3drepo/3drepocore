@@ -258,6 +258,8 @@ protected :
 	 */
 	void appendDefaultFields(mongo::BSONObjBuilder &builder) const;
 
+protected :
+
     //--------------------------------------------------------------------------
 	//
 	// Var
