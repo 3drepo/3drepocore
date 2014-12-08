@@ -17,7 +17,7 @@
 # Assimp
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lassimp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lassimpd
-else:unix: LIBS += -L$$PWD/lib/ -lassimp
+else:unix: LIBS += -L$$PWD/submodules/assimp/build/code -lassimp
 
 INCLUDEPATH += $$PWD/submodules/assimp/include
 DEPENDPATH += $$PWD/submodules/assimp/include
