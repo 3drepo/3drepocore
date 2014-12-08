@@ -55,16 +55,17 @@ public :
     inline RepoNodeMetadata() :
         RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1) {}
 
-    //! Constructs a reference node.
+	//! Constructs Metadata scene graph node from Assimp's aiMetaData.
     /*!
+     * Same as all other components, it has to have a uuid, type, api
+     * and optional name.
+     *
+     * \param metadata aiMetadata metadata object
      * \sa RepoNodeMetadata()
      */
-    RepoNodeMetadata(
-            const mongo::BSONObj &metadata,
-            const std::string &name);
+    RepoNodeMetadata(const aiMetadata *metadata);
 
-
-    //! Constructs metadata scene graph component from a BSON object.
+	//! Constructs metadata scene graph component from a BSON object.
     /*!
      * Same as all other components, it has to have a uuid, type, api
      * and optional name.
@@ -73,6 +74,10 @@ public :
      * \sa RepoNodeMetadata()
      */
     RepoNodeMetadata(const mongo::BSONObj &obj);
+
+	RepoNodeMetadata::RepoNodeMetadata(
+        const mongo::BSONObj &metadata,
+        const string &name);
 
     //--------------------------------------------------------------------------
     //

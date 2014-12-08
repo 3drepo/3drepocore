@@ -16,6 +16,59 @@
  */
 
 #include "repo_node_metadata.h"
+#include "../conversion/repo_transcoder_bson.h"
+
+//! Constructs Metadata scene graph node from Assimp's aiMetaData
+repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
+ RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1)
+{
+	mongo::BSONObjBuilder builder;
+
+	for(int i = 0; i < metaIn->mNumProperties; i++)
+	{
+		std::string key(metaIn->mKeys[i].C_Str());
+		aiMetadataEntry &currentValue = metaIn->mValues[i];
+
+		switch(currentValue.mType)
+		{
+			case AI_BOOL:
+				repo::core::RepoTranscoderBSON::append(key,
+						*(static_cast<bool *>(currentValue.mData)),
+						builder);
+				break;
+			case AI_INT:
+				repo::core::RepoTranscoderBSON::append(key,
+						*(static_cast<int *>(currentValue.mData)),
+						builder);
+				break;
+			case AI_UINT64:
+				repo::core::RepoTranscoderBSON::append(key,
+						(long long int)(*(static_cast<uint64_t *>(currentValue.mData))),
+						builder);
+				break;
+			case AI_FLOAT:
+				repo::core::RepoTranscoderBSON::append(key,
+						*(static_cast<float *>(currentValue.mData)),
+						builder);
+				break;
+			case AI_AISTRING:
+				{
+					std::string val((static_cast<aiString *>(currentValue.mData))->C_Str());
+
+					if (val.compare(key))
+						repo::core::RepoTranscoderBSON::append(key, val, builder);
+				}
+				break;
+			case AI_AIVECTOR3D:
+				repo::core::RepoTranscoderBSON::append(key,
+						*(static_cast<aiVector3D *>(currentValue.mData)),
+						builder);
+				break;
+		}
+	}
+
+	this->metadata = builder.obj();
+}
 
 repo::core::RepoNodeMetadata::RepoNodeMetadata(
         const mongo::BSONObj &metadata,
@@ -47,7 +100,7 @@ mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
     // and optional name
     appendDefaultFields(builder);
 
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
     // Add metadata subobject
     if (!metadata.isEmpty())
         builder << REPO_NODE_LABEL_METADATA << this->metadata;
