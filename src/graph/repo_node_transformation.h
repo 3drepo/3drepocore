@@ -55,9 +55,9 @@ public :
 	//
     //--------------------------------------------------------------------------
 	//! Basic constructor, uuid will be randomly generated.
-	inline RepoNodeTransformation() : 
+	inline RepoNodeTransformation() :
 		RepoNodeAbstract(
-			REPO_NODE_TYPE_TRANSFORMATION, 
+			REPO_NODE_TYPE_TRANSFORMATION,
             REPO_NODE_API_LEVEL_1) {}
 
 	//! Constructs transformation scene graph node from Assimp's aiNode.
@@ -86,7 +86,8 @@ public :
     RepoNodeTransformation(const aiNode *node,
         const std::vector<RepoNodeAbstract *> &meshes,
         const std::map<std::string, RepoNodeAbstract *> &cameras,
-        std::vector<RepoNodeAbstract *> &transformations);
+        std::vector<RepoNodeAbstract *> &transformations,
+		std::vector<RepoNodeAbstract *> &metadata);
 
 	//! Constructs transformation scene graph component from BSON object.
 	/*!
@@ -97,7 +98,7 @@ public :
 	 * \sa RepoNodeTransformation()
 	 */
     RepoNodeTransformation(const mongo::BSONObj &obj);
-	
+
     //--------------------------------------------------------------------------
 	//
 	// Destructor
@@ -127,7 +128,7 @@ public :
 	 * Returns a BSON representation of this repository object suitable for a
 	 * direct MongoDB storage.
 	 *
-	 * \return BSON representation 
+	 * \return BSON representation
 	 */
 	mongo::BSONObj toBSONObj() const;
 
@@ -135,7 +136,7 @@ public :
 	/*!
 	 * Populates given Assimp's aiNode with values stored in this transformation.
 	 *
-	 * \param meshesMapping Mapping of meshes to their index in the 
+	 * \param meshesMapping Mapping of meshes to their index in the
 	 *	meshes array.
 	 */
 	void toAssimp(

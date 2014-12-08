@@ -16,6 +16,7 @@
  */
 
 #include "repo_node_transformation.h"
+#include "repo_node_metadata.h"
 
 //------------------------------------------------------------------------------
 //
@@ -23,30 +24,31 @@
 //
 //------------------------------------------------------------------------------
 repo::core::RepoNodeTransformation::RepoNodeTransformation(
-	const aiNode *node) : 
+	const aiNode *node) :
 		RepoNodeAbstract (
-			REPO_NODE_TYPE_TRANSFORMATION, 
+			REPO_NODE_TYPE_TRANSFORMATION,
 			REPO_NODE_API_LEVEL_1,
 			repo::core::RepoTranscoderString::stringToUUID(
-				node->mName.data, 
+				node->mName.data,
 				REPO_NODE_UUID_SUFFIX_TRANSFORMATION),
-			node->mName.data), 
+			node->mName.data),
 		matrix(node->mTransformation) {}
 
 
 repo::core::RepoNodeTransformation::RepoNodeTransformation(
-	const aiNode * node, 
+	const aiNode * node,
     const std::vector<RepoNodeAbstract *> &meshes,
     const std::map<std::string, RepoNodeAbstract *> &cameras,
-    std::vector<RepoNodeAbstract *> &transformations) :
+    std::vector<RepoNodeAbstract *> &transformations,
+	std::vector<RepoNodeAbstract *> &metadata) :
 		RepoNodeAbstract (
-			REPO_NODE_TYPE_TRANSFORMATION, 
+			REPO_NODE_TYPE_TRANSFORMATION,
 			REPO_NODE_API_LEVEL_1,
 			repo::core::RepoTranscoderString::stringToUUID(
-				node->mName.data, 
+				node->mName.data,
 				REPO_NODE_UUID_SUFFIX_TRANSFORMATION),
-			node->mName.data), 
-		matrix(node->mTransformation) 
+			node->mName.data),
+		matrix(node->mTransformation)
 {
     //--------------------------------------------------------------------------
 	// Keep track of all allocated objects in order of creation
@@ -74,6 +76,19 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		it->second->addParent(this);
 	}
 
+	//--------------------------------------------------------------------------
+	// Collect metadata and add as a child
+	if (node->mMetaData)
+	{
+		repo::core::RepoNodeMetadata *metachild =
+			new RepoNodeMetadata(node->mMetaData);
+
+		this->addChild(metachild);
+		metachild->addParent(this);
+
+		metadata.push_back(metachild);
+	}
+
     //--------------------------------------------------------------------------
 	// Register child transformations as children if any
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
@@ -81,13 +96,16 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		// Recursively create the entire graph
         repo::core::RepoNodeTransformation *child =
 			new RepoNodeTransformation(
-				node->mChildren[i], 
+				node->mChildren[i],
 				meshes,
 				cameras,
-				transformations);
+				transformations,
+				metadata);
 		this->addChild(child);
-		child->addParent(this);		
+		child->addParent(this);
+
 	}
+
 }
 
 repo::core::RepoNodeTransformation::RepoNodeTransformation(
@@ -99,17 +117,17 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		std::vector<float> transformationMatrix;
 
 		// matrix is stored as array of arrays
-		mongo::BSONObj matrixObj = 
-			obj.getField(REPO_NODE_LABEL_MATRIX).embeddedObject();		
+		mongo::BSONObj matrixObj =
+			obj.getField(REPO_NODE_LABEL_MATRIX).embeddedObject();
 		std::set<std::string> mFields;
-		matrixObj.getFieldNames(mFields);			
-		for(std::set<std::string>::iterator i = mFields.begin(); 
-			i != mFields.end(); ++i) 
+		matrixObj.getFieldNames(mFields);
+		for(std::set<std::string>::iterator i = mFields.begin();
+			i != mFields.end(); ++i)
 		{
-			mongo::BSONObj arrayObj = matrixObj.getField(*i).embeddedObject();			
+			mongo::BSONObj arrayObj = matrixObj.getField(*i).embeddedObject();
 			std::set<std::string> aFields;
-			arrayObj.getFieldNames(aFields);		
-			for (std::set<std::string>::iterator j = aFields.begin(); 
+			arrayObj.getFieldNames(aFields);
+			for (std::set<std::string>::iterator j = aFields.begin();
 				j != aFields.end(); ++j)
 			{
 				transformationMatrix.push_back(
@@ -156,7 +174,7 @@ repo::core::RepoNodeTransformation::~RepoNodeTransformation() {}
 mongo::BSONObj repo::core::RepoNodeTransformation::toBSONObj() const
 {
 	mongo::BSONObjBuilder builder;
-	
+
     //--------------------------------------------------------------------------
 	// Compulsory fields such as _id, type, api as well as path
 	// and optional name
@@ -178,7 +196,7 @@ mongo::BSONObj repo::core::RepoNodeTransformation::toBSONObj() const
 }
 
 void repo::core::RepoNodeTransformation::toAssimp(
-		const std::map<const RepoNodeAbstract *, unsigned int> & meshesMapping, 
+		const std::map<const RepoNodeAbstract *, unsigned int> & meshesMapping,
 		aiNode * node) const
 {
 	//
@@ -186,19 +204,19 @@ void repo::core::RepoNodeTransformation::toAssimp(
 	//
 	node->mName = aiString(name);
     //--------------------------------------------------------------------------
-	
-	
+
+
 	//
 	// Transformation
 	//
 	node->mTransformation = matrix;
     //--------------------------------------------------------------------------
-	
+
 	//
 	// Meshes
 	//
 	std::map<const RepoNodeAbstract *, unsigned int>::const_iterator it;
-	
+
 	// Indices into the mesh array
 	std::vector<unsigned int> meshArrayIndices;
 
@@ -222,7 +240,7 @@ void repo::core::RepoNodeTransformation::toAssimp(
 			node->mMeshes = mMeshes;
 			node->mNumMeshes = meshArrayIndices.size();
 		}
-		else 
+		else
 			node->mNumMeshes = 0;
 	}
 	else
@@ -258,7 +276,7 @@ void repo::core::RepoNodeTransformation::toAssimp(
 			{
 				childrenNodes.push_back(it->second);
 
-				// Recursively invoke on children transformations to populate 
+				// Recursively invoke on children transformations to populate
 				// parents and children information to the Assimp tree hierarchy
 				// of aiNodes
                 const RepoNodeTransformation *childTransf =
