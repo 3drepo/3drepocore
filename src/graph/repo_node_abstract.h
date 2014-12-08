@@ -166,7 +166,11 @@ public :
 	//! Returns the api level of the node.
     inline unsigned int getApi() const { return api; }
 
+    //! Returns children of the node.
     inline std::set<const RepoNodeAbstract *> getChildren() const { return children; }
+
+    //! Returns parents of the node.
+    inline std::set<const RepoNodeAbstract *> getParents() const { return parents; }
 
     //--------------------------------------------------------------------------
 	//
@@ -253,6 +257,8 @@ protected :
 	 * \sa toBSONObj();
 	 */
 	void appendDefaultFields(mongo::BSONObjBuilder &builder) const;
+
+protected :
 
     //--------------------------------------------------------------------------
 	//

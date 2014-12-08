@@ -60,6 +60,12 @@ public :
 	 */
 	virtual ~RepoGraphAbstract() = 0;
 
+    /*! Appends a given graph to a given node by copying over pointers.
+     * Removes all of the pointers from the given scene graph (so that it can be
+     * safely deleted without losing the scene node objects from the memory).
+     */
+    void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
+
     //--------------------------------------------------------------------------
 	//
 	// Getters
@@ -106,6 +112,11 @@ public :
 
     virtual void printDAG() const;
 
+    /*!
+     * Clears all containers and root node. Warning: does not deallocate memory!
+     */
+    void clear();
+
 protected :
 		
 	/*! 
@@ -114,6 +125,8 @@ protected :
 	 */
 	virtual void buildGraph(
         const std::map<boost::uuids::uuid, RepoNodeAbstract*> &idMapping) const;
+
+protected :
 
     //--------------------------------------------------------------------------
 	//

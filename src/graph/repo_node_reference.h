@@ -104,6 +104,25 @@ public :
      */
     mongo::BSONObj toBSONObj() const;
 
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns the name of the project.
+    std::string getProject() const { return project; }
+
+    //! Returns the owner of the project (DB name).
+    std::string getOwner() const { return owner; }
+
+    //! Returns optional revision ID.
+    boost::uuids::uuid getRevisionID() const { return revisionID; }
+
+    //! Returns true if the revisionID is unique, false if it is shared ID.
+    bool getIsUniqueID() const { return isUniqueID; }
+
+
 protected :
 
     //--------------------------------------------------------------------------

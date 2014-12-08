@@ -226,6 +226,24 @@ repo::core::RepoGraphScene::~RepoGraphScene()
 	}
 }
 
+void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph)
+{
+    RepoGraphAbstract::append(thisNode, thatGraph);
+    RepoGraphScene *thatScene = dynamic_cast<RepoGraphScene*>(thatGraph);
+    if (thatScene)
+    {
+        materials.insert(materials.end(), thatScene->materials.begin(), thatScene->materials.end());
+        meshes.insert(meshes.end(), thatScene->meshes.begin(), thatScene->meshes.end());
+        transformations.insert(transformations.end(), thatScene->transformations.begin(), thatScene->transformations.end());
+        textures.insert(textures.end(), thatScene->textures.begin(), thatScene->textures.end());
+        cameras.insert(cameras.end(), thatScene->cameras.begin(), thatScene->cameras.end());
+        references.insert(references.end(), thatScene->references.begin(), thatScene->references.end());
+        metadata.insert(metadata.end(), thatScene->metadata.begin(), thatScene->metadata.end());
+        thatScene->clear();
+    }
+    thatGraph->clear();
+}
+
 
 //------------------------------------------------------------------------------
 //
@@ -348,4 +366,23 @@ std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 	for (unsigned int i = 0; i < names.size(); ++i)
 		names[i] = meshes[i]->getName();
 	return names;
+}
+
+//------------------------------------------------------------------------------
+//
+// Protected
+//
+//------------------------------------------------------------------------------
+
+void repo::core::RepoGraphScene::clear()
+{
+    RepoGraphAbstract::clear();
+
+    materials.clear();
+    meshes.clear();
+    textures.clear();
+    transformations.clear();
+    cameras.clear();
+    references.clear();
+    metadata.clear();
 }
