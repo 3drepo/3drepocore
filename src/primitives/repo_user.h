@@ -40,7 +40,9 @@ namespace core {
 #define REPO_LABEL_FIRST_NAME     		"firstName"
 #define REPO_LABEL_LAST_NAME     		"lastName"
 #define REPO_LABEL_MONGODB_CR           "MONGODB-CR"
+#define REPO_LABEL_OWNER                "account"
 #define REPO_LABEL_PASSWORD     		"pwd"
+#define REPO_LABEL_PROJECT             "project"
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
 
@@ -50,24 +52,30 @@ class REPO_CORE_EXPORT RepoUser : public mongo::BSONObj
 
 public :
 
+        RepoUser();
+
         RepoUser(const mongo::BSONObj &obj);
 
         ~RepoUser();
+
+        //! Returns a new full (and owned) copy of the object.
+        inline RepoUser copy() const { return RepoUser(mongo::BSONObj::copy()); }
 
         //----------------------------------------------------------------------
 
         //! Returns custom data field by label if any.
         mongo::BSONElement getCustomData(const std::string &label) const
-        { return getEmbeddedElement(REPO_LABEL_CUSTOM_DATA, label); }
+        { return getEmbeddedElement(this, REPO_LABEL_CUSTOM_DATA, label); }
 
         //! Returns the email if any.
         inline std::string getEmail() const
         { return getCustomData(REPO_LABEL_EMAIL).str(); }
 
-        //! Returns an embedded element by labels.
-        mongo::BSONElement getEmbeddedElement(
+        //! Returns an embedded element by label, EOO if not present.
+        static mongo::BSONElement getEmbeddedElement(
+                const mongo::BSONObj *obj,
                 const std::string &fstLevelLabel,
-                const std::string &sndLevelLabel) const;
+                const std::string &sndLevelLabel);
 
         //! Returns the first name if any.
         inline std::string getFirstName() const
@@ -77,9 +85,12 @@ public :
         inline std::string getLastName() const
         { return getCustomData(REPO_LABEL_LAST_NAME).str(); }
 
-        //! Returns the last name if any.
+        //! Returns the password if any.
         inline std::string getPassword() const
-        { return getEmbeddedElement(REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
+        { return getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
+
+        //! Returns all projects associated with this user as [db, project] pairs.
+        std::vector<std::pair<std::string, std::string>> getProjects() const;
 
         //! Returns the username if any.
         inline std::string getUsername() const

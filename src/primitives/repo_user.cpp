@@ -18,6 +18,10 @@
 
 #include "repo_user.h"
 
+repo::core::RepoUser::RepoUser()
+    : mongo::BSONObj()
+{}
+
 repo::core::RepoUser::RepoUser(const mongo::BSONObj &obj)
     : mongo::BSONObj(obj)
 {}
@@ -26,15 +30,44 @@ repo::core::RepoUser::~RepoUser()
 {}
 
 mongo::BSONElement repo::core::RepoUser::getEmbeddedElement(
+        const mongo::BSONObj *obj,
         const std::string &fstLevelLabel,
-        const std::string &sndLevelLabel) const
+        const std::string &sndLevelLabel)
 {
     mongo::BSONElement element;
-    if (this->hasField(fstLevelLabel))
+    if (obj->hasField(fstLevelLabel))
     {
-        BSONObj customData = this->getObjectField(fstLevelLabel);
-        if (customData.hasField(sndLevelLabel))
-            element = customData.getField(sndLevelLabel);
+        mongo::BSONObj embeddedData = obj->getObjectField(fstLevelLabel);
+        if (embeddedData.hasField(sndLevelLabel))
+        {
+            element = embeddedData.getField(sndLevelLabel);
+        }
     }
     return element;
+}
+
+std::vector<std::pair<std::string, std::string> > repo::core::RepoUser::getProjects() const
+{
+    std::vector<std::pair<std::string, std::string> > projects;
+    mongo::BSONElement element = getEmbeddedElement(this,
+                                                  REPO_LABEL_CUSTOM_DATA,
+                                                  REPO_LABEL_PROJECTS);
+    if (!element.eoo())
+    {
+        std::vector<mongo::BSONElement> array = element.Array();
+        for (unsigned int i = 0; i < array.size(); ++i)
+        {
+            if (array[i].type() == mongo::BSONType::Object)
+            {
+                mongo::BSONObj obj = array[i].embeddedObject();
+                if (obj.hasField(REPO_LABEL_OWNER) && obj.hasField(REPO_LABEL_PROJECT))
+                {
+                    std::string owner = obj.getField(REPO_LABEL_OWNER).String();
+                    std::string project = obj.getField(REPO_LABEL_PROJECT).String();
+                    projects.push_back(std::make_pair(owner, project));
+                }
+            }
+        }
+    }
+    return projects;
 }

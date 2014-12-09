@@ -23,5 +23,5 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
 else:unix: LIBS += -L$$PWD/submodules/mongo-cxx-driver/lib -lmongoclient
 
-INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/include
-DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/lib
+INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/src
+DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/src
