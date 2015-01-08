@@ -42,9 +42,12 @@ namespace core {
 #define REPO_LABEL_MONGODB_CR           "MONGODB-CR"
 #define REPO_LABEL_OWNER                "account"
 #define REPO_LABEL_PASSWORD     		"pwd"
-#define REPO_LABEL_PROJECT             "project"
+#define REPO_LABEL_PROJECT              "project"
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
+#define REPO_LABEL_ROLES                "roles"
+#define REPO_LABEL_ROLE                 "role"
+#define REPO_LABEL_DB                   "db"
 
 
 class REPO_CORE_EXPORT RepoUser : public mongo::BSONObj
@@ -62,6 +65,11 @@ public :
         inline RepoUser copy() const { return RepoUser(mongo::BSONObj::copy()); }
 
         //----------------------------------------------------------------------
+
+        static std::vector<std::pair<std::string, std::string> > getArrayStringPairs(
+                const mongo::BSONElement &arrayElement,
+                const std::string &fstLabel,
+                const std::string &sndLabel);
 
         //! Returns custom data field by label if any.
         mongo::BSONElement getCustomData(const std::string &label) const
@@ -91,6 +99,9 @@ public :
 
         //! Returns all projects associated with this user as [db, project] pairs.
         std::vector<std::pair<std::string, std::string>> getProjects() const;
+
+        //! Returns all database roles associated with this user as [db, role] pairs.
+        std::vector<std::pair<std::string, std::string>> getRoles() const;
 
         //! Returns the username if any.
         inline std::string getUsername() const
