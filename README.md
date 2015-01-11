@@ -58,8 +58,6 @@ To be able to compile Assimp Tools, you also need to install [DirectX SDK](http:
 
 The following instructions explain how to compile the 3drepocore library on Yosemite.
 
-### Dependencies
-
 You will need boost, scons and cmake installed on your machine. You can get them from homebrew:
 
 ```
@@ -97,5 +95,9 @@ Generate the project, and finally run:
 ```
 make -j8
 ```
+
+### 3drepocore
+
+Finally to compile the library itself, open the build.pro project from qtcreator and build.
 
 ## Compiling on Linux
