@@ -21,7 +21,9 @@ win32:LIBS += -lws2_32
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/ -lmongoclient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/ -lmongoclientd
-else:unix: LIBS += -L$$PWD/submodules/mongo-cxx-driver/lib -lmongoclient
+else:unix:!macx: LIBS += -L$$PWD/submodules/mongo-cxx-driver/lib -lmongoclient
+else:macx: LIBS += -L$$PWD/submodules/mongo-cxx-driver/build/darwin/64/osx-version-min_10.9/use-system-boost -lmongoclient
+
 
 INCLUDEPATH += $$PWD/submodules/mongo-cxx-driver/src
 DEPENDPATH += $$PWD/submodules/mongo-cxx-driver/src

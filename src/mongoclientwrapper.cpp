@@ -512,12 +512,13 @@ std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::listAllTail
 	std::auto_ptr<mongo::DBClientCursor> cursor;
 	try {		
 					
+        mongo::BSONObj obj = fieldsToReturn(fields);
 		cursor = clientConnection.query(
 			getNamespace(database, collection), 
 			sortField.empty() ? mongo::Query() : mongo::Query().sort(sortField, sortOrder), 
 			0, 
 			skip, 
-			&(fieldsToReturn(fields))); 
+            &obj);
 		checkForError();					
 	}
 	catch (mongo::DBException& e)
@@ -565,9 +566,10 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneByUniqueID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
+        mongo::BSONObj obj = fieldsToReturn(fields);
 		appendUUID(ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
 		bson = clientConnection.findOne(getNamespace(database, collection),
-			mongo::Query(queryBuilder.obj()), &fieldsToReturn(fields));
+            mongo::Query(queryBuilder.obj()), &obj);
 	}
 	catch (mongo::DBException& e)
 	{
@@ -587,12 +589,13 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
+        mongo::BSONObj obj = fieldsToReturn(fields);
         appendUUID("shared_id", RepoTranscoderString::stringToUUID(uuid), queryBuilder);
         //----------------------------------------------------------------------
 		bson = clientConnection.findOne(
 			getNamespace(database, collection),
 			mongo::Query(queryBuilder.obj()).sort(sortField, -1), 
-			&fieldsToReturn(fields));
+            &obj);
 	}
 	catch (mongo::DBException& e)
 	{

@@ -18,3 +18,10 @@
 win32: LIBS += -LC:/local/boost_1_56_0/lib64-msvc-12.0/
 win32:INCLUDEPATH += C:/local/boost_1_56_0/
 win32:DEPENDPATH += C:/local/boost_1_56_0/
+
+macx {
+    _BOOST_PATH = /usr/local/Cellar/boost/1.56.0
+    INCLUDEPATH += "$${_BOOST_PATH}/include/"
+    LIBS += -L$${_BOOST_PATH}/lib
+    LIBS += -lboost_chrono-mt -lboost_system -lboost_filesystem
+}
