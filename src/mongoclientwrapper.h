@@ -92,6 +92,10 @@ public:
         const boost::uuids::uuid &val,
         mongo::BSONObjBuilder &builder);
 
+    //! Compares two strings.
+    static bool caseInsensitiveStringCompare(const std::string& s1, const std::string& s2);
+
+
     /*! Returns uuid representation of a given BSONElement if its binDataType is
      *  bdtUUID, empty uuid otherwise.
      */
@@ -178,8 +182,8 @@ public:
 	//
     //--------------------------------------------------------------------------
 
-	//! Returns a list of all available databases
-	std::list<std::string> getDbs();
+    //! Returns a list of all available databases, alphabetically sorted by default.
+    std::list<std::string> getDbs(bool sorted = true);
 
 	//! Returns a list of all available collections
     std::list<std::string> getCollections(const std::string &database);

@@ -14,6 +14,10 @@
 // http://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
 #pragma warning(disable : 4996) 
 
+#if defined(_WIN32) || defined(_WIN64)
+  #define strcasecmp _stricmp
+#endif
+
 //------------------------------------------------------------------------------
 const std::string repo::core::MongoClientWrapper::ID	= "_id";
 const std::string repo::core::MongoClientWrapper::UU_ID	= "uuid";
@@ -305,19 +309,29 @@ std::string repo::core::MongoClientWrapper::getUsername(
 }
 
 //------------------------------------------------------------------------------
-std::list<std::string> repo::core::MongoClientWrapper::getDbs() 
+std::list<std::string> repo::core::MongoClientWrapper::getDbs(bool sorted)
 {
 	std::list<std::string> list;
 	try 
 	{
         log("show dbs;");
 		list = clientConnection.getDatabaseNames();
+
+        if (sorted)
+            list.sort(&MongoClientWrapper::caseInsensitiveStringCompare);
 	}
 	catch (mongo::DBException& e)
 	{
         log(std::string(e.what()));
 	}
 	return list;
+}
+
+bool repo::core::MongoClientWrapper::caseInsensitiveStringCompare(
+        const std::string& s1,
+        const std::string& s2)
+{
+    return strcasecmp(s1.c_str(), s2.c_str()) <= 0;
 }
 
 //------------------------------------------------------------------------------
