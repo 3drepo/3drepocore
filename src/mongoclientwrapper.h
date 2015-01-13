@@ -41,11 +41,20 @@ class REPO_CORE_EXPORT MongoClientWrapper
 
 public:
 
+    //! "_id"
 	static const std::string ID;
 	
-	static const std::string UU_ID;
+    //! "uuid"
+    static const std::string UUID;
 
+    //! "admin"
 	static const std::string ADMIN_DATABASE;
+
+    //! Built in any database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
+    static const std::list<std::string> DATABASE_ROLES;
+
+    //! Built in admin database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
+    static const std::list<std::string> ADMIN_DATABASE_ROLES;
 
 public:
 

@@ -20,8 +20,14 @@
 
 //------------------------------------------------------------------------------
 const std::string repo::core::MongoClientWrapper::ID	= "_id";
-const std::string repo::core::MongoClientWrapper::UU_ID	= "uuid";
+const std::string repo::core::MongoClientWrapper::UUID	= "uuid";
 const std::string repo::core::MongoClientWrapper::ADMIN_DATABASE = "admin";
+const std::list<std::string> repo::core::MongoClientWrapper::DATABASE_ROLES =
+{"dbAdmin", "dbOwner", "read", "readWrite", "userAdmin"};
+const std::list<std::string> repo::core::MongoClientWrapper::ADMIN_DATABASE_ROLES =
+{"backup", "clusterAdmin", "clusterManager", "clusterMonitor", "dbAdminAnyDatabase",
+ "hostManager",  "readAnyDatabase", "readWriteAnyDatabase", "restore", "root",
+ "userAdminAnyDatabase"};
 //------------------------------------------------------------------------------
 
 repo::core::MongoClientWrapper::MongoClientWrapper()
@@ -127,8 +133,8 @@ boost::uuids::uuid repo::core::MongoClientWrapper::retrieveUUID(
     const mongo::BSONObj &obj)
 {
 	boost::uuids::uuid uuID;
-	if (obj.hasField(UU_ID.c_str()))
-		uuID = retrieveUUID(obj.getField(UU_ID));
+    if (obj.hasField(UUID.c_str()))
+        uuID = retrieveUUID(obj.getField(UUID));
 	return uuID;
 }
 
@@ -712,7 +718,7 @@ bool repo::core::MongoClientWrapper::fetchRevision(
 	for (unsigned int i = 0; i < uuids.size(); i++)
 	{
 		mongo::BSONObjBuilder builder;
-		appendUUID(UU_ID, retrieveUUID(uuids.at(i)), builder);
+        appendUUID(UUID, retrieveUUID(uuids.at(i)), builder);
 		builder.appendElements(BSON("revision"<< BSON("$in" << ancestralArray)));
 				
 		bson::bo obj = clientConnection.findOne(
