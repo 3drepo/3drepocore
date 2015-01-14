@@ -51,10 +51,10 @@ public:
 	static const std::string ADMIN_DATABASE;
 
     //! Built in any database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
-    static const std::list<std::string> DATABASE_ROLES;
+    static const std::list<std::string> ANY_DATABASE_ROLES;
 
     //! Built in admin database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
-    static const std::list<std::string> ADMIN_DATABASE_ROLES;
+    static const std::list<std::string> ADMIN_ONLY_DATABASE_ROLES;
 
 public:
 
