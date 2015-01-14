@@ -26,7 +26,7 @@ const std::list<std::string> repo::core::MongoClientWrapper::DATABASE_ROLES =
 {"dbAdmin", "dbOwner", "read", "readWrite", "userAdmin"};
 const std::list<std::string> repo::core::MongoClientWrapper::ADMIN_DATABASE_ROLES =
 {"backup", "clusterAdmin", "clusterManager", "clusterMonitor", "dbAdminAnyDatabase",
- "hostManager",  "readAnyDatabase", "readWriteAnyDatabase", "restore", "root",
+ "hostManager","readAnyDatabase", "readWriteAnyDatabase", "restore", "root",
  "userAdminAnyDatabase"};
 //------------------------------------------------------------------------------
 

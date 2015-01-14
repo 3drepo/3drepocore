@@ -114,6 +114,8 @@ public:
 
     static std::string uuidToString(const boost::uuids::uuid &);
 
+    static std::list<std::string> getAllAdminDatabaseRoles(bool sorted);
+
     //--------------------------------------------------------------------------
 	// TODO: remove
 	static int retrieveRevisionNumber(const mongo::BSONObj& obj);
