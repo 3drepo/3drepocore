@@ -268,11 +268,11 @@ protected :
 	
 	std::string type; //!< Compulsory type of this document.
 
-	boost::uuids::uuid uniqueID; //!< Compulsory unique database document identifier.
+	unsigned int api; //!< Compulsory API level of this document (used to decode).
 
 	boost::uuids::uuid sharedID; //!< Shared unique graph document identifier.
 
-	unsigned int api; //!< Compulsory API level of this document (used to decode).
+	boost::uuids::uuid uniqueID; //!< Compulsory unique database document identifier.
 
 	std::string name; //!< Optional name of this document.
 

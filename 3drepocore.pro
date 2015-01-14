@@ -36,6 +36,7 @@ win32:DEFINES += _WIN32
 unix {
     target.path = /usr/lib
     INSTALLS += target
+    LIBS += -lboost_system -lboost_thread -lboost_filesystem
 }
 
 HEADERS +=  src/repocore.h\

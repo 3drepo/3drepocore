@@ -227,6 +227,8 @@ public :
 
 protected :
 
+    std::vector<aiVector3t<float> > *vertices; //!< Vertices of this mesh.
+
 	//! Faces of the mesh. Each face points to several vertices by the indices.
 	std::vector<aiFace> * faces; 
 
@@ -235,8 +237,6 @@ protected :
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
     std::vector<aiVector3t<float> > *normals;
-
-    std::vector<aiVector3t<float> > *vertices; //!< Vertices of this mesh.
 
 	//! 2D outline of this mesh.
 	/*!

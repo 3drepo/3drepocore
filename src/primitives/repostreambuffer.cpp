@@ -21,8 +21,8 @@ repo::core::RepoStreamBuffer::RepoStreamBuffer(
         RepoAbstractListener *interceptor,
         std::ostream &stream)
     : listener(interceptor)
-    , originalStream(stream)
     , originalBuffer(0)
+    , originalStream(stream)
     , redirectStream(0)
 {
     originalBuffer = originalStream.rdbuf(this);

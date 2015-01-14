@@ -277,11 +277,14 @@ T repo::core::RepoVertex::distancePointToTriangleSquared(
     }
 
     //mClosestPoint0 = pointP;
-    aiVector3t<T> mClosestPoint1 = trianglePointA + s*edge0 + t*edge1;
-	aiVector3t<T> mTriangleBary;
-    mTriangleBary.y = s;
-    mTriangleBary.z = t;
-    mTriangleBary.x = (T)1 - s - t;
+    // This code from the original source isn't needed in this case because
+    // we're just returning sqr(distance) rather than the parameters of the
+    // triangle that's been chosen.
+//    aiVector3t<T> mClosestPoint1 = trianglePointA + s*edge0 + t*edge1;
+//    aiVector3t<T> mTriangleBary;
+//    mTriangleBary.y = s;
+//    mTriangleBary.z = t;
+//    mTriangleBary.x = (T)1 - s - t;
     return sqrDistance;
 }
 
