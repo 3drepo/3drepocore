@@ -41,11 +41,20 @@ class REPO_CORE_EXPORT MongoClientWrapper
 
 public:
 
+    //! "_id"
 	static const std::string ID;
 	
-	static const std::string UU_ID;
+    //! "uuid"
+    static const std::string UUID;
 
+    //! "admin"
 	static const std::string ADMIN_DATABASE;
+
+    //! Built in any database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
+    static const std::list<std::string> ANY_DATABASE_ROLES;
+
+    //! Built in admin database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
+    static const std::list<std::string> ADMIN_ONLY_DATABASE_ROLES;
 
 public:
 
@@ -92,6 +101,10 @@ public:
         const boost::uuids::uuid &val,
         mongo::BSONObjBuilder &builder);
 
+    //! Compares two strings.
+    static bool caseInsensitiveStringCompare(const std::string& s1, const std::string& s2);
+
+
     /*! Returns uuid representation of a given BSONElement if its binDataType is
      *  bdtUUID, empty uuid otherwise.
      */
@@ -100,6 +113,8 @@ public:
     static boost::uuids::uuid retrieveUUID(const mongo::BSONObj &obj);
 
     static std::string uuidToString(const boost::uuids::uuid &);
+
+    static std::list<std::string> getAllAdminDatabaseRoles(bool sorted);
 
     //--------------------------------------------------------------------------
 	// TODO: remove
@@ -178,8 +193,8 @@ public:
 	//
     //--------------------------------------------------------------------------
 
-	//! Returns a list of all available databases
-	std::list<std::string> getDbs();
+    //! Returns a list of all available databases, alphabetically sorted by default.
+    std::list<std::string> getDbs(bool sorted = true);
 
 	//! Returns a list of all available collections
     std::list<std::string> getCollections(const std::string &database);

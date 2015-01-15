@@ -14,10 +14,20 @@
 // http://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
 #pragma warning(disable : 4996) 
 
+#if defined(_WIN32) || defined(_WIN64)
+  #define strcasecmp _stricmp
+#endif
+
 //------------------------------------------------------------------------------
 const std::string repo::core::MongoClientWrapper::ID	= "_id";
-const std::string repo::core::MongoClientWrapper::UU_ID	= "uuid";
+const std::string repo::core::MongoClientWrapper::UUID	= "uuid";
 const std::string repo::core::MongoClientWrapper::ADMIN_DATABASE = "admin";
+const std::list<std::string> repo::core::MongoClientWrapper::ANY_DATABASE_ROLES =
+{"dbAdmin", "dbOwner", "read", "readWrite", "userAdmin"};
+const std::list<std::string> repo::core::MongoClientWrapper::ADMIN_ONLY_DATABASE_ROLES =
+{"backup", "clusterAdmin", "clusterManager", "clusterMonitor", "dbAdminAnyDatabase",
+ "hostManager","readAnyDatabase", "readWriteAnyDatabase", "restore", "root",
+ "userAdminAnyDatabase"};
 //------------------------------------------------------------------------------
 
 repo::core::MongoClientWrapper::MongoClientWrapper()
@@ -123,8 +133,8 @@ boost::uuids::uuid repo::core::MongoClientWrapper::retrieveUUID(
     const mongo::BSONObj &obj)
 {
 	boost::uuids::uuid uuID;
-	if (obj.hasField(UU_ID.c_str()))
-		uuID = retrieveUUID(obj.getField(UU_ID));
+    if (obj.hasField(UUID.c_str()))
+        uuID = retrieveUUID(obj.getField(UUID));
 	return uuID;
 }
 
@@ -305,19 +315,29 @@ std::string repo::core::MongoClientWrapper::getUsername(
 }
 
 //------------------------------------------------------------------------------
-std::list<std::string> repo::core::MongoClientWrapper::getDbs() 
+std::list<std::string> repo::core::MongoClientWrapper::getDbs(bool sorted)
 {
 	std::list<std::string> list;
 	try 
 	{
         log("show dbs;");
 		list = clientConnection.getDatabaseNames();
+
+        if (sorted)
+            list.sort(&MongoClientWrapper::caseInsensitiveStringCompare);
 	}
 	catch (mongo::DBException& e)
 	{
         log(std::string(e.what()));
 	}
 	return list;
+}
+
+bool repo::core::MongoClientWrapper::caseInsensitiveStringCompare(
+        const std::string& s1,
+        const std::string& s2)
+{
+    return strcasecmp(s1.c_str(), s2.c_str()) <= 0;
 }
 
 //------------------------------------------------------------------------------
@@ -512,12 +532,13 @@ std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::listAllTail
 	std::auto_ptr<mongo::DBClientCursor> cursor;
 	try {		
 					
+        mongo::BSONObj obj = fieldsToReturn(fields);
 		cursor = clientConnection.query(
 			getNamespace(database, collection), 
 			sortField.empty() ? mongo::Query() : mongo::Query().sort(sortField, sortOrder), 
 			0, 
 			skip, 
-			&(fieldsToReturn(fields))); 
+            &obj);
 		checkForError();					
 	}
 	catch (mongo::DBException& e)
@@ -565,9 +586,10 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneByUniqueID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
+        mongo::BSONObj obj = fieldsToReturn(fields);
 		appendUUID(ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
 		bson = clientConnection.findOne(getNamespace(database, collection),
-			mongo::Query(queryBuilder.obj()), &fieldsToReturn(fields));
+            mongo::Query(queryBuilder.obj()), &obj);
 	}
 	catch (mongo::DBException& e)
 	{
@@ -587,12 +609,13 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	try
 	{	
 		mongo::BSONObjBuilder queryBuilder;
+        mongo::BSONObj obj = fieldsToReturn(fields);
         appendUUID("shared_id", RepoTranscoderString::stringToUUID(uuid), queryBuilder);
         //----------------------------------------------------------------------
 		bson = clientConnection.findOne(
 			getNamespace(database, collection),
 			mongo::Query(queryBuilder.obj()).sort(sortField, -1), 
-			&fieldsToReturn(fields));
+            &obj);
 	}
 	catch (mongo::DBException& e)
 	{
@@ -695,7 +718,7 @@ bool repo::core::MongoClientWrapper::fetchRevision(
 	for (unsigned int i = 0; i < uuids.size(); i++)
 	{
 		mongo::BSONObjBuilder builder;
-		appendUUID(UU_ID, retrieveUUID(uuids.at(i)), builder);
+        appendUUID(UUID, retrieveUUID(uuids.at(i)), builder);
 		builder.appendElements(BSON("revision"<< BSON("$in" << ancestralArray)));
 				
 		bson::bo obj = clientConnection.findOne(

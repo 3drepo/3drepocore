@@ -75,7 +75,7 @@ public :
      */
     RepoNodeMetadata(const mongo::BSONObj &obj);
 
-	RepoNodeMetadata::RepoNodeMetadata(
+    RepoNodeMetadata(
         const mongo::BSONObj &metadata,
         const string &name);
 

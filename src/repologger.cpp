@@ -20,7 +20,7 @@
 #include <ctime>
 #include <stdio.h>
 //------------------------------------------------------------------------------
-#ifdef _WIN32 || _WIN64
+#if defined(_WIN32) || defined(_WIN64)
 #   include <direct.h>
 #   define getcwd _getcwd
 #   define PATH_SEPARATOR "\\"

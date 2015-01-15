@@ -28,6 +28,7 @@ QT  -= core gui
 TEMPLATE = lib
 
 CONFIG += build_all #debug_and_release
+CONFIG += c++11
 
 DEFINES += REPO_CORE_LIBRARY
 win32:DEFINES += _WIN32
@@ -55,12 +56,12 @@ HEADERS +=  src/repocore.h\
             src/graph/repo_node_metadata.h \
             src/graph/repo_node_texture.h \
             src/graph/repo_node_transformation.h \
+            src/primitives/repo_user.h \
             src/primitives/repo_vertex.h \
             src/primitives/repostreambuffer.h \
             src/primitives/repoabstractlistener.h \
             src/primitives/repoabstractnotifier.h \
             src/primitives/reposeverity.h \
-            src/primitives/repo_user.h \
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
@@ -82,12 +83,12 @@ SOURCES +=  src/repocore.cpp \
             src/graph/repo_node_metadata.cpp \
             src/graph/repo_node_texture.cpp \
             src/graph/repo_node_transformation.cpp \
+            src/primitives/repo_user.cpp \
             src/primitives/repo_vertex.cpp \
             src/primitives/repostreambuffer.cpp \
             src/primitives/repoabstractlistener.cpp \
             src/primitives/repoabstractnotifier.cpp \
             src/primitives/reposeverity.cpp \
-            src/primitives/repo_user.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
             src/compute/render.cpp \

@@ -20,3 +20,6 @@ unix:QMAKE_CXXFLAGS += -fpermissive -std=c++11
 unix:QMAKE_CXXFLAGS_DEBUG -= -O1
 unix:QMAKE_CXXFLAGS_DEBUG += -O0
 
+macx{
+     CONFIG += c++11
+}

@@ -54,5 +54,50 @@ See also [http://assimp.sourceforge.net/lib_html/cmake_build.html](http://assimp
 
 To be able to compile Assimp Tools, you also need to install [DirectX SDK](http://www.microsoft.com/en-gb/download/details.aspx?id=6812). If you have Microsoft Visual C++ 2010 Redistributable, make sure to uninstall it from Programs and Features first.
 
+## Compiling on Mac
+
+The following instructions explain how to compile the 3drepocore library on Yosemite.
+
+You will need boost, scons and cmake installed on your machine. You can get them from homebrew:
+
+```
+brew install boost
+brew install scons
+brew install cmake
+```
+
+### MongoDB
+
+To compile MongoDB, run the following command:
+
+```
+scons -j2 --full --64 --mute --sharedclient --osx-version-min=10.9 --use-system-boost install-mongoclient
+```
+
+### Assimp
+
+Assimp uses cmake. Make a folder named **build** at the root of the assimp submodule directly. Then, run the following commands:
+
+```
+cd build
+ccmake ..
+```
+
+Choose the following options:
+
+```
+ASSIMP_ENABLE_BOOST_WORKAROUND -> off
+ASSIMP_BUILD_TESTS -> off
+```
+
+Generate the project, and finally run:
+
+```
+make -j8
+```
+
+### 3drepocore
+
+Finally to compile the library itself, open the build.pro project from qtcreator and build.
 
 ## Compiling on Linux
