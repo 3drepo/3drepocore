@@ -22,6 +22,7 @@
 const std::string repo::core::MongoClientWrapper::ID	= "_id";
 const std::string repo::core::MongoClientWrapper::UUID	= "uuid";
 const std::string repo::core::MongoClientWrapper::ADMIN_DATABASE = "admin";
+const std::string repo::core::MongoClientWrapper::SYSTEM_ROLES_COLLECTION = "system.roles";
 const std::list<std::string> repo::core::MongoClientWrapper::ANY_DATABASE_ROLES =
 {"dbAdmin", "dbOwner", "read", "readWrite", "userAdmin"};
 const std::list<std::string> repo::core::MongoClientWrapper::ADMIN_ONLY_DATABASE_ROLES =

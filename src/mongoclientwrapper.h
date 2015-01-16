@@ -50,6 +50,9 @@ public:
     //! "admin"
 	static const std::string ADMIN_DATABASE;
 
+    //! "system.roles"
+    static const std::string SYSTEM_ROLES_COLLECTION;
+
     //! Built in any database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
     static const std::list<std::string> ANY_DATABASE_ROLES;
 
@@ -113,8 +116,6 @@ public:
     static boost::uuids::uuid retrieveUUID(const mongo::BSONObj &obj);
 
     static std::string uuidToString(const boost::uuids::uuid &);
-
-    static std::list<std::string> getAllAdminDatabaseRoles(bool sorted);
 
     //--------------------------------------------------------------------------
 	// TODO: remove
@@ -222,6 +223,7 @@ public:
      * (db.collection)
      */
     long long getCollectionSize(const std::string &ns);
+
 
 	//! Returns a collection name from namespace (db.collection)
     std::string nsGetCollection(const std::string &ns);
