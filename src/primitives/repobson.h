@@ -47,8 +47,6 @@ public:
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }
 
-    //--------------------------------------------------------------------------
-
     //! Given an array, returns a vector of pairs stored as given labels if any.
     static std::vector<std::pair<std::string, std::string> > getArrayStringPairs(
             const mongo::BSONElement &arrayElement,

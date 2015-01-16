@@ -46,8 +46,6 @@ namespace core {
 #define REPO_LABEL_PROJECT              "project"
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
-#define REPO_LABEL_ROLES                "roles"
-#define REPO_LABEL_ROLE                 "role"
 #define REPO_LABEL_DB                   "db"
 
 
