@@ -189,3 +189,71 @@ void repo::core::RepoNodeCamera::toAssimp(aiCamera *camera) const
 	// Up vector
 	camera->mUp = up;
 }
+
+float repo::core::RepoNodeCamera::getAspectRatio() const
+{
+    return aspectRatio;
+}
+
+float repo::core::RepoNodeCamera::getFarClippingPlane() const
+{
+    return farClippingPlane;
+}
+
+float repo::core::RepoNodeCamera::getNearClippingPlane() const
+{
+    return nearClippingPlane;
+}
+
+float repo::core::RepoNodeCamera::getFieldOfView() const
+{
+    return fieldOfView;
+}
+
+aiVector3D repo::core::RepoNodeCamera::getLookAt() const
+{
+    return lookAt;
+}
+
+aiVector3D repo::core::RepoNodeCamera::getPosition() const
+{
+    return position;
+}
+
+aiVector3D repo::core::RepoNodeCamera::getUp() const
+{
+    return up;
+}
+
+aiMatrix4x4 repo::core::RepoNodeCamera::getCameraMatrix () const
+{
+    aiMatrix4x4 out;
+
+    /** todo: test ... should work, but i'm not absolutely sure */
+
+    /** We don't know whether these vectors are already normalized ...*/
+    aiVector3D zaxis = lookAt;     zaxis.Normalize();
+    aiVector3D yaxis = up;         yaxis.Normalize();
+    aiVector3D xaxis = up^lookAt;  xaxis.Normalize();
+
+    out.a4 = -(xaxis * position);
+    out.b4 = -(yaxis * position);
+    out.c4 = -(zaxis * position);
+
+    out.a1 = xaxis.x;
+    out.a2 = xaxis.y;
+    out.a3 = xaxis.z;
+
+    out.b1 = yaxis.x;
+    out.b2 = yaxis.y;
+    out.b3 = yaxis.z;
+
+    out.c1 = zaxis.x;
+    out.c2 = zaxis.y;
+    out.c3 = zaxis.z;
+
+    out.d1 = out.d2 = out.d3 = 0.f;
+    out.d4 = 1.f;
+
+    return out;
+}

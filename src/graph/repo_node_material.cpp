@@ -342,3 +342,99 @@ void repo::core::RepoNodeMaterial::toAssimp(
 		}
 	}
 }
+
+bool repo::core::RepoNodeMaterial::hasAmbient() const
+{
+    return ambient != NULL;
+}
+
+bool repo::core::RepoNodeMaterial::hasDiffuse() const
+{
+    return diffuse != NULL;
+}
+
+bool repo::core::RepoNodeMaterial::hasEmissive() const
+{
+    return emissive != NULL;
+}
+
+bool repo::core::RepoNodeMaterial::hasSpecular() const
+{
+    return specular != NULL;
+}
+
+bool repo::core::RepoNodeMaterial::hasOpacity() const
+{
+    return opacity == opacity;
+}
+
+bool repo::core::RepoNodeMaterial::hasShininess() const
+{
+    return shininess == shininess;
+}
+
+bool repo::core::RepoNodeMaterial::hasShininessStrength() const
+{
+    return shininessStrength == shininessStrength;
+}
+
+aiColor3D repo::core::RepoNodeMaterial::getAmbient() const
+{
+    if(ambient){
+        return *ambient;
+    }
+    aiColor3D dummy;
+    return dummy;
+}
+
+aiColor3D repo::core::RepoNodeMaterial::getDiffuse() const
+{
+    if(diffuse){
+        return *diffuse;
+    }
+    aiColor3D dummy;
+    return dummy;
+}
+
+aiColor3D repo::core::RepoNodeMaterial::getEmissive() const
+{
+    if(emissive){
+        return *emissive;
+    }
+    aiColor3D dummy;
+    return dummy;
+}
+
+aiColor3D repo::core::RepoNodeMaterial::getSpecular() const
+{
+    if(specular){
+        return *specular;
+    }
+    aiColor3D dummy;
+    return dummy;
+}
+
+bool repo::core::RepoNodeMaterial::getIsWireframe() const
+{
+    return isWireframe;
+}
+
+bool repo::core::RepoNodeMaterial::getIsTwoSided() const
+{
+    return isTwoSided;
+}
+
+float repo::core::RepoNodeMaterial::getOpacity() const
+{
+    return opacity;
+}
+
+float repo::core::RepoNodeMaterial::getShininess() const
+{
+    return shininess;
+}
+
+float repo::core::RepoNodeMaterial::getShininessStrength() const
+{
+    return shininessStrength;
+}
