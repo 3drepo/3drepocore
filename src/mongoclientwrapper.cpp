@@ -316,7 +316,7 @@ std::string repo::core::MongoClientWrapper::getUsername(
 }
 
 //------------------------------------------------------------------------------
-std::list<std::string> repo::core::MongoClientWrapper::getDbs(bool sorted)
+std::list<std::string> repo::core::MongoClientWrapper::getDatabases(bool sorted)
 {
 	std::list<std::string> list;
 	try 
@@ -334,6 +334,20 @@ std::list<std::string> repo::core::MongoClientWrapper::getDbs(bool sorted)
 	return list;
 }
 
+std::map<std::string, std::list<std::string> > repo::core::MongoClientWrapper::getDatabasesWithProjects()
+{
+    std::list<std::string> databases = getDatabases(false);
+    std::map<std::string, std::list<std::string> > mapping;
+    for (std::list<std::string>::iterator it = databases.begin();
+         it != databases.end(); ++it)
+    {
+        std::string database = *it;
+        std::list<std::string> projects = getProjects(database);
+        mapping.insert(std::make_pair(database, projects));
+    }
+    return mapping;
+}
+
 bool repo::core::MongoClientWrapper::caseInsensitiveStringCompare(
         const std::string& s1,
         const std::string& s2)
@@ -347,8 +361,31 @@ bool repo::core::MongoClientWrapper::caseInsensitiveStringCompare(
 std::list<std::string> repo::core::MongoClientWrapper::getCollections(
 	const std::string &database) 
 {
-    log("use " + database + "; show collections;");
-	return clientConnection.getCollectionNames(database);
+    std::list<std::string> collections;
+    try
+    {
+        log("use " + database + "; show collections;");
+        collections = clientConnection.getCollectionNames(database);
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }
+    return collections;
+}
+
+
+std::list<std::string> repo::core::MongoClientWrapper::getProjects(const std::string &database)
+{
+    // TODO: remove db.info from the list (anything that is not a project basically)
+    std::list<std::string> collections = getCollections(database);
+    std::list<std::string> projects;
+    for (std::list<std::string>::iterator it = collections.begin();
+         it != collections.end(); ++it)
+        projects.push_back(nsGetDB(nsGetCollection(*it)));
+    projects.sort();
+    projects.unique();
+    return projects;
 }
 
 mongo::BSONObj repo::core::MongoClientWrapper::getConnectionStatus()
@@ -428,8 +465,9 @@ long long repo::core::MongoClientWrapper::getCollectionSize(const std::string &n
 
 std::string repo::core::MongoClientWrapper::nsGetCollection(const std::string &ns)
 {
-	std::string collection;
-	if (const char *p = strchr(ns.c_str(), '.')) 
+    std::string collection = ns;
+    const char *p;
+    if (ns.find('.') != std::string::npos && (p = strchr(ns.c_str(), '.')))
 		collection = p + 1;
 	return collection;
 }
@@ -438,9 +476,10 @@ std::string repo::core::MongoClientWrapper::nsGetCollection(const std::string &n
 
 std::string repo::core::MongoClientWrapper::nsGetDB(const std::string &ns)
 {
-	std::string database;
+    std::string database = ns;
 	const char *str = ns.c_str();
-	if (const char *p = strchr(str, '.')) 
+    const char *p;
+    if (ns.find('.') != std::string::npos && (p = strchr(str, '.')))
 		database = std::string(str, p - str);
 	return database;
 }
