@@ -22,7 +22,75 @@ repo::core::RepoUser::RepoUser() : RepoBSON() {}
 
 repo::core::RepoUser::RepoUser(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
+
+repo::core::RepoUser::RepoUser(
+        const std::string &username,
+        const std::string &password)
+    : RepoBSON()
+{
+    mongo::BSONObjBuilder builder;
+    RepoTranscoderBSON::append(
+                REPO_LABEL_ID,
+                boost::uuids::random_generator()(),
+                builder);
+    builder << REPO_LABEL_USER << username;
+
+    std::set<std::string> fields;
+    mongo::BSONObj temp = builder.obj();
+    temp.getFieldNames(fields);
+
+    RepoBSON::addFields(temp, fields);
+    std::cerr << this->toString() << std::endl;
+}
+
 repo::core::RepoUser::~RepoUser() {}
+
+std::string repo::core::RepoUser::getEvalString(bool newUser) const
+{
+    std::stringstream eval;
+    if (newUser)
+    {
+        //----------------------------------------------------------------------
+        // Create new user
+        // http://docs.mongodb.org/manual/reference/method/db.createUser/
+
+        eval << "{";
+        eval << REPO_LABEL_USER << getUsername();
+        eval << REPO_LABEL_PASSWORD << getPassword(); // cleartext!
+        eval <<  "}";
+
+//    { user: "<name>",
+//      pwd: "<cleartext password>",
+//      customData: { <any information> },
+//      roles: [
+//        { role: "<role>", db: "<database>" } | "<role>",
+//        ...
+//      ]
+//    }
+
+    }
+    else
+    {
+
+        //----------------------------------------------------------------------
+        // Update existing user
+        // http://docs.mongodb.org/manual/reference/method/db.updateUser/
+//
+//    db.updateUser(
+//       "<username>",
+//       {
+//         customData : { <any information> },
+//         roles : [
+//                   { role: "<role>", db: "<database>" } | "<role>",
+//                   ...
+//                 ],
+//         pwd: "<cleartext password>"
+//        },
+//        writeConcern: { <write concern> }
+//    )
+    }
+    return eval.str();
+}
 
 std::vector<std::pair<std::string, std::string> > repo::core::RepoUser::getProjects() const
 {

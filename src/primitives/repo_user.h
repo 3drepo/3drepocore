@@ -60,11 +60,21 @@ public :
     //! Constructor from Mongo BSON objects.
     RepoUser(const mongo::BSONObj &obj);
 
+    RepoUser(const std::string &username, const std::string &password);
+
     //! Default empty destructor.
     ~RepoUser();
 
+    //--------------------------------------------------------------------------
+
     //! Returns a new full (and owned) copy of the object.
     inline RepoUser copy() const { return RepoUser(RepoBSON::copy()); }
+
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
 
     //! Returns custom data field by label if any.
     mongo::BSONElement getCustomData(const std::string &label) const
@@ -73,6 +83,9 @@ public :
     //! Returns the email if any.
     inline std::string getEmail() const
     { return getCustomData(REPO_LABEL_EMAIL).str(); }
+
+    //! Returns db.eval string to store (or update) user in the database.
+    std::string getEvalString(bool newUser = true) const;
 
     //! Returns the first name if any.
     inline std::string getFirstName() const

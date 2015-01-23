@@ -36,13 +36,16 @@ class REPO_CORE_EXPORT RepoBSON : public mongo::BSONObj
 public:
 
     //! Default empty constructor.
-    RepoBSON();
+    RepoBSON() : mongo::BSONObj() {}
 
-    //! Constructor from Mongo BSON objects.
-    RepoBSON(const mongo::BSONObj &obj);
+    //! Constructor from Mongo BSON object.
+    RepoBSON(const mongo::BSONObj &obj) : mongo::BSONObj(obj) {}
+
+    //! Constructor from Mongo BSON object builder.
+    RepoBSON(mongo::BSONObjBuilder &builder) : mongo::BSONObj(builder.obj()) {}
 
     //! Default empty destructor.
-    ~RepoBSON();
+    ~RepoBSON() {}
 
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }

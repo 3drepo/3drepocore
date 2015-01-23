@@ -18,12 +18,6 @@
 
 #include "repobson.h"
 
-repo::core::RepoBSON::RepoBSON() : mongo::BSONObj() {}
-
-repo::core::RepoBSON::RepoBSON(const mongo::BSONObj &obj) : mongo::BSONObj(obj) {}
-
-repo::core::RepoBSON::~RepoBSON() {}
-
 std::vector<std::pair<std::string, std::string> > repo::core::RepoBSON::getArrayStringPairs(
         const mongo::BSONElement &arrayElement,
         const std::string &fstLabel,

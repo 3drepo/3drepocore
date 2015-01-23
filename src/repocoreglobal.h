@@ -47,9 +47,11 @@ namespace core {
 #define REPO_SYSTEM_USERS       "system.users"      //! Users collection
 #define REPO_SYSTEM_ROLES       "system.roles"      //! Roles collection
 
+#define REPO_LABEL_ID                   "_id"
 #define REPO_LABEL_ROLES                "roles"
 #define REPO_LABEL_ROLE                 "role"
 #define REPO_LABEL_USER                 "user"
+
 
 
 //------------------------------------------------------------------------------
