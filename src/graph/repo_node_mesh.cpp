@@ -101,12 +101,15 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		uvChannels->at(0)->insert(uvChannels->at(0)->begin(), 
 		mesh->mTextureCoords[0], mesh->mTextureCoords[0] + mesh->mNumVertices); 
 	}
-	/*
 
-	if (mesh->HasVertexColors())
+    // Consider only first color set
+    if (mesh->HasVertexColors(0))
 	{
-
-	}*/
+        colors = new std::vector<aiColor4t<float>>();
+        colors->reserve(mesh->mNumVertices);
+        colors->insert(colors->begin(),
+            mesh->mColors[0], mesh->mColors[0] + mesh->mNumVertices);
+    }
 
     //--------------------------------------------------------------------------
 	// Bounding box
@@ -134,7 +137,8 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		faces(NULL), 
 		normals(NULL),
 		outline(NULL),
-		uvChannels(NULL)
+        uvChannels(NULL),
+        colors(NULL)
 {	
     //--------------------------------------------------------------------------
 	// Vertices
@@ -278,6 +282,11 @@ repo::core::RepoNodeMesh::~RepoNodeMesh()
 		uvChannels->clear();
 		uvChannels = NULL;
 	}
+
+    if(NULL != colors){
+        colors->clear();
+        delete colors;
+    }
 }
 
 
@@ -523,6 +532,14 @@ void repo::core::RepoNodeMesh::toAssimp(
 		}
 	}
 
+    //--------------------------------------------------------------------------
+    // Vertex colors
+    if(NULL != colors && 0 < colors->size())
+    {
+        aiColor4D * colorsArray = new aiColor4D[colors->size()];
+        std::copy(colors->begin(), colors->end(), colorsArray);
+        mesh->mColors[0] = colorsArray;
+    }
 
     //--------------------------------------------------------------------------
 	// Material index
