@@ -48,7 +48,10 @@ public:
     static const std::string UUID;
 
     //! "admin"
-	static const std::string ADMIN_DATABASE;
+    static const std::string ADMIN_DATABASE;
+
+    //! "system.roles"
+    static const std::string SYSTEM_ROLES_COLLECTION;
 
     //! Built in any database roles. See http://docs.mongodb.org/manual/reference/built-in-roles/
     static const std::list<std::string> ANY_DATABASE_ROLES;
@@ -113,8 +116,6 @@ public:
     static boost::uuids::uuid retrieveUUID(const mongo::BSONObj &obj);
 
     static std::string uuidToString(const boost::uuids::uuid &);
-
-    static std::list<std::string> getAllAdminDatabaseRoles(bool sorted);
 
     //--------------------------------------------------------------------------
 	// TODO: remove
@@ -194,16 +195,25 @@ public:
     //--------------------------------------------------------------------------
 
     //! Returns a list of all available databases, alphabetically sorted by default.
-    std::list<std::string> getDbs(bool sorted = true);
+    std::list<std::string> getDatabases(bool sorted = true);
 
-	//! Returns a list of all available collections
+    //! Returns a map of databases with associated projects.
+    std::map<std::string, std::list<std::string> > getDatabasesWithProjects();
+
+    /*!
+     * Returns a list of all available collections in a format "database.collection".
+     * Use mongo.nsGetCollection() to remove database from the returned string.
+     */
     std::list<std::string> getCollections(const std::string &database);
+
+    //! Returns a list of projects associated with a given database (aka company account).
+    std::list<std::string> getProjects(const std::string &database);
 	
+    //! Returns connection status on the admin database.
+    mongo::BSONObj getConnectionStatus();
+
     //! Returns connection status on a given database.
     mongo::BSONObj getConnectionStatus(const std::string &database);
-
-    //! Returns connection status on admin database.
-    mongo::BSONObj getConnectionStatus();
 
 	//! Returns stats for collection
     mongo::BSONObj getCollectionStats(
@@ -222,6 +232,7 @@ public:
      * (db.collection)
      */
     long long getCollectionSize(const std::string &ns);
+
 
 	//! Returns a collection name from namespace (db.collection)
     std::string nsGetCollection(const std::string &ns);

@@ -25,13 +25,14 @@
 #include "../conversion/repo_transcoder_string.h"
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
+#include "repobson.h"
 
 namespace repo {
 namespace core {
 
 //------------------------------------------------------------------------------
 //
-// Fields specific to metadata only
+// Fields specific to user only
 //
 //------------------------------------------------------------------------------
 #define REPO_LABEL_CREDENTIALS          "credentials"
@@ -45,72 +46,73 @@ namespace core {
 #define REPO_LABEL_PROJECT              "project"
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
-#define REPO_LABEL_ROLES                "roles"
-#define REPO_LABEL_ROLE                 "role"
 #define REPO_LABEL_DB                   "db"
 
 
-class REPO_CORE_EXPORT RepoUser : public mongo::BSONObj
+class REPO_CORE_EXPORT RepoUser : public RepoBSON
 {
 
 public :
 
-        RepoUser();
+    //! Default empty constructor.
+    RepoUser();
 
-        RepoUser(const mongo::BSONObj &obj);
+    //! Constructor from Mongo BSON objects.
+    RepoUser(const mongo::BSONObj &obj);
 
-        ~RepoUser();
+    RepoUser(const std::string &username, const std::string &password);
 
-        //! Returns a new full (and owned) copy of the object.
-        inline RepoUser copy() const { return RepoUser(mongo::BSONObj::copy()); }
+    //! Default empty destructor.
+    ~RepoUser();
 
-        //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
-        static std::vector<std::pair<std::string, std::string> > getArrayStringPairs(
-                const mongo::BSONElement &arrayElement,
-                const std::string &fstLabel,
-                const std::string &sndLabel);
+    //! Returns a new full (and owned) copy of the object.
+    inline RepoUser copy() const { return RepoUser(RepoBSON::copy()); }
 
-        //! Returns custom data field by label if any.
-        mongo::BSONElement getCustomData(const std::string &label) const
-        { return getEmbeddedElement(this, REPO_LABEL_CUSTOM_DATA, label); }
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
 
-        //! Returns the email if any.
-        inline std::string getEmail() const
-        { return getCustomData(REPO_LABEL_EMAIL).str(); }
+    //! Returns custom data field by label if any.
+    mongo::BSONElement getCustomData(const std::string &label) const
+    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CUSTOM_DATA, label); }
 
-        //! Returns an embedded element by label, EOO if not present.
-        static mongo::BSONElement getEmbeddedElement(
-                const mongo::BSONObj *obj,
-                const std::string &fstLevelLabel,
-                const std::string &sndLevelLabel);
+    //! Returns the email if any.
+    inline std::string getEmail() const
+    { return getCustomData(REPO_LABEL_EMAIL).str(); }
 
-        //! Returns the first name if any.
-        inline std::string getFirstName() const
-        { return getCustomData(REPO_LABEL_FIRST_NAME).str(); }
+    //! Returns db.eval string to store (or update) user in the database.
+    std::string getEvalString(bool newUser = true) const;
 
-        //! Returns the last name if any.
-        inline std::string getLastName() const
-        { return getCustomData(REPO_LABEL_LAST_NAME).str(); }
+    //! Returns the first name if any.
+    inline std::string getFirstName() const
+    { return getCustomData(REPO_LABEL_FIRST_NAME).str(); }
 
-        //! Returns the password if any.
-        inline std::string getPassword() const
-        { return getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
+    //! Returns the last name if any.
+    inline std::string getLastName() const
+    { return getCustomData(REPO_LABEL_LAST_NAME).str(); }
 
-        //! Returns all projects associated with this user as [db, project] pairs.
-        std::vector<std::pair<std::string, std::string>> getProjects() const;
+    //! Returns the password if any.
+    inline std::string getPassword() const
+    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
 
-        //! Returns all database roles associated with this user as [db, role] pairs.
-        std::vector<std::pair<std::string, std::string>> getRoles() const;
+    //! Returns all projects associated with this user as [db, project] pairs.
+    std::vector<std::pair<std::string, std::string> > getProjects() const;
 
-        //! Returns the username if any.
-        inline std::string getUsername() const
-        { return getField(REPO_LABEL_USER).str(); }
+    //! Returns all database roles associated with this user as [db, role] pairs.
+    std::vector<std::pair<std::string, std::string> > getRoles() const;
+
+    //! Returns the username if any.
+    inline std::string getUsername() const
+    { return getField(REPO_LABEL_USER).str(); }
 
 }; // end class
 
 } // end namespace core
 } // end namespace repo
 
-#endif // end REPO_NODE_ABSTRACT_H
+#endif // end REPO_USER_H
 

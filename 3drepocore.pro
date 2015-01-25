@@ -62,6 +62,8 @@ HEADERS +=  src/repocore.h\
             src/primitives/repoabstractlistener.h \
             src/primitives/repoabstractnotifier.h \
             src/primitives/reposeverity.h \
+            src/primitives/repobson.h \
+            src/primitives/reporole.h \
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
@@ -89,6 +91,8 @@ SOURCES +=  src/repocore.cpp \
             src/primitives/repoabstractlistener.cpp \
             src/primitives/repoabstractnotifier.cpp \
             src/primitives/reposeverity.cpp \
+            src/primitives/repobson.cpp \
+            src/primitives/reporole.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
             src/compute/render.cpp \
