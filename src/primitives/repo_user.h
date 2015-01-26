@@ -53,10 +53,14 @@ namespace core {
 // Commands
 #define REPO_COMMAND_CREATE_USER        "createUser"
 #define REPO_COMMAND_DROP_USER          "dropUser"
-
+#define REPO_COMMAND_UPDATE_USER        "updateUser"
+//------------------------------------------------------------------------------
 
 class REPO_CORE_EXPORT RepoUser : public RepoBSON
 {
+
+    //! Available user commands.
+    enum Commands { CREATE, DROP, UPDATE };
 
 public :
 
@@ -70,6 +74,9 @@ public :
     RepoUser(
             const std::string &username,
             const std::string &cleartextPassword = std::string(),
+            const std::string &firstName = std::string(),
+            const std::string &lastName = std::string(),
+            const std::string &email = std::string(),
             const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),
             const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >());
 
@@ -86,13 +93,24 @@ public :
      * be cleartext.
      * See http://docs.mongodb.org/manual/reference/command/createUser/#dbcmd.createUser
      */
-    mongo::BSONObj createUser() const;
+    RepoBSON createUser() const
+    { return this->command(CREATE); }
 
     /*!
      * Returns a db.runCommand BSON to drop a user from a database.
      * See http://docs.mongodb.org/manual/reference/command/dropUser/#dbcmd.dropUser
      */
-    mongo::BSONObj dropUser() const;
+    RepoBSON dropUser() const
+    { return this->command(DROP); }
+
+    /*!
+     * Returns a db.runCommand BSON to update an existing user in a database.
+     * See http://docs.mongodb.org/manual/reference/command/updateUser/#dbcmd.updateUser
+     * \brief updateUser
+     * \return
+     */
+    RepoBSON updateUser() const
+    { return this->command(UPDATE); }
 
     //--------------------------------------------------------------------------
     //
@@ -139,6 +157,15 @@ public :
     //! Returns the username if any.
     inline std::string getUsername() const
     { return getField(REPO_LABEL_USER).str(); }
+
+private :
+
+    /*!
+     * Returns a db.runCommand BSON representation of this object with specific
+     * command label for the user.
+     */
+    RepoBSON command(const Commands &command) const;
+
 
 }; // end class
 

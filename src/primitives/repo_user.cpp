@@ -26,6 +26,9 @@ repo::core::RepoUser::RepoUser(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 repo::core::RepoUser::RepoUser(
         const std::string &username,
         const std::string &cleartextPassword,
+        const string &firstName,
+        const string &lastName,
+        const string &email,
         const std::list<std::pair<std::string, std::string> > &projects,
         const std::list<std::pair<std::string, std::string> > &roles)
     : RepoBSON()
@@ -46,8 +49,29 @@ repo::core::RepoUser::RepoUser(
     builder << REPO_LABEL_CREDENTIALS << credentialsBuilder.obj();
 
     //--------------------------------------------------------------------------
-    // Projects (part of customData subobject)
+    //
+    // Custom Data
+    //
+    //--------------------------------------------------------------------------
     mongo::BSONObjBuilder customDatabBuilder;
+
+    //--------------------------------------------------------------------------
+    // First name
+    if (!firstName.empty())
+        customDatabBuilder << REPO_LABEL_FIRST_NAME << firstName;
+
+    //--------------------------------------------------------------------------
+    // Last name
+    if (!lastName.empty())
+        customDatabBuilder << REPO_LABEL_LAST_NAME << lastName;
+
+    //--------------------------------------------------------------------------
+    // Email
+    if (!email.empty())
+        customDatabBuilder << REPO_LABEL_EMAIL << email;
+
+    //--------------------------------------------------------------------------
+    // Custom Data.Projects : []
     mongo::BSONArrayBuilder projectsBuilder;
     for (std::list<std::pair<std::string, std::string> >::const_iterator i = projects.begin();
          i != projects.end(); ++i)
@@ -60,6 +84,27 @@ repo::core::RepoUser::RepoUser(
         projectsBuilder.append(projectBuilder.obj());
     }
     customDatabBuilder.appendArray(REPO_LABEL_PROJECTS, projectsBuilder.arr());
+
+
+
+    //--------------------------------------------------------------------------
+    // Avatar
+//    builder.appendBinData(
+//        label, (data->size() * sizeof(T)), mongo::BinDataGeneral,
+//        (char *) &(data->at(0)) );
+
+
+    // Vector is now guaranteed to be continuous block of memory, hence it is
+    // used as a convenient way of keep track of the number of bytes pointed
+    // by the data pointer.
+//	this->data = new std::vector<char>(byteCount);
+//    if (!this->data)
+//        std::cerr << "Memory allocation for texture " << name << " failed." << std::endl;
+//    else
+//        memcpy(&(this->data->at(0)), data, byteCount);
+
+
+
     builder << REPO_LABEL_CUSTOM_DATA << customDatabBuilder.obj();
 
 
@@ -84,44 +129,9 @@ repo::core::RepoUser::RepoUser(
     mongo::BSONObj temp = builder.obj();
     temp.getFieldNames(fields);        
     this->addFields(temp, fields);
-
-    std::cerr << this->toString() << std::endl;
 }
 
 repo::core::RepoUser::~RepoUser() {}
-
-mongo::BSONObj repo::core::RepoUser::createUser() const
-{ 
-    mongo::BSONObjBuilder builder;
-
-    //--------------------------------------------------------------------------
-    // Username
-    builder << REPO_COMMAND_CREATE_USER << getUsername();
-
-    //--------------------------------------------------------------------------
-    // Password
-    std::string cleartextPassword = getCleartextPassword();
-    if (!cleartextPassword.empty())
-        builder << REPO_LABEL_PWD << getCleartextPassword();
-
-    //--------------------------------------------------------------------------
-    // Projects
-    builder << REPO_LABEL_CUSTOM_DATA << getCustomDataBSON();
-
-    //--------------------------------------------------------------------------
-    // Roles
-    builder.appendArray(REPO_LABEL_ROLES, getRolesBSON());
-
-
-    return builder.obj();
-}
-
-mongo::BSONObj repo::core::RepoUser::dropUser() const
-{
-    mongo::BSONObjBuilder builder;
-    builder << REPO_COMMAND_DROP_USER << getUsername();
-    return builder.obj();
-}
 
 std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getProjectsList() const
 {
@@ -134,6 +144,50 @@ std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getProject
 std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getRolesList() const
 {
     return RepoBSON::getArrayStringPairs(getField(REPO_LABEL_ROLES), REPO_LABEL_DB, REPO_LABEL_ROLE);
+}
+
+//------------------------------------------------------------------------------
+//
+// Private
+//
+//------------------------------------------------------------------------------
+
+repo::core::RepoBSON repo::core::RepoUser::command(const Commands &command) const
+{
+    mongo::BSONObjBuilder builder;
+
+    //--------------------------------------------------------------------------
+    // Command : Username
+    switch(command)
+    {
+    case CREATE:
+        builder << REPO_COMMAND_CREATE_USER << getUsername();
+        break;
+    case UPDATE:
+        builder << REPO_COMMAND_UPDATE_USER << getUsername();
+        break;
+    case DROP :
+        builder << REPO_COMMAND_DROP_USER << getUsername();
+        break;
+    }
+
+    if (DROP != command)
+    {
+        //----------------------------------------------------------------------
+        // Password
+        std::string cleartextPassword = getCleartextPassword();
+        if (!cleartextPassword.empty())
+            builder << REPO_LABEL_PWD << getCleartextPassword();
+
+        //----------------------------------------------------------------------
+        // Projects
+        builder << REPO_LABEL_CUSTOM_DATA << getCustomDataBSON();
+
+        //----------------------------------------------------------------------
+        // Roles
+        builder.appendArray(REPO_LABEL_ROLES, getRolesBSON());
+    }
+    return RepoBSON(builder.obj());
 }
 
 
