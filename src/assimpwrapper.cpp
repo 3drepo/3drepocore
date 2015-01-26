@@ -66,8 +66,8 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 	// post processor
 	// http://assimp.sourceforge.net/lib_html/ai_post_process_8h.html#64795260b95f5a4b3f3dc1be4f52e410
 	
-    AI_SLM_DEFAULT_MAX_VERTICES; // 1,000,000 by default
-    AI_SLM_DEFAULT_MAX_TRIANGLES; // 1,000,000 by default
+    // AI_SLM_DEFAULT_MAX_VERTICES; // 1,000,000 by default
+    // AI_SLM_DEFAULT_MAX_TRIANGLES; // 1,000,000 by default
 
 	//-------------------------------------------------------------------------
     // In OpenGL ES 2.0 and WebGL, vertices are 16-bit
@@ -157,6 +157,11 @@ bool repo::core::AssimpWrapper::exportModel(
             break;
         case aiReturn_OUTOFMEMORY :
             std::cerr << "Export failed due to running out of memory." << std::endl;
+            break;
+        case aiReturn_SUCCESS :
+            break;
+        case _AI_ENFORCE_ENUM_SIZE :
+            // Silently handle assimp's bogus enum-size-enforcing value.
             break;
     }
     return (ret == aiReturn_SUCCESS);

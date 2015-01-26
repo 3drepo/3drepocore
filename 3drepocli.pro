@@ -33,7 +33,7 @@ QT += core gui # TODO: remove Qt dependencies, ie it should be -=
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/release/ -l3drepocore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/debug/ -l3drepocore
-else:unix: LIBS += -L$$OUT_PWD/ -l3drepocore
+else:unix: LIBS += -L$$OUT_PWD/ -lboost_system -l3drepocore
 
 INCLUDEPATH += $$PWD/src
 DEPENDPATH += $$PWD/src

@@ -11,10 +11,10 @@
 #include <cstring>
 #include <cstdint>
 
-// http://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
-#pragma warning(disable : 4996) 
-
 #if defined(_WIN32) || defined(_WIN64)
+  // http://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
+  #pragma warning(disable : 4996)
+
   #define strcasecmp _stricmp
 #endif
 
@@ -152,7 +152,7 @@ std::string repo::core::MongoClientWrapper::uuidToString(
 int repo::core::MongoClientWrapper::retrieveRevisionNumber(
     const mongo::BSONObj &obj)
 {
-	int revision;
+	int revision = 0;
 	if (obj.hasField("revision"))
 	{
 		if (obj.getField("revision").type() == mongo::NumberInt)
@@ -709,7 +709,7 @@ bool repo::core::MongoClientWrapper::fetchEntireCollection(
 	std::vector<mongo::BSONObj> &ret)
 {		
 	// TODO: fix this to make sure infinite loops cannot occur if someone deletes something from db in the meantime.
-	int retrieved = 0;
+	unsigned long long retrieved = 0;
 	unsigned long long count = countItemsInCollection(database, collection);	
 	while (count > retrieved)
 	{
@@ -734,6 +734,10 @@ void repo::core::MongoClientWrapper::getRevision(
 {	
 	// this works fine, however, the entire query is returned as single BSON object
 	// which is limited to 16MB
+
+    // TODO: Use these parameters :)
+    (void)revNumber;
+    (void)ancestor;
 
 	// TODO fix ancestral array [0,1]!!!
 	std::stringstream sstr;
@@ -904,7 +908,7 @@ void repo::core::MongoClientWrapper::insertRecords(
 	bool inReverse)
 {
 	if (inReverse)
-		for (unsigned int i = objs.size() - 1; i >= 0; --i)
+		for (int i = objs.size() - 1; i >= 0; --i)
 			insertRecord(database, collection, objs[i]);	
 	else 
 		for (unsigned int i = 0; i < objs.size(); ++i)

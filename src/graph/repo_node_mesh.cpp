@@ -602,7 +602,7 @@ double repo::core::RepoNodeMesh::getFacesBoundaryLength(
 {
 	double boundaryLength = 0;
 	const aiFace & faceA = faces->at(faceIndexA);
-	const aiFace & faceB = faces->at(faceIndexA);
+	const aiFace & faceB = faces->at(faceIndexB);
 		
 	std::vector<repo::core::RepoVertex> commonVertices;
 	for (unsigned int i = 0; i < faceA.mNumIndices; ++i)

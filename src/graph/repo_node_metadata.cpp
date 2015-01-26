@@ -24,7 +24,7 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
 {
 	mongo::BSONObjBuilder builder;
 
-	for(int i = 0; i < metaIn->mNumProperties; i++)
+	for(unsigned int i = 0; i < metaIn->mNumProperties; i++)
 	{
 		std::string key(metaIn->mKeys[i].C_Str());
 		aiMetadataEntry &currentValue = metaIn->mValues[i];
@@ -64,6 +64,10 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
 						*(static_cast<aiVector3D *>(currentValue.mData)),
 						builder);
 				break;
+            case FORCE_32BIT:
+                // Gracefully (but silently) handle the bogus enum used by
+                // assimp to ensure the enum is 32-bits.
+                break;
 		}
 	}
 
