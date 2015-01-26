@@ -41,12 +41,18 @@ namespace core {
 #define REPO_LABEL_FIRST_NAME     		"firstName"
 #define REPO_LABEL_LAST_NAME     		"lastName"
 #define REPO_LABEL_MONGODB_CR           "MONGODB-CR"
+#define REPO_LABEL_CLEARTEXT            "cleartext"
 #define REPO_LABEL_OWNER                "account"
-#define REPO_LABEL_PASSWORD     		"pwd"
+#define REPO_LABEL_PWD           		"pwd"
 #define REPO_LABEL_PROJECT              "project"
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
 #define REPO_LABEL_DB                   "db"
+
+//------------------------------------------------------------------------------
+// Commands
+#define REPO_COMMAND_CREATE_USER        "createUser"
+#define REPO_COMMAND_DROP_USER          "dropUser"
 
 
 class REPO_CORE_EXPORT RepoUser : public RepoBSON
@@ -60,7 +66,12 @@ public :
     //! Constructor from Mongo BSON objects.
     RepoUser(const mongo::BSONObj &obj);
 
-    RepoUser(const std::string &username, const std::string &password);
+    //! Constructor from basic fields.
+    RepoUser(
+            const std::string &username,
+            const std::string &cleartextPassword = std::string(),
+            const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),
+            const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >());
 
     //! Default empty destructor.
     ~RepoUser();
@@ -70,40 +81,60 @@ public :
     //! Returns a new full (and owned) copy of the object.
     inline RepoUser copy() const { return RepoUser(RepoBSON::copy()); }
 
+    /*!
+     * Returns db.runCommand BSON to store user in a database. Password needs to
+     * be cleartext.
+     * See http://docs.mongodb.org/manual/reference/command/createUser/#dbcmd.createUser
+     */
+    mongo::BSONObj createUser() const;
+
+    /*!
+     * Returns a db.runCommand BSON to drop a user from a database.
+     * See http://docs.mongodb.org/manual/reference/command/dropUser/#dbcmd.dropUser
+     */
+    mongo::BSONObj dropUser() const;
+
     //--------------------------------------------------------------------------
     //
     // Getters
     //
     //--------------------------------------------------------------------------
 
+    mongo::BSONObj getCustomDataBSON() const
+    { return this->getObjectField(REPO_LABEL_CUSTOM_DATA); }
+
     //! Returns custom data field by label if any.
-    mongo::BSONElement getCustomData(const std::string &label) const
+    mongo::BSONElement getCustomDataField(const std::string &label) const
     { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CUSTOM_DATA, label); }
+
+    //! Returns the cleartext password if any.
+    inline std::string getCleartextPassword() const
+    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_CLEARTEXT).str(); }
 
     //! Returns the email if any.
     inline std::string getEmail() const
-    { return getCustomData(REPO_LABEL_EMAIL).str(); }
-
-    //! Returns db.eval string to store (or update) user in the database.
-    std::string getEvalString(bool newUser = true) const;
+    { return getCustomDataField(REPO_LABEL_EMAIL).str(); }
 
     //! Returns the first name if any.
     inline std::string getFirstName() const
-    { return getCustomData(REPO_LABEL_FIRST_NAME).str(); }
+    { return getCustomDataField(REPO_LABEL_FIRST_NAME).str(); }
 
     //! Returns the last name if any.
     inline std::string getLastName() const
-    { return getCustomData(REPO_LABEL_LAST_NAME).str(); }
+    { return getCustomDataField(REPO_LABEL_LAST_NAME).str(); }
 
-    //! Returns the password if any.
+    //! Returns the MONGODB-CR (default) password if any.
     inline std::string getPassword() const
     { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
 
     //! Returns all projects associated with this user as [db, project] pairs.
-    std::vector<std::pair<std::string, std::string> > getProjects() const;
+    std::list<std::pair<std::string, std::string> > getProjectsList() const;
 
     //! Returns all database roles associated with this user as [db, role] pairs.
-    std::vector<std::pair<std::string, std::string> > getRoles() const;
+    std::list<std::pair<std::string, std::string> > getRolesList() const;
+
+    mongo::BSONObj getRolesBSON() const
+    { return this->getObjectField(REPO_LABEL_ROLES); }
 
     //! Returns the username if any.
     inline std::string getUsername() const

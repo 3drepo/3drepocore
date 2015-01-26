@@ -597,7 +597,7 @@ std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::findAllByUn
 	// http://stackoverflow.com/questions/18023949/how-to-build-a-mongo-in-query-in-c
 	std::auto_ptr<mongo::DBClientCursor> cursor;
 	try 
-	{							
+    {
 		mongo::BSONObjBuilder query;
 		query << ID << BSON( "$in" << array);
 
@@ -662,6 +662,42 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
         log(std::string(e.what()));
 	}		
 	return bson;
+}
+
+
+mongo::BSONElement repo::core::MongoClientWrapper::eval(
+        const std::string &database,
+        const std::string &jscode)
+{
+    mongo::BSONElement retValue;
+    try
+    {
+        mongo::BSONObj info;
+        if (!clientConnection.eval(database, jscode, info, retValue))
+            log(info.toString());
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }
+    return retValue;
+}
+
+mongo::BSONObj repo::core::MongoClientWrapper::runCommand(
+        const std::string &database,
+        const mongo::BSONObj &cmd)
+{
+    mongo::BSONObj info;
+    try
+    {
+        if (!clientConnection.runCommand(database, cmd, info))
+            log(info.toString());
+    }
+    catch (mongo::DBException &e)
+    {
+        log(std::string(e.what()));
+    }
+    return info;
 }
 
 

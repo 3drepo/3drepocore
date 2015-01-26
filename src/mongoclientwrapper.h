@@ -226,7 +226,7 @@ public:
 	//! Returns the size of the collection in bytes as long long.
     long long getCollectionSize(
             const std::string &database,
-            const std::string  &collection);
+            const std::string &collection);
 	
     /*! Returns the size of the collection in bytes as long long from namespace
      * (db.collection)
@@ -298,6 +298,21 @@ public:
 		const std::string& uuid,
 		const std::string& sortField,
 		const std::list<std::string>& fields);
+
+    //! Run db.eval command on the specified database.
+    mongo::BSONElement eval(const std::string &database,
+            const std::string &jscode);
+
+    /*!
+     * See http://docs.mongodb.org/manual/reference/method/db.runCommand/
+     * http://docs.mongodb.org/manual/reference/command/
+     * \brief runCommand
+     * \param database
+     * \param command
+     */
+    mongo::BSONObj runCommand(
+            const std::string &database,
+            const mongo::BSONObj &command);
 
     //--------------------------------------------------------------------------
 	// Deprecated
@@ -379,9 +394,7 @@ public:
 
 	//! Returns a "username@host:port" string.
     std::string getUsernameAtHostAndPort() const
-    {
-        return clientConnection.getServerAddress();
-    }
+    { return clientConnection.getServerAddress(); }
 
     //--------------------------------------------------------------------------
 	//
@@ -420,7 +433,8 @@ private :
 	//! Host and port of the mongoDB connection.
 	mongo::HostAndPort hostAndPort;
 
-    /*! Map holding database name as key and <username, password digest> as a
+    /*!
+     * Map holding database name as key and <username, password digest> as a
      * value. User can be authenticated on any number of databases on a single
      * connection.
      */

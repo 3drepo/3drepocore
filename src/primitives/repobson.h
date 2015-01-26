@@ -50,8 +50,8 @@ public:
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }
 
-    //! Given an array, returns a vector of pairs stored as given labels if any.
-    static std::vector<std::pair<std::string, std::string> > getArrayStringPairs(
+    //! Given an array, returns a list of pairs stored as given labels if any.
+    static std::list<std::pair<std::string, std::string> > getArrayStringPairs(
             const mongo::BSONElement &arrayElement,
             const std::string &fstLabel,
             const std::string &sndLabel);
@@ -61,6 +61,9 @@ public:
             const mongo::BSONObj *obj,
             const std::string &fstLevelLabel,
             const std::string &sndLevelLabel);
+
+    //! Returns true if it is valid and not empty, false otherwise.
+    bool isOk() const { return isValid() && !isEmpty(); }
 
 }; // end class
 

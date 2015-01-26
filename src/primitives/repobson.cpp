@@ -18,12 +18,12 @@
 
 #include "repobson.h"
 
-std::vector<std::pair<std::string, std::string> > repo::core::RepoBSON::getArrayStringPairs(
+std::list<std::pair<std::string, std::string> > repo::core::RepoBSON::getArrayStringPairs(
         const mongo::BSONElement &arrayElement,
         const std::string &fstLabel,
         const std::string &sndLabel)
 {
-    std::vector<std::pair<std::string, std::string> > vector;
+    std::list<std::pair<std::string, std::string> > list;
     if (!arrayElement.eoo())
     {
         std::vector<mongo::BSONElement> array = arrayElement.Array();
@@ -36,12 +36,12 @@ std::vector<std::pair<std::string, std::string> > repo::core::RepoBSON::getArray
                 {
                     std::string field1 = obj.getField(fstLabel).String();
                     std::string field2 = obj.getField(sndLabel).String();
-                    vector.push_back(std::make_pair(field1, field2));
+                    list.push_back(std::make_pair(field1, field2));
                 }
             }
         }
     }
-    return vector;
+    return list;
 }
 
 mongo::BSONElement repo::core::RepoBSON::getEmbeddedElement(
@@ -54,9 +54,7 @@ mongo::BSONElement repo::core::RepoBSON::getEmbeddedElement(
     {
         mongo::BSONObj embeddedData = obj->getObjectField(fstLevelLabel);
         if (embeddedData.hasField(sndLevelLabel))
-        {
             element = embeddedData.getField(sndLevelLabel);
-        }
     }
     return element;
 }

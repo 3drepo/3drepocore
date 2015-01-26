@@ -25,74 +25,105 @@ repo::core::RepoUser::RepoUser(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
 repo::core::RepoUser::RepoUser(
         const std::string &username,
-        const std::string &password)
+        const std::string &cleartextPassword,
+        const std::list<std::pair<std::string, std::string> > &projects,
+        const std::list<std::pair<std::string, std::string> > &roles)
     : RepoBSON()
 {
     mongo::BSONObjBuilder builder;
+    //--------------------------------------------------------------------------
+    // Username
     RepoTranscoderBSON::append(
                 REPO_LABEL_ID,
                 boost::uuids::random_generator()(),
                 builder);
     builder << REPO_LABEL_USER << username;
 
+    //--------------------------------------------------------------------------
+    // Password
+    mongo::BSONObjBuilder credentialsBuilder;
+    credentialsBuilder << REPO_LABEL_CLEARTEXT << cleartextPassword;
+    builder << REPO_LABEL_CREDENTIALS << credentialsBuilder.obj();
+
+    //--------------------------------------------------------------------------
+    // Projects (part of customData subobject)
+    mongo::BSONObjBuilder customDatabBuilder;
+    mongo::BSONArrayBuilder projectsBuilder;
+    for (std::list<std::pair<std::string, std::string> >::const_iterator i = projects.begin();
+         i != projects.end(); ++i)
+    {
+        mongo::BSONObjBuilder projectBuilder;
+        std::string database = i->first;
+        std::string project = i->second;
+        projectBuilder << REPO_LABEL_OWNER << database;
+        projectBuilder << REPO_LABEL_PROJECT << project;
+        projectsBuilder.append(projectBuilder.obj());
+    }
+    customDatabBuilder.appendArray(REPO_LABEL_PROJECTS, projectsBuilder.arr());
+    builder << REPO_LABEL_CUSTOM_DATA << customDatabBuilder.obj();
+
+
+    //--------------------------------------------------------------------------
+    // Roles
+    mongo::BSONArrayBuilder rolesBuilder;
+    for (std::list<std::pair<std::string, std::string> >::const_iterator i = roles.begin();
+         i != roles.end(); ++i)
+    {
+        mongo::BSONObjBuilder roleBuilder;
+        std::string database = i->first;
+        std::string role = i->second;
+        roleBuilder << REPO_LABEL_ROLE << role;
+        roleBuilder << REPO_LABEL_DB << database;
+        rolesBuilder.append(roleBuilder.obj());
+    }
+    builder.appendArray(REPO_LABEL_ROLES, rolesBuilder.arr());
+
+    //--------------------------------------------------------------------------
+    // Populate superclass RepoBSON
     std::set<std::string> fields;
     mongo::BSONObj temp = builder.obj();
-    temp.getFieldNames(fields);
+    temp.getFieldNames(fields);        
+    this->addFields(temp, fields);
 
-    RepoBSON::addFields(temp, fields);
     std::cerr << this->toString() << std::endl;
 }
 
 repo::core::RepoUser::~RepoUser() {}
 
-std::string repo::core::RepoUser::getEvalString(bool newUser) const
-{
-    std::stringstream eval;
-    if (newUser)
-    {
-        //----------------------------------------------------------------------
-        // Create new user
-        // http://docs.mongodb.org/manual/reference/method/db.createUser/
+mongo::BSONObj repo::core::RepoUser::createUser() const
+{ 
+    mongo::BSONObjBuilder builder;
 
-        eval << "{";
-        eval << REPO_LABEL_USER << getUsername();
-        eval << REPO_LABEL_PASSWORD << getPassword(); // cleartext!
-        eval <<  "}";
+    //--------------------------------------------------------------------------
+    // Username
+    builder << REPO_COMMAND_CREATE_USER << getUsername();
 
-//    { user: "<name>",
-//      pwd: "<cleartext password>",
-//      customData: { <any information> },
-//      roles: [
-//        { role: "<role>", db: "<database>" } | "<role>",
-//        ...
-//      ]
-//    }
+    //--------------------------------------------------------------------------
+    // Password
+    std::string cleartextPassword = getCleartextPassword();
+    if (!cleartextPassword.empty())
+        builder << REPO_LABEL_PWD << getCleartextPassword();
 
-    }
-    else
-    {
+    //--------------------------------------------------------------------------
+    // Projects
+    builder << REPO_LABEL_CUSTOM_DATA << getCustomDataBSON();
 
-        //----------------------------------------------------------------------
-        // Update existing user
-        // http://docs.mongodb.org/manual/reference/method/db.updateUser/
-//
-//    db.updateUser(
-//       "<username>",
-//       {
-//         customData : { <any information> },
-//         roles : [
-//                   { role: "<role>", db: "<database>" } | "<role>",
-//                   ...
-//                 ],
-//         pwd: "<cleartext password>"
-//        },
-//        writeConcern: { <write concern> }
-//    )
-    }
-    return eval.str();
+    //--------------------------------------------------------------------------
+    // Roles
+    builder.appendArray(REPO_LABEL_ROLES, getRolesBSON());
+
+
+    return builder.obj();
 }
 
-std::vector<std::pair<std::string, std::string> > repo::core::RepoUser::getProjects() const
+mongo::BSONObj repo::core::RepoUser::dropUser() const
+{
+    mongo::BSONObjBuilder builder;
+    builder << REPO_COMMAND_DROP_USER << getUsername();
+    return builder.obj();
+}
+
+std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getProjectsList() const
 {
     mongo::BSONElement arrayElement = RepoBSON::getEmbeddedElement(this,
                                                   REPO_LABEL_CUSTOM_DATA,
@@ -100,7 +131,7 @@ std::vector<std::pair<std::string, std::string> > repo::core::RepoUser::getProje
     return RepoBSON::getArrayStringPairs(arrayElement, REPO_LABEL_OWNER, REPO_LABEL_PROJECT);
 }
 
-std::vector<std::pair<std::string, std::string> > repo::core::RepoUser::getRoles() const
+std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getRolesList() const
 {
     return RepoBSON::getArrayStringPairs(getField(REPO_LABEL_ROLES), REPO_LABEL_DB, REPO_LABEL_ROLE);
 }
