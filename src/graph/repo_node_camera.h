@@ -117,6 +117,36 @@ public :
 	 */
     void toAssimp(aiCamera *camera) const;
 
+    //--------------------------------------------------------------------------
+    //
+    // Accessors
+    //
+    //--------------------------------------------------------------------------
+
+    //! Aspect ratio accessor
+    float getAspectRatio() const;
+
+    //! Far clipping plane accessor
+    float getFarClippingPlane() const;
+
+    //! Near clipping plane accessor
+    float getNearClippingPlane() const;
+
+    //! Field of view accessor
+    float getFieldOfView() const;
+
+    //! Lookat vector accessor
+    aiVector3D getLookAt() const;
+
+    //! Position vector accessor
+    aiVector3D getPosition() const;
+
+    //! Up vector accessor
+    aiVector3D getUp() const;
+
+    //! Camera matrix computation
+    aiMatrix4x4 getCameraMatrix() const;
+
 protected :
 
 	float aspectRatio; //!< Aspect ratio.

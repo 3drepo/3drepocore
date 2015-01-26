@@ -131,6 +131,59 @@ public :
 		std::map<const RepoNodeAbstract *, std::string> texturesMapping,
 		aiMaterial * material) const;
 
+    //--------------------------------------------------------------------------
+    //
+    // Accessors
+    //
+    //--------------------------------------------------------------------------
+
+    //! Ambient component existence
+    bool hasAmbient() const;
+
+    //! Diffuse component existence
+    bool hasDiffuse() const;
+
+    //! Emissive component existence
+    bool hasEmissive() const;
+
+    //! Specular component existence
+    bool hasSpecular() const;
+
+    //! Opacity existence (non NaN)
+    bool hasOpacity() const;
+
+    //! Shininess existence (non NaN)
+    bool hasShininess() const;
+
+    //! Shininess strength existence (non NaN)
+    bool hasShininessStrength() const;
+
+    //! Ambient component accessor
+    aiColor3D getAmbient() const;
+
+    //! Diffuse component accessor
+    aiColor3D getDiffuse() const;
+
+    //! Emissive component accessor
+    aiColor3D getEmissive() const;
+
+    //! Specular component accessor
+    aiColor3D getSpecular() const;
+
+    //! Wireframe rendering flag accessor
+    bool getIsWireframe() const;
+
+    //! Two sided rendering flag accessor
+    bool getIsTwoSided() const;
+
+    //! Opacity accessor
+    float getOpacity() const;
+
+    //! Shininess accessor
+    float getShininess() const;
+
+    //! Shininess stength accessor
+    float getShininessStrength() const;
 
     //--------------------------------------------------------------------------
 	//

@@ -87,7 +87,9 @@ public :
 			vertices(NULL), 
 			faces(NULL), 
 			normals(NULL),
-            outline(NULL) {}
+            outline(NULL),
+            uvChannels(NULL),
+            colors(NULL){}
 
 	//! Constructs mesh scene graph node from Assimp's aiMesh.
 	/*!
@@ -178,6 +180,10 @@ public :
         return tmp;
     }
 
+    //! Returns the vertices colors.
+    const std::vector<aiColor4t<float> > * getColors() const
+    { return colors; }
+
     const RepoBoundingBox &getBoundingBox() const
     {
         return boundingBox;
@@ -253,6 +259,9 @@ protected :
 	 * is the length of the number of vertices.
 	 */
     std::vector<std::vector<aiVector3t<float> >*> *uvChannels;
+
+    //! Vertex colors of this mesh.
+    std::vector<aiColor4t<float> > *colors;
 
 }; // end class
 
