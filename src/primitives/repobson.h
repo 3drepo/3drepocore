@@ -47,6 +47,11 @@ public:
     //! Default empty destructor.
     ~RepoBSON() {}
 
+    //--------------------------------------------------------------------------
+
+    //! Adds all fields from the given object to this object.
+    void addFields(mongo::BSONObj &obj);
+
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }
 

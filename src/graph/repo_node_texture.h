@@ -32,11 +32,8 @@ namespace core {
 //
 //------------------------------------------------------------------------------
 #define REPO_NODE_TYPE_TEXTURE				"texture"
-#define REPO_NODE_LABEL_WIDTH				"width"
-#define REPO_NODE_LABEL_HEIGHT				"height"
 #define REPO_NODE_LABEL_BIT_DEPTH			"bit_depth"
 #define REPO_NODE_LABEL_EXTENSION			"extension"
-#define REPO_NODE_LABEL_DATA				"data"
 #define REPO_NODE_LABEL_DATA_BYTE_COUNT		"data_byte_count"
 #define REPO_NODE_UUID_SUFFIX_TEXTURE		"11" //!< uuid suffix
 //------------------------------------------------------------------------------

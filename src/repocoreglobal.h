@@ -47,12 +47,31 @@ namespace core {
 #define REPO_SYSTEM_USERS       "system.users"      //! Users collection
 #define REPO_SYSTEM_ROLES       "system.roles"      //! Roles collection
 
-#define REPO_LABEL_ID                   "_id"
-#define REPO_LABEL_ROLES                "roles"
-#define REPO_LABEL_ROLE                 "role"
-#define REPO_LABEL_USER                 "user"
+#define REPO_LABEL_ID           "_id"
+#define REPO_LABEL_AVATAR       "avatar"
+#define REPO_LABEL_DATA         "data"
+#define REPO_LABEL_HEIGHT		"height"
+#define REPO_LABEL_MEDIA_TYPE   "media_type"
+#define REPO_LABEL_ROLE         "role"
+#define REPO_LABEL_ROLES        "roles"
+#define REPO_LABEL_USER         "user"
+#define REPO_LABEL_WIDTH		"width"
 
+//------------------------------------------------------------------------------
+// Media Types a.k.a. as Multipurpose Internet Mail Extensions (MIME) Types
+// http://www.iana.org/assignments/media-types/media-types.xhtml#image
+// http://doc.qt.io/qt-5/qimagereader.html
 
+#define REPO_MEDIA_TYPE_BMP     "image/bmp"                 //! Windows Bitmap
+#define REPO_MEDIA_TYPE_GIF     "image/gif"                 //! Graphic Interchange Format
+#define REPO_MEDIA_TYPE_JPG     "image/jpeg"                //! Joint Photographic Experts Group
+#define REPO_MEDIA_TYPE_PNG     "image/png"                 //! Portable Network Graphics
+#define REPO_MEDIA_TYPE_PBM     "image/x-portable-bitmap"	//! Portable Bitmap
+#define REPO_MEDIA_TYPE_PGM     "image/x-portable-graymap"	//! Portable Graymap
+#define REPO_MEDIA_TYPE_PPM     "image/x-portable-pixmap"	//! Portable Pixmap
+#define REPO_MEDIA_TYPE_XBM     "image/x-xbitmap"           //! X11 Bitmap
+#define REPO_MEDIA_TYPE_XPM     "image/x-xpixmap"           //! X11 Pixmap
+#define REPO_MEDIA_TYPE_SVG      "image/svg+xml"            //! Scalable Vector Graphics
 
 //------------------------------------------------------------------------------
 

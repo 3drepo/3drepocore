@@ -18,6 +18,15 @@
 
 #include "repobson.h"
 
+//------------------------------------------------------------------------------
+
+void repo::core::RepoBSON::addFields(mongo::BSONObj &obj)
+{
+    std::set<std::string> fields;
+    obj.getFieldNames(fields);
+    mongo::BSONObj::addFields(obj, fields);
+}
+
 std::list<std::pair<std::string, std::string> > repo::core::RepoBSON::getArrayStringPairs(
         const mongo::BSONElement &arrayElement,
         const std::string &fstLabel,

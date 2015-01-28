@@ -231,8 +231,9 @@ public :
 		if (NULL != vec && bse.binDataType() == mongo::BinDataGeneral) 
 		{
 			vec->resize(vectorSize);
-			int len = static_cast<int>(vectorSize * sizeof(T));
-			const char *binData = bse.binData(len);
+            bse.value();
+            int len;// = static_cast<int>(vectorSize * sizeof(T));
+            const char *binData = bse.binData(len);
 			memcpy(&(vec->at(0)), binData, len);
 		}
     }

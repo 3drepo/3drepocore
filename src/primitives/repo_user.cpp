@@ -18,19 +18,14 @@
 
 #include "repo_user.h"
 
-repo::core::RepoUser::RepoUser() : RepoBSON() {}
-
-repo::core::RepoUser::RepoUser(const mongo::BSONObj &obj) : RepoBSON(obj) {}
-
-
-repo::core::RepoUser::RepoUser(
-        const std::string &username,
-        const std::string &cleartextPassword,
-        const string &firstName,
-        const string &lastName,
-        const string &email,
-        const std::list<std::pair<std::string, std::string> > &projects,
-        const std::list<std::pair<std::string, std::string> > &roles)
+repo::core::RepoUser::RepoUser(const std::string &username,
+                               const std::string &cleartextPassword,
+                               const string &firstName,
+                               const string &lastName,
+                               const string &email,
+                               const std::list<std::pair<std::string, std::string> > &projects,
+                               const std::list<std::pair<std::string, std::string> > &roles,
+                               const RepoImage &avatar)
     : RepoBSON()
 {
     mongo::BSONObjBuilder builder;
@@ -85,25 +80,10 @@ repo::core::RepoUser::RepoUser(
     }
     customDatabBuilder.appendArray(REPO_LABEL_PROJECTS, projectsBuilder.arr());
 
-
-
     //--------------------------------------------------------------------------
-    // Avatar
-//    builder.appendBinData(
-//        label, (data->size() * sizeof(T)), mongo::BinDataGeneral,
-//        (char *) &(data->at(0)) );
-
-
-    // Vector is now guaranteed to be continuous block of memory, hence it is
-    // used as a convenient way of keep track of the number of bytes pointed
-    // by the data pointer.
-//	this->data = new std::vector<char>(byteCount);
-//    if (!this->data)
-//        std::cerr << "Memory allocation for texture " << name << " failed." << std::endl;
-//    else
-//        memcpy(&(this->data->at(0)), data, byteCount);
-
-
+    // Avatar    
+    if (avatar.isOk())
+        customDatabBuilder << REPO_LABEL_AVATAR << avatar;
 
     builder << REPO_LABEL_CUSTOM_DATA << customDatabBuilder.obj();
 
@@ -125,13 +105,8 @@ repo::core::RepoUser::RepoUser(
 
     //--------------------------------------------------------------------------
     // Populate superclass RepoBSON
-    std::set<std::string> fields;
-    mongo::BSONObj temp = builder.obj();
-    temp.getFieldNames(fields);        
-    this->addFields(temp, fields);
+    RepoBSON::addFields(builder.obj());
 }
-
-repo::core::RepoUser::~RepoUser() {}
 
 std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getProjectsList() const
 {

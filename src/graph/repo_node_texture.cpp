@@ -62,14 +62,14 @@ repo::core::RepoNodeTexture::RepoNodeTexture(const mongo::BSONObj &obj)
 	//
 	// Width
 	//
-	if (obj.hasField(REPO_NODE_LABEL_WIDTH))
-		width = obj.getField(REPO_NODE_LABEL_WIDTH).numberInt();
+    if (obj.hasField(REPO_LABEL_WIDTH))
+        width = obj.getField(REPO_LABEL_WIDTH).numberInt();
 
 	//
 	// Height
 	//
-	if (obj.hasField(REPO_NODE_LABEL_HEIGHT))
-		height = obj.getField(REPO_NODE_LABEL_HEIGHT).numberInt();
+    if (obj.hasField(REPO_LABEL_HEIGHT))
+        height = obj.getField(REPO_LABEL_HEIGHT).numberInt();
 
 	//
 	// Format
@@ -88,12 +88,14 @@ repo::core::RepoNodeTexture::RepoNodeTexture(const mongo::BSONObj &obj)
 	//
 	// Data
 	//
-	if (obj.hasField(REPO_NODE_LABEL_DATA) &&
+    if (obj.hasField(REPO_LABEL_DATA) &&
 		obj.hasField(REPO_NODE_LABEL_DATA_BYTE_COUNT))
 	{
+
+        std::cerr << "Texture" << std::endl;
 		data = new std::vector<char>();
 		RepoTranscoderBSON::retrieve(
-			obj.getField(REPO_NODE_LABEL_DATA),
+            obj.getField(REPO_LABEL_DATA),
 			obj.getField(REPO_NODE_LABEL_DATA_BYTE_COUNT).numberInt(),
 			data);
 	}	
@@ -131,12 +133,12 @@ mongo::BSONObj repo::core::RepoNodeTexture::toBSONObj() const
 	//
 	// Width
 	//
-	builder << REPO_NODE_LABEL_WIDTH << width;
+    builder << REPO_LABEL_WIDTH << width;
 
 	//
 	// Height
 	//
-	builder << REPO_NODE_LABEL_HEIGHT << height;
+    builder << REPO_LABEL_HEIGHT << height;
 	
 	//
 	// Format
@@ -153,7 +155,7 @@ mongo::BSONObj repo::core::RepoNodeTexture::toBSONObj() const
 	//
 	if (NULL != data && data->size() > 0)
 		RepoTranscoderBSON::append(
-			REPO_NODE_LABEL_DATA,
+            REPO_LABEL_DATA,
 			data,
 			builder,
 			REPO_NODE_LABEL_DATA_BYTE_COUNT);

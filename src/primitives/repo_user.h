@@ -26,6 +26,7 @@
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
 #include "repobson.h"
+#include "repoimage.h"
 
 namespace repo {
 namespace core {
@@ -65,10 +66,10 @@ class REPO_CORE_EXPORT RepoUser : public RepoBSON
 public :
 
     //! Default empty constructor.
-    RepoUser();
+    RepoUser() : RepoBSON() {}
 
     //! Constructor from Mongo BSON objects.
-    RepoUser(const mongo::BSONObj &obj);
+    RepoUser(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
     //! Constructor from basic fields.
     RepoUser(
@@ -78,10 +79,11 @@ public :
             const std::string &lastName = std::string(),
             const std::string &email = std::string(),
             const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),
-            const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >());
+            const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >(),
+            const RepoImage &avatar = RepoImage());
 
     //! Default empty destructor.
-    ~RepoUser();
+    ~RepoUser() {}
 
     //--------------------------------------------------------------------------
 
@@ -118,6 +120,11 @@ public :
     //
     //--------------------------------------------------------------------------
 
+    //! Returns avatar stored in customData field.
+    RepoImage getAvatar() const
+    { return RepoImage(this->getCustomDataField(REPO_LABEL_AVATAR).embeddedObject()); }
+
+    //! Returns entire customData subobject.
     mongo::BSONObj getCustomDataBSON() const
     { return this->getObjectField(REPO_LABEL_CUSTOM_DATA); }
 
