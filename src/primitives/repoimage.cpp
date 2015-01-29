@@ -2,7 +2,7 @@
  *  Copyright (C) 2015 3D Repo Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
+ *  it under the terms of the GNU Affero General Public Listd::cerrnse as
  *  published by the Free Software Foundation, either version 3 of the
  *  License, or (at your option) any later version.
  *
@@ -18,11 +18,11 @@
 
 #include "repoimage.h"
 
-repo::core::RepoImage::RepoImage(
-        const std::vector<char> &imageBytes,
-        int width,
-        int height,
-        const std::string &mediaType)
+repo::core::RepoImage::RepoImage(const unsigned char *bytes,
+                                 unsigned int bytesLength,
+                                 unsigned int width,
+                                 unsigned int height,
+                                 const string &mediaType)
     : RepoBSON()
 {
     mongo::BSONObjBuilder builder;
@@ -35,27 +35,27 @@ repo::core::RepoImage::RepoImage(
 
     //--------------------------------------------------------------------------
     // Binary data
-//    RepoTranscoderBSON::append(
-//        REPO_LABEL_DATA,
-//        byteData,
-//        builder);
-    builder.appendBinData(
-        REPO_LABEL_DATA,
-        imageBytes.size(),
-        mongo::BinDataGeneral,
-        (char*) &(imageBytes.at(0)));
+    if (bytes && bytesLength)
+        builder.appendBinData(
+            REPO_LABEL_DATA,
+            bytesLength,
+            mongo::BinDataGeneral,
+            bytes);
 
     //--------------------------------------------------------------------------
     // Width
-    builder << REPO_LABEL_WIDTH << width;
+    if (width)
+        builder << REPO_LABEL_WIDTH << width;
 
     //--------------------------------------------------------------------------
     // Height
-    builder << REPO_LABEL_HEIGHT << height;
+    if (height)
+        builder << REPO_LABEL_HEIGHT << height;
 
     //--------------------------------------------------------------------------
     // Media Type
-    builder << REPO_LABEL_MEDIA_TYPE << mediaType;
+    if (!mediaType.empty())
+        builder << REPO_LABEL_MEDIA_TYPE << mediaType;
 
     //--------------------------------------------------------------------------
     // Add to the parent object
@@ -65,14 +65,24 @@ repo::core::RepoImage::RepoImage(
 
 std::vector<char> repo::core::RepoImage::getData() const
 {
-    std::vector<char> ret;
-    mongo::BSONElement bse;
-    if (hasField(REPO_LABEL_DATA) &&
-        mongo::BSONType::BinData == (bse = getField(REPO_LABEL_DATA)).type())
+    std::vector<char> ret;    
+    int length = 0;
+    const char* data = getData(length);
+    if (data)
     {
-        int length;
-        const char* data = bse.binData(length);
         ret = std::vector<char>(data, data + length);
     }
     return ret;
+}
+
+const char *repo::core::RepoImage::getData(int &length) const
+{
+    mongo::BSONElement bse;
+    const char* data;
+    if (hasField(REPO_LABEL_DATA) &&
+        mongo::BSONType::BinData == (bse = getField(REPO_LABEL_DATA)).type())
+    {
+         data = bse.binData(length);
+    }
+    return data;
 }

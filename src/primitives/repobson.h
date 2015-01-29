@@ -62,13 +62,16 @@ public:
             const std::string &sndLabel);
 
     //! Returns an embedded element by label, EOO if not present.
-    static mongo::BSONElement getEmbeddedElement(
-            const mongo::BSONObj *obj,
+    mongo::BSONElement getEmbeddedElement(
             const std::string &fstLevelLabel,
-            const std::string &sndLevelLabel);
+            const std::string &sndLevelLabel) const;
 
     //! Returns true if it is valid and not empty, false otherwise.
     bool isOk() const { return isValid() && !isEmpty(); }
+
+    static mongo::BSONArray toArray(const std::list<std::pair<std::string, std::string> > &list,
+                                    const std::string &fstLabel,
+                                    const std::string &sndLabel);
 
 }; // end class
 

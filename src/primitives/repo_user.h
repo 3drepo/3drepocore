@@ -49,6 +49,8 @@ namespace core {
 #define REPO_LABEL_PROJECTS             "projects"
 #define REPO_LABEL_USER     			"user"
 #define REPO_LABEL_DB                   "db"
+#define REPO_LABEL_GROUP                "group"
+#define REPO_LABEL_GROUPS               "groups"
 
 //------------------------------------------------------------------------------
 // Commands
@@ -78,8 +80,9 @@ public :
             const std::string &firstName = std::string(),
             const std::string &lastName = std::string(),
             const std::string &email = std::string(),
-            const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),
+            const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),          
             const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >(),
+            const std::list<std::pair<string, string> > &groups = std::list<std::pair<string, string> >(),
             const RepoImage &avatar = RepoImage());
 
     //! Default empty destructor.
@@ -120,9 +123,8 @@ public :
     //
     //--------------------------------------------------------------------------
 
-    //! Returns avatar stored in customData field.
-    RepoImage getAvatar() const
-    { return RepoImage(this->getCustomDataField(REPO_LABEL_AVATAR).embeddedObject()); }
+    //! Returns the avatar stored in the customData field, empty image otherwise.
+    RepoImage getAvatar() const;
 
     //! Returns entire customData subobject.
     mongo::BSONObj getCustomDataBSON() const
@@ -130,11 +132,11 @@ public :
 
     //! Returns custom data field by label if any.
     mongo::BSONElement getCustomDataField(const std::string &label) const
-    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CUSTOM_DATA, label); }
+    { return getEmbeddedElement(REPO_LABEL_CUSTOM_DATA, label); }
 
     //! Returns the cleartext password if any.
     inline std::string getCleartextPassword() const
-    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_CLEARTEXT).str(); }
+    { return getEmbeddedElement(REPO_LABEL_CREDENTIALS, REPO_LABEL_CLEARTEXT).str(); }
 
     //! Returns the email if any.
     inline std::string getEmail() const
@@ -150,10 +152,13 @@ public :
 
     //! Returns the MONGODB-CR (default) password if any.
     inline std::string getPassword() const
-    { return RepoBSON::getEmbeddedElement(this, REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
+    { return getEmbeddedElement(REPO_LABEL_CREDENTIALS, REPO_LABEL_MONGODB_CR).str(); }
 
     //! Returns all projects associated with this user as [db, project] pairs.
     std::list<std::pair<std::string, std::string> > getProjectsList() const;
+
+    //! Returns all groups associated with this user as [db, group] pairs.
+    std::list<std::pair<std::string, std::string> > getGroupsList() const;
 
     //! Returns all database roles associated with this user as [db, role] pairs.
     std::list<std::pair<std::string, std::string> > getRolesList() const;

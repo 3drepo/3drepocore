@@ -28,6 +28,9 @@
 namespace repo {
 namespace core {
 
+/*!
+ * See http://www.iana.org/assignments/media-types/media-types.xhtml#image
+ */
 class REPO_CORE_EXPORT RepoImage : public RepoBSON
 {
 
@@ -37,13 +40,17 @@ public:
 
     RepoImage(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
-    /*!
-     * See http://www.iana.org/assignments/media-types/media-types.xhtml#image
-     */
-    RepoImage(const std::vector<char> &imageBytes,
-              int width,
-              int height,
+    RepoImage(const unsigned char* bytes,
+              unsigned int bytesLength,
+              unsigned int width,
+              unsigned int height,
               const string &mediaType);
+
+//    RepoImage(const std::vector<char> &bytes,
+//              unsigned int width,
+//              unsigned int height,
+//              const string &mediaType)
+//    { RepoImage(toArray(bytes), bytes.size(), width, height, mediaType); }
 
     ~RepoImage() {}
 
@@ -57,6 +64,9 @@ public:
     //! Returns image data as a vector of bytes.
     std::vector<char> getData() const;
 
+    //! Returns the raw byte array pointer as well as the size of the array.
+    const char* getData(int &length) const;
+
     //! Returns the height of the image if set.
     int getHeight() const
     { return getField(REPO_LABEL_HEIGHT).Int(); }
@@ -68,6 +78,11 @@ public:
     //! Returns the width of the image if set.
     int getWidth() const
     { return getField(REPO_LABEL_WIDTH).Int(); }
+
+    //! Returns a raw array pointer from a given vector.
+    template <class T>
+    static const T* toArray(const std::vector<T> &vector)
+    {   return (const T*) &(vector.at(0)); }
 
 }; // end class
 

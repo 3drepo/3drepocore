@@ -25,6 +25,7 @@ repo::core::RepoUser::RepoUser(const std::string &username,
                                const string &email,
                                const std::list<std::pair<std::string, std::string> > &projects,
                                const std::list<std::pair<std::string, std::string> > &roles,
+                               const std::list<std::pair<string, string> > &groups,
                                const RepoImage &avatar)
     : RepoBSON()
 {
@@ -48,72 +49,72 @@ repo::core::RepoUser::RepoUser(const std::string &username,
     // Custom Data
     //
     //--------------------------------------------------------------------------
-    mongo::BSONObjBuilder customDatabBuilder;
+    mongo::BSONObjBuilder customDataBuilder;
 
     //--------------------------------------------------------------------------
     // First name
     if (!firstName.empty())
-        customDatabBuilder << REPO_LABEL_FIRST_NAME << firstName;
+        customDataBuilder << REPO_LABEL_FIRST_NAME << firstName;
 
     //--------------------------------------------------------------------------
     // Last name
     if (!lastName.empty())
-        customDatabBuilder << REPO_LABEL_LAST_NAME << lastName;
+        customDataBuilder << REPO_LABEL_LAST_NAME << lastName;
 
     //--------------------------------------------------------------------------
     // Email
     if (!email.empty())
-        customDatabBuilder << REPO_LABEL_EMAIL << email;
+        customDataBuilder << REPO_LABEL_EMAIL << email;
 
     //--------------------------------------------------------------------------
     // Custom Data.Projects : []
-    mongo::BSONArrayBuilder projectsBuilder;
-    for (std::list<std::pair<std::string, std::string> >::const_iterator i = projects.begin();
-         i != projects.end(); ++i)
-    {
-        mongo::BSONObjBuilder projectBuilder;
-        std::string database = i->first;
-        std::string project = i->second;
-        projectBuilder << REPO_LABEL_OWNER << database;
-        projectBuilder << REPO_LABEL_PROJECT << project;
-        projectsBuilder.append(projectBuilder.obj());
-    }
-    customDatabBuilder.appendArray(REPO_LABEL_PROJECTS, projectsBuilder.arr());
+    if (!projects.empty())
+        customDataBuilder.appendArray(REPO_LABEL_PROJECTS, toArray(projects, REPO_LABEL_OWNER, REPO_LABEL_PROJECT));
+
+    if (!groups.empty())
+        customDataBuilder << REPO_LABEL_GROUPS << toArray(groups, REPO_LABEL_OWNER, REPO_LABEL_GROUP);
 
     //--------------------------------------------------------------------------
-    // Avatar    
+    // Avatar
     if (avatar.isOk())
-        customDatabBuilder << REPO_LABEL_AVATAR << avatar;
+        customDataBuilder << REPO_LABEL_AVATAR << avatar;
 
-    builder << REPO_LABEL_CUSTOM_DATA << customDatabBuilder.obj();
+    builder << REPO_LABEL_CUSTOM_DATA << customDataBuilder.obj();
 
 
     //--------------------------------------------------------------------------
     // Roles
-    mongo::BSONArrayBuilder rolesBuilder;
-    for (std::list<std::pair<std::string, std::string> >::const_iterator i = roles.begin();
-         i != roles.end(); ++i)
-    {
-        mongo::BSONObjBuilder roleBuilder;
-        std::string database = i->first;
-        std::string role = i->second;
-        roleBuilder << REPO_LABEL_ROLE << role;
-        roleBuilder << REPO_LABEL_DB << database;
-        rolesBuilder.append(roleBuilder.obj());
-    }
-    builder.appendArray(REPO_LABEL_ROLES, rolesBuilder.arr());
+    if (!roles.empty())
+        builder.appendArray(REPO_LABEL_ROLES, toArray(roles, REPO_LABEL_DB, REPO_LABEL_ROLE));
 
     //--------------------------------------------------------------------------
     // Populate superclass RepoBSON
     RepoBSON::addFields(builder.obj());
 }
 
+
+repo::core::RepoImage repo::core::RepoUser::getAvatar() const
+{
+    RepoImage image;
+    mongo::BSONElement bse = this->getCustomDataField(REPO_LABEL_AVATAR);
+    if (!bse.eoo())
+        image = RepoImage(bse.embeddedObject());
+    return image;
+}
+
+
 std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getProjectsList() const
 {
-    mongo::BSONElement arrayElement = RepoBSON::getEmbeddedElement(this,
-                                                  REPO_LABEL_CUSTOM_DATA,
-                                                  REPO_LABEL_PROJECTS);
+    mongo::BSONElement arrayElement = getEmbeddedElement(REPO_LABEL_CUSTOM_DATA,
+                                                         REPO_LABEL_PROJECTS);
     return RepoBSON::getArrayStringPairs(arrayElement, REPO_LABEL_OWNER, REPO_LABEL_PROJECT);
+}
+
+std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getGroupsList() const
+{
+    mongo::BSONElement arrayElement = getEmbeddedElement(REPO_LABEL_CUSTOM_DATA,
+                                                         REPO_LABEL_GROUPS);
+    return RepoBSON::getArrayStringPairs(arrayElement, REPO_LABEL_OWNER, REPO_LABEL_GROUP);
 }
 
 std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getRolesList() const
@@ -155,7 +156,7 @@ repo::core::RepoBSON repo::core::RepoUser::command(const Commands &command) cons
             builder << REPO_LABEL_PWD << getCleartextPassword();
 
         //----------------------------------------------------------------------
-        // Projects
+        // Custom data
         builder << REPO_LABEL_CUSTOM_DATA << getCustomDataBSON();
 
         //----------------------------------------------------------------------

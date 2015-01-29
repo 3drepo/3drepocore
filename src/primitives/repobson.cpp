@@ -54,16 +54,32 @@ std::list<std::pair<std::string, std::string> > repo::core::RepoBSON::getArraySt
 }
 
 mongo::BSONElement repo::core::RepoBSON::getEmbeddedElement(
-        const mongo::BSONObj *obj,
         const std::string &fstLevelLabel,
-        const std::string &sndLevelLabel)
+        const std::string &sndLevelLabel) const
 {
     mongo::BSONElement element;
-    if (obj->hasField(fstLevelLabel))
+    if (this->hasField(fstLevelLabel))
     {
-        mongo::BSONObj embeddedData = obj->getObjectField(fstLevelLabel);
+        mongo::BSONObj embeddedData = this->getObjectField(fstLevelLabel);
         if (embeddedData.hasField(sndLevelLabel))
             element = embeddedData.getField(sndLevelLabel);
     }
     return element;
+}
+
+mongo::BSONArray repo::core::RepoBSON::toArray(
+        const std::list<std::pair<std::string, std::string> > &list,
+        const std::string &fstLabel,
+        const std::string &sndLabel)
+{
+    mongo::BSONArrayBuilder builder;
+    std::list<std::pair<std::string, std::string> >::const_iterator i;
+    for (i = list.begin(); i != list.end(); ++i)
+    {
+        mongo::BSONObjBuilder innerBuilder;
+        innerBuilder << fstLabel <<  i->first;
+        innerBuilder << sndLabel << i->second;
+        builder.append(innerBuilder.obj());
+    }
+    return builder.arr();
 }
