@@ -178,7 +178,7 @@ bool repo::core::MongoClientWrapper::connect(
 	bool ret = false;
 	try 
 	{		
-		clientConnection.connect(hostAndPort);
+        clientConnection.connect(hostAndPort);
 		ret = true;
 	}
 	catch (mongo::DBException& e)
@@ -221,25 +221,33 @@ bool repo::core::MongoClientWrapper::authenticate(
 	const std::string &password,
 	bool isPasswordDiggested)
 {		
-	std::string errmsg;
-    std::string passwordDigest = isPasswordDiggested
-            ? password
-            : clientConnection.createPasswordDigest(username, password);
-    bool success = clientConnection.auth(
-                database,
-                username,
-                passwordDigest,
-                errmsg,
-                false);
-    if (success) // || ADMIN_DATABASE == database) // needs to store username for admin DB even if auth fails (non-protected DB)
-	{
-        //----------------------------------------------------------------------
-		// Preserve authentication details for connection duplication
-        databasesAuthentication[database] =
-            std::make_pair(username, passwordDigest);
-	}
-	else 
-        log(errmsg);
+    bool success = false;
+    try
+    {
+        std::string errmsg;
+        std::string passwordDigest = isPasswordDiggested
+                ? password
+                : clientConnection.createPasswordDigest(username, password);
+        success = clientConnection.auth(
+                    database,
+                    username,
+                    passwordDigest,
+                    errmsg,
+                    false);
+        if (success) // || ADMIN_DATABASE == database) // needs to store username for admin DB even if auth fails (non-protected DB)
+        {
+            //----------------------------------------------------------------------
+            // Preserve authentication details for connection duplication
+            databasesAuthentication[database] =
+                std::make_pair(username, passwordDigest);
+        }
+        else
+            log(errmsg);
+    }
+    catch (std::exception& e)
+    {
+        log(std::string(e.what()));
+    }
 	return success;
 }
 
@@ -284,9 +292,17 @@ bool repo::core::MongoClientWrapper::reauthenticate(const std::string& database)
 
 bool repo::core::MongoClientWrapper::reconnectAndReauthenticate()
 {
-	bool success = reconnect();
-	if (success)
-		success = reauthenticate();
+    bool success = false;
+    try
+    {
+        success = reconnect();
+        if (success)
+            success = reauthenticate();
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }
 	return success;
 }
 
@@ -295,9 +311,17 @@ bool repo::core::MongoClientWrapper::reconnectAndReauthenticate()
 bool repo::core::MongoClientWrapper::reconnectAndReauthenticate(
     const std::string &database)
 {
-	bool success = reconnect();
-	if (success)
-		success = reauthenticate(database);
+    bool success = false;
+    try
+    {
+        success = reconnect();
+        if (success)
+            success = reauthenticate(database);
+    }
+    catch (std::exception& e)
+    {
+        log(std::string(e.what()));
+    }
 	return success;
 }
 
@@ -327,23 +351,32 @@ std::list<std::string> repo::core::MongoClientWrapper::getDatabases(bool sorted)
         if (sorted)
             list.sort(&MongoClientWrapper::caseInsensitiveStringCompare);
 	}
-	catch (mongo::DBException& e)
+    catch (std::exception& e)
 	{
         log(std::string(e.what()));
 	}
+    catch (...)
+    {}
 	return list;
 }
 
-std::map<std::string, std::list<std::string> > repo::core::MongoClientWrapper::getDatabasesWithProjects()
+std::map<std::string, std::list<std::string> > repo::core::MongoClientWrapper::getDatabasesWithProjects(
+        const std::list<std::string> &databases)
 {
-    std::list<std::string> databases = getDatabases(false);
     std::map<std::string, std::list<std::string> > mapping;
-    for (std::list<std::string>::iterator it = databases.begin();
-         it != databases.end(); ++it)
+    try
     {
-        std::string database = *it;
-        std::list<std::string> projects = getProjects(database);
-        mapping.insert(std::make_pair(database, projects));
+        for (std::list<std::string>::const_iterator it = databases.begin();
+             it != databases.end(); ++it)
+        {
+            std::string database = *it;
+            std::list<std::string> projects = getProjects(database);
+            mapping.insert(std::make_pair(database, projects));
+        }
+    }
+    catch (std::exception& e)
+    {
+        log(std::string(e.what()));
     }
     return mapping;
 }
@@ -427,7 +460,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::getCollectionStats(
 			+ "._db.runCommand({collstats:db." 
 			+ collection 
 			+ "._shortName, scale:1});");
-		clientConnection.runCommand(database, builder.obj(), info);		
+        clientConnection.runCommand(database, builder.obj(), info);
 	}
 	catch (mongo::DBException &e)
 	{
@@ -938,9 +971,9 @@ mongo::BSONObj repo::core::MongoClientWrapper::fieldsToReturn(
 
 bool repo::core::MongoClientWrapper::checkForError()
 {
-	std::string err = clientConnection.getLastError();
-	bool ok = err.empty();
-	if (!ok)
-        log(err);
-	return ok;
+//	std::string err = clientConnection.getLastError();
+//	bool ok = err.empty();
+//	if (!ok)
+//        log(err);
+    return true;
 }

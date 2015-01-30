@@ -198,7 +198,8 @@ public:
     std::list<std::string> getDatabases(bool sorted = true);
 
     //! Returns a map of databases with associated projects.
-    std::map<std::string, std::list<std::string> > getDatabasesWithProjects();
+    std::map<std::string, std::list<std::string> > getDatabasesWithProjects(
+            const std::list<std::string> &databases);
 
     /*!
      * Returns a list of all available collections in a format "database.collection".
@@ -409,6 +410,10 @@ public:
 	*/
 	static mongo::BSONObj fieldsToReturn(const std::list<std::string>& list);
 
+
+
+    mongo::DBClientConnection clientConnection;
+
 private :
 
     /*! Checks the last error and logs it if any. Returns true if no error,
@@ -428,7 +433,7 @@ private :
      *  for one connection.	To perform parallel fetching, duplicate this wrapper
      * object.
      */
-	mongo::DBClientConnection clientConnection;
+//	mongo::DBClientConnection clientConnection;
 
 	//! Host and port of the mongoDB connection.
 	mongo::HostAndPort hostAndPort;
