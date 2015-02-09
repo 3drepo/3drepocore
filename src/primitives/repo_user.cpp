@@ -89,7 +89,9 @@ repo::core::RepoUser::RepoUser(const std::string &username,
 
     //--------------------------------------------------------------------------
     // Populate superclass RepoBSON
-    RepoBSON::addFields(builder.obj());
+	mongo::BSONObj builtObj = builder.obj();
+	RepoBSON::addFields(builtObj);
+
 }
 
 
