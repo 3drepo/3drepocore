@@ -59,13 +59,15 @@ repo::core::RepoImage::RepoImage(const unsigned char *bytes,
 
     //--------------------------------------------------------------------------
     // Add to the parent object
-    RepoBSON::addFields(builder.obj());
+	mongo::BSONObj builtObj = builder.obj();
+	RepoBSON::addFields(builtObj);
+
 }
 
 
 std::vector<char> repo::core::RepoImage::getData() const
 {
-    std::vector<char> ret;    
+    std::vector<char> ret;
     int length = 0;
     const char* data = getData(length);
     if (data)
