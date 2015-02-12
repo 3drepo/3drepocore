@@ -53,7 +53,13 @@ public :
     //--------------------------------------------------------------------------
     bool importModel(const std::string &fileName,
                      const std::string &fullFilePath,
-                     const unsigned int pFlags = 0);
+                     const unsigned int pFlags = 0,
+                     const int triangleLimit = AI_SLM_DEFAULT_MAX_TRIANGLES,
+                     const int vertexLimit = AI_SLM_DEFAULT_MAX_VERTICES,
+                     bool removePoints = false,
+                     bool removeLines = false,
+                     bool removeTriangles = false,
+                     bool removePolygons = false);
 
     //--------------------------------------------------------------------------
     bool exportModel(const aiScene *scene,

@@ -59,29 +59,36 @@ void repo::core::AssimpWrapper::resetScene()
 //------------------------------------------------------------------------------
 bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
                                             const std::string &fullFilePath,
-                                            const unsigned int pFlags)
+                                            const unsigned int pFlags,
+                                            const int triangleLimit,
+                                            const int vertexLimit,
+                                            bool removePoints,
+                                            bool removeLines,
+                                            bool removeTriangles,
+                                            bool removePolygons)
 {
 	resetScene();
 
 	// post processor
 	// http://assimp.sourceforge.net/lib_html/ai_post_process_8h.html#64795260b95f5a4b3f3dc1be4f52e410
 	
-    // AI_SLM_DEFAULT_MAX_VERTICES; // 1,000,000 by default
-    // AI_SLM_DEFAULT_MAX_TRIANGLES; // 1,000,000 by default
-
 	//-------------------------------------------------------------------------
     // In OpenGL ES 2.0 and WebGL, vertices are 16-bit
     // Hence the max number can be 2^16 = 65,536
-	bool b;
-	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, 65535, &b);
-	importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, 65535, &b);
+    // AI_SLM_DEFAULT_MAX_VERTICES; // 1,000,000 by default
+    // AI_SLM_DEFAULT_MAX_TRIANGLES; // 1,000,000 by default
+    importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, vertexLimit);
+    importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, triangleLimit);
 	
 	//-------------------------------------------------------------------------
 	// Remove component info: http://assimp.sourceforge.net/lib_html/config_8h.html#a97ac2ef7a3967402a223f3da2640b2b3
-
-	// Sort by P type (remove all but triangles)
-	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, 
-		aiPrimitiveType_LINE | aiPrimitiveType_POINT | aiPrimitiveType_POLYGON);
+    // Sort by P type and remove
+    int removePrimitives = 0;
+    removePrimitives |= removePoints    ? aiPrimitiveType_POINT     : 0;
+    removePrimitives |= removeLines     ? aiPrimitiveType_LINE      : 0;
+    removePrimitives |= removeTriangles ? aiPrimitiveType_TRIANGLE  : 0;
+    removePrimitives |= removePolygons  ? aiPrimitiveType_POLYGON   : 0;
+    importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, removePrimitives);
 
 
 
