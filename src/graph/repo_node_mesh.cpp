@@ -40,7 +40,6 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 			outline(NULL),
             uvChannels(NULL),
             colors(NULL)
-
 {
     //--------------------------------------------------------------------------
 	// Vertices (always present)
