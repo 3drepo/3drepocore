@@ -59,39 +59,12 @@ void repo::core::AssimpWrapper::resetScene()
 //------------------------------------------------------------------------------
 bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
                                             const std::string &fullFilePath,
-                                            const unsigned int pFlags,
-                                            const int triangleLimit,
-                                            const int vertexLimit,
-                                            bool removePoints,
-                                            bool removeLines,
-                                            bool removeTriangles,
-                                            bool removePolygons)
+                                            unsigned int pFlags)
 {
 	resetScene();
 
 	// post processor
 	// http://assimp.sourceforge.net/lib_html/ai_post_process_8h.html#64795260b95f5a4b3f3dc1be4f52e410
-	
-	//-------------------------------------------------------------------------
-    // In OpenGL ES 2.0 and WebGL, vertices are 16-bit
-    // Hence the max number can be 2^16 = 65,536
-    // AI_SLM_DEFAULT_MAX_VERTICES; // 1,000,000 by default
-    // AI_SLM_DEFAULT_MAX_TRIANGLES; // 1,000,000 by default
-    importer.SetPropertyInteger(AI_CONFIG_PP_SLM_VERTEX_LIMIT, vertexLimit);
-    importer.SetPropertyInteger(AI_CONFIG_PP_SLM_TRIANGLE_LIMIT, triangleLimit);
-	
-	//-------------------------------------------------------------------------
-	// Remove component info: http://assimp.sourceforge.net/lib_html/config_8h.html#a97ac2ef7a3967402a223f3da2640b2b3
-    // Sort by P type and remove
-    int removePrimitives = 0;
-    removePrimitives |= removePoints    ? aiPrimitiveType_POINT     : 0;
-    removePrimitives |= removeLines     ? aiPrimitiveType_LINE      : 0;
-    removePrimitives |= removeTriangles ? aiPrimitiveType_TRIANGLE  : 0;
-    removePrimitives |= removePolygons  ? aiPrimitiveType_POLYGON   : 0;
-    importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, removePrimitives);
-
-
-
 
     std::cerr << "File path " <<  fullFilePath << std::endl;
 	//-------------------------------------------------------------------------
@@ -283,6 +256,47 @@ int repo::core::AssimpWrapper::countNodes(const aiNode *parent)
     for (int i = 0; i < childrenCount; ++i)
 		ret += countNodes(childrenNodes[i]);
 	return ret;
+}
+
+void repo::core::AssimpWrapper::setSortAndRemovePrimitives(bool removePoints,
+                                                           bool removeLines,
+                                                           bool removeTriangles,
+                                                           bool removePolygons)
+{
+    int removePrimitives = 0;
+    removePrimitives |= removePoints    ? aiPrimitiveType_POINT     : 0;
+    removePrimitives |= removeLines     ? aiPrimitiveType_LINE      : 0;
+    removePrimitives |= removeTriangles ? aiPrimitiveType_TRIANGLE  : 0;
+    removePrimitives |= removePolygons  ? aiPrimitiveType_POLYGON   : 0;
+    importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, removePrimitives);
+}
+
+
+void repo::core::AssimpWrapper::setRemoveComponents(bool removeAnimations,
+        bool removeTangentsAndBitangents,
+        bool removeBoneWeights,
+        bool removeCameras,
+        bool removeColors,
+        bool removeLights,
+        bool removeMaterials,
+        bool removeMeshes,
+        bool removeNormals,
+        bool removeTextureCoordinates,
+        bool removeTextures)
+{
+    int removeComponents = 0;
+    removeComponents |= removeAnimations            ? aiComponent_ANIMATIONS                : 0;
+    removeComponents |= removeTangentsAndBitangents ? aiComponent_TANGENTS_AND_BITANGENTS   : 0;
+    removeComponents |= removeBoneWeights           ? aiComponent_BONEWEIGHTS               : 0;
+    removeComponents |= removeCameras               ? aiComponent_CAMERAS                   : 0;
+    removeComponents |= removeColors                ? aiComponent_COLORS                    : 0;
+    removeComponents |= removeLights                ? aiComponent_LIGHTS                    : 0;
+    removeComponents |= removeMaterials             ? aiComponent_MATERIALS                 : 0;
+    removeComponents |= removeMeshes                ? aiComponent_MESHES                    : 0;
+    removeComponents |= removeNormals               ? aiComponent_NORMALS                   : 0;
+    removeComponents |= removeTextureCoordinates    ? aiComponent_TEXCOORDS                 : 0;
+    removeComponents |= removeTextures              ? aiComponent_TEXTURES                  : 0;
+    importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, removeComponents);
 }
 
 //-----------------------------------------------------------------------------
