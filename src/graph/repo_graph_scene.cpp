@@ -311,7 +311,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 			meshesMapping.insert(std::make_pair(meshes[i], i));
 		}
 		scene->mMeshes = mMeshes;
-		scene->mNumMeshes = meshes.size();
+        scene->mNumMeshes = (unsigned int) meshes.size();
 	}
 
 

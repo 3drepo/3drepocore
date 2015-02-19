@@ -18,6 +18,8 @@
 
 #include "repo_node_mesh.h"
 
+#include <algorithm>
+
 //------------------------------------------------------------------------------
 //
 // Constructors
@@ -216,7 +218,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 
 		unsigned int channelsCount = 
 			obj.getField(REPO_NODE_LABEL_UV_CHANNELS_COUNT).numberInt();
-		unsigned int channelSize = concatenated.size()/channelsCount;
+        unsigned int channelSize = (unsigned int) concatenated.size()/channelsCount;
 		uvChannels = 
 			new std::vector<std::vector<aiVector3t<float>> *>(channelsCount);
 
@@ -284,12 +286,50 @@ repo::core::RepoNodeMesh::~RepoNodeMesh()
 		uvChannels = NULL;
 	}
 
-    if(NULL != colors){
+    if (NULL != colors){
         colors->clear();
         delete colors;
     }
 }
 
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeMesh::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeMesh *otherMesh = dynamic_cast<const RepoNodeMesh*>(&other);
+    //return false;
+    return otherMesh &&
+            RepoNodeAbstract::operator==(other) &&
+            (std::equal(this->getVertices()->begin(),
+                        this->getVertices()->end(),
+                        otherMesh->getVertices()->end())) &&
+            (std::equal(this->getFaces()->begin(),
+                        this->getFaces()->end(),
+                        otherMesh->getFaces()->end())) &&
+            (std::equal(this->getNormals()->begin(),
+                        this->getNormals()->end(),
+                        otherMesh->getNormals()->end())) &&
+            (std::equal(this->getOutline()->begin(),
+                        this->getOutline()->end(),
+                        otherMesh->getOutline()->end())) &&
+            (this->getBoundingBox() == otherMesh->getBoundingBox()) &&
+            (std::equal(this->getColors()->begin(),
+                        this->getColors()->end(),
+                        otherMesh->getColors()->begin())) &&
+            (std::equal(this->getUVChannel(0)->begin(),
+                        this->getUVChannel(0)->end(),
+                        otherMesh->getUVChannel(0)->begin())) &&
+            (std::equal(this->getUVChannel(1)->begin(),
+                        this->getUVChannel(1)->end(),
+                        otherMesh->getUVChannel(1)->end())) &&
+            (std::equal(this->getUVChannel(2)->begin(),
+                        this->getUVChannel(2)->end(),
+                        otherMesh->getUVChannel(2)->end()));
+}
 
 //------------------------------------------------------------------------------
 //
@@ -481,7 +521,7 @@ void repo::core::RepoNodeMesh::toAssimp(
 		{
 			std::copy(faces->begin(), faces->end(), facesArray);
 			mesh->mFaces = facesArray;
-			mesh->mNumFaces = faces->size();
+            mesh->mNumFaces = (unsigned int) faces->size();
 			mesh->mPrimitiveTypes = 4; // TODO: work out the exact primitive type of each mesh!
 		}
 		else
@@ -498,7 +538,7 @@ void repo::core::RepoNodeMesh::toAssimp(
 	{
 		std::copy(vertices->begin(), vertices->end(), verticesArray);
 		mesh->mVertices = verticesArray;
-		mesh->mNumVertices = vertices->size();
+        mesh->mNumVertices = (unsigned int) vertices->size();
 	}
 	else
 		mesh->mNumVertices = 0;

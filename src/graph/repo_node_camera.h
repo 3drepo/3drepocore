@@ -96,6 +96,15 @@ public :
     ~RepoNodeCamera() {}
 
     //--------------------------------------------------------------------------
+    //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the given node is identical to this, false otherwise.
+    virtual bool operator==(const RepoNodeAbstract&) const;
+
+    //--------------------------------------------------------------------------
 	//
 	// Export
 	//

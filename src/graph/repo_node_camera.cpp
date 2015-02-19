@@ -111,6 +111,26 @@ repo::core::RepoNodeCamera::RepoNodeCamera(const mongo::BSONObj &obj)
 
 //------------------------------------------------------------------------------
 //
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeCamera::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeCamera *otherCamera = dynamic_cast<const RepoNodeCamera*>(&other);
+    return otherCamera &&
+            RepoNodeAbstract::operator==(other) &&
+            (this->getAspectRatio() == otherCamera->getAspectRatio()) &&
+            (this->getFarClippingPlane() == otherCamera->getFarClippingPlane()) &&
+            (this->getNearClippingPlane() == otherCamera->getNearClippingPlane()) &&
+            (this->getFieldOfView() == otherCamera->getFieldOfView()) &&
+            (this->getLookAt() == otherCamera->getLookAt()) &&
+            (this->getPosition() == otherCamera->getPosition()) &&
+            (this->getUp() == otherCamera->getUp());
+}
+
+//------------------------------------------------------------------------------
+//
 // Export
 //
 //------------------------------------------------------------------------------

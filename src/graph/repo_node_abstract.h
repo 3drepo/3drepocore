@@ -102,6 +102,14 @@ public :
 	 */
     virtual ~RepoNodeAbstract() {}
 
+    //--------------------------------------------------------------------------
+    //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the node is the same, false otherwise.
+    virtual bool operator==(const RepoNodeAbstract &other) const;
 
     //--------------------------------------------------------------------------
 	//

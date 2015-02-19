@@ -50,17 +50,44 @@ public :
 	//! Empty destructor
     inline ~RepoBoundingBox() {}
 
+    //--------------------------------------------------------------------------
+    //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the given bounding box is identical, false otherwise.
+    virtual bool operator==(const RepoBoundingBox&) const;
+
+    //--------------------------------------------------------------------------
+
 	//! Returns a vector representation as [min, max].
 	std::vector<aiVector3t<float> > toVector() const;
 
 	//! Returns a polygon outline as a bounding rectangle in XY plane.
 	void toOutline(std::vector<aiVector2t<float> > * vec) const;
 
+
+    //--------------------------------------------------------------------------
+    //
+    // Setters
+    //
+    //--------------------------------------------------------------------------
+
     void setMin(aiVector3t<float> &min) { this->min = min; }
+
     void setMax(aiVector3t<float> &max) { this->max = max; }
 
-    const aiVector3t<float>& getMin() const { return min; }
-    const aiVector3t<float>& getMax() const { return max; }
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
+
+
+    const aiVector3D& getMin() const { return min; }
+
+    const aiVector3D& getMax() const { return max; }
 
 private :
 

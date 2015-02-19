@@ -198,6 +198,28 @@ repo::core::RepoNodeMaterial::~RepoNodeMaterial()
 		delete specular;
 }
 
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeMaterial::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeMaterial *otherMaterial = dynamic_cast<const RepoNodeMaterial*>(&other);
+
+    return otherMaterial &&
+            RepoNodeAbstract::operator==(other) &&
+            (this->getAmbient() == otherMaterial->getAmbient()) &&
+            (this->getDiffuse() == otherMaterial->getDiffuse()) &&
+            (this->getEmissive() == otherMaterial->getEmissive()) &&
+            (this->getSpecular() == otherMaterial->getSpecular()) &&
+            (this->getIsWireframe() == otherMaterial->getIsWireframe()) &&
+            (this->getIsTwoSided() == otherMaterial->getIsTwoSided()) &&
+            (this->getOpacity() == otherMaterial->getOpacity()) &&
+            (this->getShininess() == otherMaterial->getShininess()) &&
+            (this->getShininessStrength() == otherMaterial->getShininessStrength());
+}
 
 //------------------------------------------------------------------------------
 //

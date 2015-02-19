@@ -41,6 +41,12 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 	}
 }
 
+bool repo::core::RepoBoundingBox::operator==(const RepoBoundingBox& other) const
+{
+    return this->getMin() == other.getMin() &&
+            this->getMax() == other.getMax();
+}
+
 std::vector<aiVector3t<float>> repo::core::RepoBoundingBox::toVector() const
 {
 	std::vector<aiVector3t<float>> vec;

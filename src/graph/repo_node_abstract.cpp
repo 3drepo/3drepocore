@@ -65,11 +65,25 @@ repo::core::RepoNodeAbstract::RepoNodeAbstract(const mongo::BSONObj &obj)
         std::vector<boost::uuids::uuid>::iterator it;
         for (it = parentIDs.begin(); it != parentIDs.end(); ++it)
         {
-           boost::uuids::uuid id = *it;
-//		for each (boost::uuids::uuid id in parentIDs)
+            boost::uuids::uuid id = *it;
 			parentSharedIDs.insert(id);
         }
 	}
+}
+
+
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+//! Returns true if the node is the same, false otherwise.
+bool repo::core::RepoNodeAbstract::operator==(const RepoNodeAbstract &other) const
+{
+    return (this->getType() == other.getType()) &&
+           (this->getName() == other.getName()) &&
+           (this->getApi() == other.getApi());
 }
 
 //------------------------------------------------------------------------------

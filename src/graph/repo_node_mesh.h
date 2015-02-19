@@ -120,8 +120,23 @@ public :
 	 */
 	RepoNodeMesh(const mongo::BSONObj & obj);
 
+    //--------------------------------------------------------------------------
+    //
+    // Destructors
+    //
+    //--------------------------------------------------------------------------
+
 	//! Destructor. Deallocates vertices, normals and faces vectors.
 	~RepoNodeMesh();
+
+    //--------------------------------------------------------------------------
+    //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the given node is identical to this, false otherwise.
+    virtual bool operator==(const RepoNodeAbstract&) const;
 
     //--------------------------------------------------------------------------
 	//
@@ -160,34 +175,32 @@ public :
 	{ return faces; }
 
 	//! Return the normals vector.
-	const std::vector<aiVector3t<float> > * getNormals() const
+    const std::vector<aiVector3D> * getNormals() const
 	{ return normals; }
 
 	//! Returns the vertices vector.
-	const std::vector<aiVector3t<float> > * getVertices() const 
+    const std::vector<aiVector3D> * getVertices() const
 	{ return vertices; }
 
 	//! Returns the texcoord vector.
-	const std::vector<aiVector3t<float> > * getUVChannel(int channel = 0) const 
+    const std::vector<aiVector3D> * getUVChannel(int channel = 0) const
 	{ 
-        std::vector<aiVector3t<float> > *tmp = NULL;
-
-        if ((uvChannels != NULL) && (uvChannels->size() > 0))
-        {
-            tmp = (*uvChannels)[channel]; 
-        }
-
+        std::vector<aiVector3D> *tmp = NULL;
+        if (uvChannels && (uvChannels->size() > 0))
+            tmp = (*uvChannels)[channel];
         return tmp;
     }
 
+    //! Returns outline of this mesh.
+    const std::vector<aiVector2D> *getOutline() const
+    { return outline; }
+
     //! Returns the vertices colors.
-    const std::vector<aiColor4t<float> > * getColors() const
+    const std::vector<aiColor4D > *getColors() const
     { return colors; }
 
     const RepoBoundingBox &getBoundingBox() const
-    {
-        return boundingBox;
-    }
+    {   return boundingBox; }
 
 	//! Returns the area of a face identified by its index.
 	double getFaceArea(const unsigned int & index) const;
@@ -233,7 +246,7 @@ public :
 
 protected :
 
-    std::vector<aiVector3t<float> > *vertices; //!< Vertices of this mesh.
+    std::vector<aiVector3D > *vertices; //!< Vertices of this mesh.
 
 	//! Faces of the mesh. Each face points to several vertices by the indices.
 	std::vector<aiFace> * faces; 
@@ -242,14 +255,14 @@ protected :
 	/*!
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
-    std::vector<aiVector3t<float> > *normals;
+    std::vector<aiVector3D > *normals;
 
 	//! 2D outline of this mesh.
 	/*!
 	 * Outline is a XY orthographic projection of the mesh. The simplest 
 	 * example is a bounding rectangle.
 	 */
-    std::vector<aiVector2t<float> > *outline;
+    std::vector<aiVector2D > *outline;
 
 	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box. 
 
@@ -258,10 +271,10 @@ protected :
 	 * A mesh can have multiple UV channels per vertex, each channel
 	 * is the length of the number of vertices.
 	 */
-    std::vector<std::vector<aiVector3t<float> >*> *uvChannels;
+    std::vector<std::vector<aiVector3D >*> *uvChannels;
 
     //! Vertex colors of this mesh.
-    std::vector<aiColor4t<float> > *colors;
+    std::vector<aiColor4D > *colors;
 
 }; // end class
 
