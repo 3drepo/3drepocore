@@ -68,7 +68,9 @@ HEADERS +=  src/repocore.h\
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
-    src/primitives/repoimage.h
+            src/primitives/repoimage.h \
+            src/3ddiff/repo3ddiff.h
+
 
 SOURCES +=  src/repocore.cpp \
             src/repologger.cpp \
@@ -98,7 +100,5 @@ SOURCES +=  src/repocore.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
             src/compute/render.cpp \
-    src/primitives/repoimage.cpp
-
-
-
+            src/primitives/repoimage.cpp \
+            src/3ddiff/repo3ddiff.cpp
