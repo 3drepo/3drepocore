@@ -63,7 +63,7 @@ public :
      * \param metadata aiMetadata metadata object
      * \sa RepoNodeMetadata()
      */
-    RepoNodeMetadata(const aiMetadata *metadata);
+    RepoNodeMetadata(const aiMetadata *metadata, const std::string &name);
 
 	//! Constructs metadata scene graph component from a BSON object.
     /*!

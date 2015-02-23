@@ -19,8 +19,16 @@
 #include "../conversion/repo_transcoder_bson.h"
 
 //! Constructs Metadata scene graph node from Assimp's aiMetaData
-repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
- RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1)
+repo::core::RepoNodeMetadata::RepoNodeMetadata(
+        const aiMetadata *metaIn,
+        const std::string& name)
+    : RepoNodeAbstract(
+          REPO_NODE_TYPE_METADATA,
+          REPO_NODE_API_LEVEL_1,
+          repo::core::RepoTranscoderString::stringToUUID(
+              name,
+              REPO_NODE_UUID_SUFFIX_METADATA),
+          name)
 {
 	mongo::BSONObjBuilder builder;
 
@@ -28,6 +36,10 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
 	{
 		std::string key(metaIn->mKeys[i].C_Str());
 		aiMetadataEntry &currentValue = metaIn->mValues[i];
+
+        if (key == "IfcGloballyUniqueId")
+            std::cerr << "TODO: fix IfcGloballyUniqueId in RepoMetadata" << std::endl;
+
 
 		switch(currentValue.mType)
 		{

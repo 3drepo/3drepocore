@@ -81,7 +81,7 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 	if (node->mMetaData)
 	{
 		repo::core::RepoNodeMetadata *metachild =
-			new RepoNodeMetadata(node->mMetaData);
+            new RepoNodeMetadata(node->mMetaData, node->mName.data);
 
 		this->addChild(metachild);
 		metachild->addParent(this);

@@ -182,6 +182,9 @@ public :
     //! Returns parents of the node.
     inline std::set<const RepoNodeAbstract *> getParents() const { return parents; }
 
+    void setName(const std::string& name)
+    { this->name = name; }
+
     //--------------------------------------------------------------------------
 	//
 	// Family matters
