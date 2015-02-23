@@ -90,6 +90,15 @@ public :
 
     //--------------------------------------------------------------------------
     //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the given node is identical to this, false otherwise.
+    virtual bool operator==(const RepoNodeAbstract&) const;
+
+    //--------------------------------------------------------------------------
+    //
     // Export
     //
     //--------------------------------------------------------------------------
@@ -102,6 +111,9 @@ public :
      * \return BSON representation
      */
     mongo::BSONObj toBSONObj() const;
+
+    //! Returns metadata subobject.
+    mongo::BSONObj getMetadata() const { return metadata; }
 
 protected :
 

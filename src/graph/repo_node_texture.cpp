@@ -116,6 +116,25 @@ repo::core::RepoNodeTexture::~RepoNodeTexture()
 	}
 }
 
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeTexture::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeTexture *otherTexture = dynamic_cast<const RepoNodeTexture*>(&other);
+    return otherTexture &&
+            RepoNodeAbstract::operator==(other) &&
+            this->getWidth() == otherTexture->getWidth() &&
+            this->getHeight() == otherTexture->getHeight() &&
+            this->getExtension() == otherTexture->getExtension() &&
+            std::equal(this->getData()->begin(),
+                       this->getData()->end(),
+                       otherTexture->getData()->begin());
+}
+
 
 //------------------------------------------------------------------------------
 //

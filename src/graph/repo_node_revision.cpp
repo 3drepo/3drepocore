@@ -97,6 +97,39 @@ repo::core::RepoNodeRevision::RepoNodeRevision(const mongo::BSONObj & obj)
 
 repo::core::RepoNodeRevision::~RepoNodeRevision() {}
 
+
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeRevision::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeRevision *otherRevision = dynamic_cast<const RepoNodeRevision*>(&other);
+    return otherRevision &&
+            RepoNodeAbstract::operator==(other) &&
+            this->getAuthor() == otherRevision->getAuthor() &&
+            this->getMessage() == otherRevision->getMessage() &&
+            this->getTag() == otherRevision->getTag() &&
+            this->getTimestamp() == otherRevision->getTimestamp() &&
+            (std::equal(this->getCurrentUniqueIDs().begin(),
+                        this->getCurrentUniqueIDs().end(),
+                        otherRevision->getCurrentUniqueIDs().end())) &&
+            (std::equal(this->getAddedSharedIDs().begin(),
+                        this->getAddedSharedIDs().end(),
+                        otherRevision->getAddedSharedIDs().end())) &&
+            (std::equal(this->getDeletedSharedIDs().begin(),
+                        this->getDeletedSharedIDs().end(),
+                        otherRevision->getDeletedSharedIDs().end())) &&
+            (std::equal(this->getModifiedSharedIDs().begin(),
+                        this->getModifiedSharedIDs().end(),
+                        otherRevision->getModifiedSharedIDs().end())) &&
+            (std::equal(this->getUnmodifiedSharedIDs().begin(),
+                        this->getUnmodifiedSharedIDs().end(),
+                        otherRevision->getUnmodifiedSharedIDs().end()));
+}
+
 //------------------------------------------------------------------------------
 //
 // Export

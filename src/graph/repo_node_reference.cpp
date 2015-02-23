@@ -73,6 +73,23 @@ repo::core::RepoNodeReference::RepoNodeReference(
     }
 }
 
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeReference::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeReference *otherReference = dynamic_cast<const RepoNodeReference*>(&other);
+    return otherReference &&
+            RepoNodeAbstract::operator==(other) &&
+            this->getProject() == otherReference->getProject() &&
+            this->getOwner() == otherReference->getOwner() &&
+            this->getRevisionID() == otherReference->getRevisionID() &&
+            this->getIsUniqueID() == otherReference->getIsUniqueID();
+}
+
 mongo::BSONObj repo::core::RepoNodeReference::toBSONObj() const
 {
     mongo::BSONObjBuilder builder;

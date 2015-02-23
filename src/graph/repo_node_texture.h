@@ -77,6 +77,16 @@ public :
 	~RepoNodeTexture();
 
     //--------------------------------------------------------------------------
+    //
+    // Operators
+    //
+    //--------------------------------------------------------------------------
+
+    //! Returns true if the given node is identical to this, false otherwise.
+    virtual bool operator==(const RepoNodeAbstract&) const;
+
+
+    //--------------------------------------------------------------------------
 	//
 	// Export
 	//
@@ -92,11 +102,23 @@ public :
 	 */
 	mongo::BSONObj toBSONObj() const;
 
+    const std::vector<char>* getData() const { return data; }
+
 	//! Returns a pointer to the internal raw data of the texture.
-    inline const char * getData() const { return &(data->at(0)); }
+    inline const char * getRawData() const { return &(data->at(0)); }
 
 	//! Returns the number of bytes of the raw data.
-    inline unsigned int getDataSize() const { return data->size(); }
+    inline unsigned int getRawDataSize() const { return data->size(); }
+
+    //! Returns width of the texture if set.
+    unsigned int getWidth() const { return width; }
+
+    //! Returns height of the texture if set.
+    unsigned int getHeight() const { return height; }
+
+    //! Returns extension of the texture if set.
+    std::string getExtension() const { return extension; }
+
 
 protected :
 

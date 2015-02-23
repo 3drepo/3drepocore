@@ -168,6 +168,20 @@ repo::core::RepoNodeTransformation::~RepoNodeTransformation() {}
 
 //------------------------------------------------------------------------------
 //
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeTransformation::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeTransformation *otherTransformation = dynamic_cast<const RepoNodeTransformation*>(&other);
+    return otherTransformation &&
+            RepoNodeAbstract::operator==(other) &&
+            this->getMatrix() == otherTransformation->getMatrix();
+}
+
+//------------------------------------------------------------------------------
+//
 // Export
 //
 //------------------------------------------------------------------------------

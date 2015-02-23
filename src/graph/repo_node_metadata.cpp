@@ -96,6 +96,22 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const mongo::BSONObj &obj)
         metadata = obj.getField(REPO_NODE_LABEL_METADATA).Obj();
 }
 
+
+//------------------------------------------------------------------------------
+//
+// Operators
+//
+//------------------------------------------------------------------------------
+
+bool repo::core::RepoNodeMetadata::operator==(const RepoNodeAbstract& other) const
+{
+    const RepoNodeMetadata* otherMetadata = dynamic_cast<const RepoNodeMetadata*>(&other);
+    return otherMetadata &&
+            RepoNodeAbstract::operator ==(other) &&
+            this->getMetadata() == otherMetadata->getMetadata();
+
+}
+
 mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
 {
     mongo::BSONObjBuilder builder;
