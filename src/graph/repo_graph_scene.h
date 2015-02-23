@@ -104,8 +104,12 @@ public :
 	//! Returns a vector of material nodes.
     inline std::vector<RepoNodeAbstract *> getMaterials() const { return materials; }
 
+    //! Returns a set of meshes.
+    inline RepoNodeAbstractSet getMeshes() const { return meshes; }
+
 	//! Returns a vector of mesh nodes.
-    inline std::vector<RepoNodeAbstract *> getMeshes() const { return meshes; }
+    inline std::vector<RepoNodeAbstract*> getMeshesVector() const
+    { return std::vector<RepoNodeAbstract*>(meshes.begin(), meshes.end());  }
 			
 	//! Returns a vector of transformation nodes.
     inline std::vector<RepoNodeAbstract *> getTransformations() const { return transformations; }
@@ -133,19 +137,19 @@ public :
 
 protected :
 
-    std::vector<RepoNodeAbstract *> materials; //!< Materials
-	
-	std::vector<RepoNodeAbstract *> meshes; //!< Meshes
-
-	std::vector<RepoNodeAbstract *> transformations; //!< Transformations
-	
-	std::vector<RepoNodeTexture *> textures; //!< Textures
-
 	std::vector<RepoNodeAbstract *> cameras; //!< Cameras
+
+    RepoNodeAbstractSet meshes; //!< Meshes
+
+    std::vector<RepoNodeAbstract *> materials; //!< Materials
+
+    std::vector<RepoNodeAbstract *> metadata; //!< Metadata
 
     std::vector<RepoNodeAbstract *> references; //!< References
 
-    std::vector<RepoNodeAbstract *> metadata; //!< Metadata
+    std::vector<RepoNodeTexture *> textures; //!< Textures
+
+    std::vector<RepoNodeAbstract *> transformations; //!< Transformations
 
 }; // end class
 

@@ -63,14 +63,14 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Meshes
 	if (scene->HasMeshes())
 	{
-		meshes.reserve(scene->mNumMeshes);
+        //meshes.reserve(scene->mNumMeshes);
 		for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 		{
 			RepoNodeAbstract* mesh = new RepoNodeMesh(
 				REPO_NODE_API_LEVEL_1,
 				scene->mMeshes[i],
 				materials);
-			meshes.push_back(mesh);
+            meshes.insert(mesh);
 			nodesByUniqueID.insert(std::make_pair(mesh->getUniqueID(), mesh));
 		}
 	}
@@ -111,7 +111,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Recursively converts aiNode and all of its children to a hierarchy
 	// of RepoNodeTransformations. Call with root node of aiScene.
 	// RootNode will be the first entry in transformations vector.
-    rootNode = new RepoNodeTransformation(scene->mRootNode, meshes, camerasMap,
+    rootNode = new RepoNodeTransformation(scene->mRootNode, this->getMeshesVector(), camerasMap,
                                           transformations,
 										  metadata);
 
@@ -164,7 +164,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		else if (REPO_NODE_TYPE_MESH == nodeType)
 		{
 			node = new RepoNodeMesh(obj);
-			meshes.push_back(node);
+            meshes.insert(node);
 		}
 		else if (REPO_NODE_TYPE_MATERIAL == nodeType)
 		{
@@ -241,7 +241,7 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
     if (thatScene)
     {
         materials.insert(materials.end(), thatScene->materials.begin(), thatScene->materials.end());
-        meshes.insert(meshes.end(), thatScene->meshes.begin(), thatScene->meshes.end());
+        meshes.insert(thatScene->meshes.begin(), thatScene->meshes.end());
         transformations.insert(transformations.end(), thatScene->transformations.begin(), thatScene->transformations.end());
         textures.insert(textures.end(), thatScene->textures.begin(), thatScene->textures.end());
         cameras.insert(cameras.end(), thatScene->cameras.begin(), thatScene->cameras.end());
@@ -303,12 +303,14 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 	std::map<const RepoNodeAbstract *, unsigned int> meshesMapping;
 	if (NULL != mMeshes)
 	{
-		for (unsigned int i = 0; i < meshes.size(); ++i)
-		{
+
+        RepoNodeAbstractSet::iterator it = meshes.begin();
+        for (unsigned int i = 0; it != meshes.end(); ++it, ++i)
+        {
 			aiMesh *mesh = new aiMesh();
-			((RepoNodeMesh *) meshes[i])->toAssimp(materialsMapping, mesh);
+            ((RepoNodeMesh*) *it)->toAssimp(materialsMapping, mesh);
 			mMeshes[i] = mesh;
-			meshesMapping.insert(std::make_pair(meshes[i], i));
+            meshesMapping.insert(std::make_pair(*it, i));
 		}
 		scene->mMeshes = mMeshes;
         scene->mNumMeshes = (unsigned int) meshes.size();
@@ -371,8 +373,9 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 {
 	std::vector<std::string> names(meshes.size());
-	for (unsigned int i = 0; i < names.size(); ++i)
-		names[i] = meshes[i]->getName();
+    RepoNodeAbstractSet::iterator it = meshes.begin();
+    for (unsigned int i = 0; it != meshes.end(); ++it, ++i)
+        names[i] = (*it)->getName();
 	return names;
 }
 

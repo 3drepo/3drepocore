@@ -83,7 +83,19 @@ bool repo::core::RepoNodeAbstract::operator==(const RepoNodeAbstract &other) con
 {
     return (this->getType() == other.getType()) &&
            (this->getName() == other.getName()) &&
-           (this->getApi() == other.getApi());
+           (this->getApi() == other.getApi()) &&
+           (this->getSharedID() == other.getSharedID());
+}
+
+bool repo::core::RepoNodeAbstract::operator<(const RepoNodeAbstract& other) const
+{
+    return this->getType() != other.getType()
+            ? this->getType() < other.getType()
+            : this->getName() != other.getName()
+            ? this->getName() < other.getName()
+            : this->getApi() != other.getApi()
+            ? this->getApi() < other.getApi()
+            : this->getSharedID() < other.getSharedID();
 }
 
 //------------------------------------------------------------------------------

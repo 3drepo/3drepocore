@@ -43,7 +43,7 @@ namespace core {
  * required to decode it. Name of this object is optional information which
  * might or might not be present. It is assumed a graph may have only one root.
  */
-class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeAbstract
 {
 
 public :
@@ -61,9 +61,8 @@ public :
 	 * 
 	 * \param type repository object type such as 'material', 'mesh', etc.
 	 * \param api API level of this object, information used to decode it in 
-	 *            clients
-	 
-	 head_bson.append("_id", * \param uuid unique identifier, randomly generated if not given
+     *        clients
+     * \param uuid unique identifier, randomly generated if not given
 	 * \param name optional name of this object, empty string if not specified,
 	 *             does not have to be unique
 	 * \sa RepoNodeAbstract() and ~RepoNodeAbstract()
@@ -109,7 +108,10 @@ public :
     //--------------------------------------------------------------------------
 
     //! Returns true if the node is the same, false otherwise.
-    virtual bool operator==(const RepoNodeAbstract &other) const;
+    virtual bool operator==(const RepoNodeAbstract& other) const;
+
+    //! Returns true if the other node is greater than this one, false otherwise.
+    virtual bool operator<(const RepoNodeAbstract& other) const;
 
     //--------------------------------------------------------------------------
 	//
@@ -304,6 +306,21 @@ protected :
 	std::set<const RepoNodeAbstract *> children; 
 
 }; // end class
+
+
+/*!
+ * Comparator definition to enable std::set to store pointers to abstract nodes
+ * so that they are compared based on their value rather than their integer
+ * pointers.
+ */
+struct REPO_CORE_EXPORT RepoNodeAbstractComparator
+{
+    bool operator()(const RepoNodeAbstract* a, const RepoNodeAbstract* b) const
+    { return *a < *b; }
+};
+
+//! Set definition for pointers to abstract nodes (sorted by value rather than pointer)
+typedef std::set<RepoNodeAbstract *, RepoNodeAbstractComparator> RepoNodeAbstractSet;
 
 } // end namespace core
 } // end namespace repo

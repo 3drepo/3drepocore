@@ -18,17 +18,40 @@
 #ifndef REPO_3D_DIFF_H
 #define REPO_3D_DIFF_H
 
+#include "../repocoreglobal.h"
+
+#include "../graph/repo_node_abstract.h"
+#include "../graph/repo_node_revision.h"
+#include "../graph/repo_graph_abstract.h"
+#include "../graph/repo_graph_scene.h"
+
 namespace repo {
 namespace core {
 
-class Repo3DDiff
+class REPO_CORE_EXPORT Repo3DDiff
 {
 
 public:
 
-    Repo3DDiff();
+    //! Default empty constructor.
+    Repo3DDiff() {}
 
+    //! Default empty destructor.
     ~Repo3DDiff() {}
+
+    RepoNodeRevision diff(const RepoGraphScene* A,
+            const RepoGraphScene* B) const;
+
+    //! Set difference (A - B)
+    RepoNodeAbstractSet setDifference(
+            const RepoNodeAbstractSet &A,
+            const RepoNodeAbstractSet &B) const;
+
+    void printSet(const RepoNodeAbstractSet &A,
+                  const std::string& label = "") const;
+
+
+private :
 
 
 }; // end class
