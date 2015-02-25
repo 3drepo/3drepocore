@@ -66,7 +66,7 @@ namespace core {
 //------------------------------------------------------------------------------
 
 typedef uint64_t hash_type;
-#define HASH_DENSITY 65535
+#define REPO_HASH_DENSITY 65535
 
 
 //! Mesh scene graph node, corresponds to aiMesh in Assimp.
@@ -300,6 +300,12 @@ protected :
     std::vector<aiColor4D>* colors;
 
 }; // end class
+
+
+struct RepoNodeMeshHasher {
+    size_t operator()(const RepoNodeAbstract* mesh) const
+    { return hash<std::string>()(((RepoNodeMesh*)mesh)->getVertexHash()); }
+};
 
 } // end namespace core
 } // end namespace repo

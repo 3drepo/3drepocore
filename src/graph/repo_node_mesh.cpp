@@ -748,12 +748,12 @@ std::string repo::core::RepoNodeMesh::hash(
         float norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
         float norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
 
-		hash_type vertexHash = (hash_type)(HASH_DENSITY * norm_x)
-			+ (hash_type)(HASH_DENSITY * HASH_DENSITY * norm_y)
-			+ (hash_type)(HASH_DENSITY * HASH_DENSITY * HASH_DENSITY * norm_z);
+        hash_type vertexHash = (hash_type)(REPO_HASH_DENSITY * norm_x)
+            + (hash_type)(REPO_HASH_DENSITY * REPO_HASH_DENSITY * norm_y)
+            + (hash_type)(REPO_HASH_DENSITY * REPO_HASH_DENSITY * REPO_HASH_DENSITY * norm_z);
 
 		vertexHashes[v_idx] = vertexHash;
 	}
 
-    return sha256(std::string((char *) &(vertexHashes.at(0))));
+    return sha256(std::string((char *)(&vertexHashes[0])));
 }

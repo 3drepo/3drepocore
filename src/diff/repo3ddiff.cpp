@@ -32,7 +32,16 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
 
 
     RepoNodeAbstractSet meshIntersection = setIntersection(oldMeshes, newMeshes);
-    printSet(meshIntersection, "Matching Meshes");
+//    printSet(meshIntersection, "Matching Meshes");
+
+
+    std::unordered_multiset<core::RepoNodeAbstract*,RepoNodeMeshHasher>
+            hashMultiSet(oldMeshes.begin(), oldMeshes.end());
+
+    std::cerr << "Hash set:" << std::endl;
+    for (const core::RepoNodeAbstract* x: hashMultiSet)
+        std::cerr << ((core::RepoNodeMesh*)(x))->getVertexHash() << std::endl;
+
 
 
 //    // A - B
@@ -52,7 +61,7 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
     RepoNodeAbstractSet oldTransformations = A->getTransformations();
     RepoNodeAbstractSet newTransformations = B->getTransformations();
     RepoNodeAbstractSet intersect = setIntersection(oldTransformations, newTransformations);
-    printSet(intersect, "Matching Transformations");
+//    printSet(intersect, "Matching Transformations");
 
     // A - B
 //    RepoNodeAbstractSet deletedTransformations = this->setDifference(oldTransformations, newTransformations);

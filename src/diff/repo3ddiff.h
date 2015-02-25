@@ -18,6 +18,10 @@
 #ifndef REPO_3D_DIFF_H
 #define REPO_3D_DIFF_H
 
+#include <set>
+#include <unordered_set>
+
+
 #include "../repocoreglobal.h"
 
 #include "../graph/repo_node_abstract.h"
