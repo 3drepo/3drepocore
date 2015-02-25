@@ -232,9 +232,9 @@ public :
 		{
 			vec->resize(vectorSize);
             bse.value();
-            int len;// = static_cast<int>(vectorSize * sizeof(T));
-            const char *binData = bse.binData(len);
-			memcpy(&(vec->at(0)), binData, len);
+            int length;// = static_cast<int>(vectorSize * sizeof(T));
+            const char *binData = bse.binData(length);
+            memcpy(&(vec->at(0)), binData, length);
 		}
     }
 

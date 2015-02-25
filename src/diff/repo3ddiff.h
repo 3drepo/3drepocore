@@ -42,19 +42,22 @@ public:
     RepoNodeRevision diff(const RepoGraphScene* A,
             const RepoGraphScene* B) const;
 
+
+public :
+
     //! Set difference (A - B)
-    RepoNodeAbstractSet setDifference(
+    static RepoNodeAbstractSet setDifference(
             const RepoNodeAbstractSet &A,
-            const RepoNodeAbstractSet &B) const;
+            const RepoNodeAbstractSet &B);
 
     //! Set intersection (A intersect B)
-    RepoNodeAbstractSet setIntersection(
+    static RepoNodeAbstractSet setIntersection(
             const RepoNodeAbstractSet &A,
-            const RepoNodeAbstractSet &B) const;
+            const RepoNodeAbstractSet &B);
 
 
-    void printSet(const RepoNodeAbstractSet &A,
-                  const std::string& label = "") const;
+    static void printSet(const RepoNodeAbstractSet &A,
+                  const std::string& label = std::string());
 
 
 private :

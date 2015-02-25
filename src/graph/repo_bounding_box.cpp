@@ -41,6 +41,29 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 	}
 }
 
+repo::core::RepoBoundingBox::RepoBoundingBox(
+        const std::vector<aiVector3D> &vertices)
+{
+    if (vertices.size())
+    {
+        min = vertices[0];
+        max = vertices[0];
+    }
+
+    for (unsigned int i = 0; i < vertices.size(); ++i)
+    {
+        aiVector3D tmp = vertices[i];
+
+        min.x = std::min(min.x,tmp.x);
+        min.y = std::min(min.y,tmp.y);
+        min.z = std::min(min.z,tmp.z);
+
+        max.x = std::max(max.x,tmp.x);
+        max.y = std::max(max.y,tmp.y);
+        max.z = std::max(max.z,tmp.z);
+    }
+}
+
 bool repo::core::RepoBoundingBox::operator==(const RepoBoundingBox& other) const
 {
     return this->getMin() == other.getMin() &&

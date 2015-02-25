@@ -28,7 +28,7 @@
 
 //------------------------------------------------------------------------------
 #include <stdint.h>
-#include "sha256/sha256.h"
+#include "../sha256/sha256.h"
 
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
@@ -59,9 +59,14 @@ namespace core {
 #define REPO_NODE_LABEL_UV_CHANNELS				"uv_channels" //!< uv channels array
 #define REPO_NODE_LABEL_UV_CHANNELS_COUNT		"uv_channels_count"
 #define REPO_NODE_LABEL_UV_CHANNELS_BYTE_COUNT	"uv_channels_byte_count"
+#define REPO_NODE_LABEL_SHA256                  "sha256"
+#define REPO_NODE_LABEL_COLORS                  "colors"
 //------------------------------------------------------------------------------
 #define REPO_NODE_UUID_SUFFIX_MESH				"08" //!< uuid suffix
 //------------------------------------------------------------------------------
+
+typedef uint64_t hash_type;
+#define HASH_DENSITY 65535
 
 
 //! Mesh scene graph node, corresponds to aiMesh in Assimp.
@@ -195,8 +200,6 @@ public :
         return tmp;
     }
 
-	std::string getVertexHash() const;
-
     //! Returns outline of this mesh.
     const std::vector<aiVector2D> *getOutline() const
     { return outline; }
@@ -205,8 +208,12 @@ public :
     const std::vector<aiColor4D > *getColors() const
     { return colors; }
 
+    //! Returns bounding box of the mesh.
     const RepoBoundingBox &getBoundingBox() const
-    {   return boundingBox; }
+    { return boundingBox; }
+
+    std::string getVertexHash() const
+    { return vertexHash; }
 
 	//! Returns the area of a face identified by its index.
 	double getFaceArea(const unsigned int & index) const;
@@ -250,37 +257,47 @@ public :
 		const unsigned int facesCount,
 		std::vector<aiFace> * faces);
 
+
+    //! Returns sha256 hash of a given array of [x,y,z] coordinates.
+    static std::string hash(
+            const std::vector<aiVector3t<float> >&,
+            const RepoBoundingBox&);
+
 protected :
 
-    std::vector<aiVector3D > *vertices; //!< Vertices of this mesh.
+    std::vector<aiVector3D>* vertices; //!< Vertices of this mesh.
 
 	//! Faces of the mesh. Each face points to several vertices by the indices.
-	std::vector<aiFace> * faces;
+    std::vector<aiFace>* faces;
 
 	//! Normals of this mesh.
 	/*!
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
-    std::vector<aiVector3D > *normals;
+    std::vector<aiVector3D>* normals;
 
 	//! 2D outline of this mesh.
 	/*!
 	 * Outline is a XY orthographic projection of the mesh. The simplest
 	 * example is a bounding rectangle.
 	 */
-    std::vector<aiVector2D > *outline;
+    std::vector<aiVector2D>* outline;
 
-	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box.
+    //! Axis-aligned local coords bounding box.
+    RepoBoundingBox boundingBox;
+
+    //! Sha256 hash of vertices.
+    std::string vertexHash;
 
 	//! UV channels per vertex
 	/*!
 	 * A mesh can have multiple UV channels per vertex, each channel
 	 * is the length of the number of vertices.
 	 */
-    std::vector<std::vector<aiVector3D >*> *uvChannels;
+    std::vector<std::vector<aiVector3D>*>* uvChannels;
 
     //! Vertex colors of this mesh.
-    std::vector<aiColor4D > *colors;
+    std::vector<aiColor4D>* colors;
 
 }; // end class
 

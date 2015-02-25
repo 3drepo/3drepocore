@@ -70,10 +70,15 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
     return RepoNodeRevision();
 }
 
+//------------------------------------------------------------------------------
+//
+// Static helpers
+//
+//------------------------------------------------------------------------------
 
 repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setDifference(
         const RepoNodeAbstractSet& A,
-        const RepoNodeAbstractSet& B) const
+        const RepoNodeAbstractSet& B)
 {
     RepoNodeAbstractSet aMinusB;
     std::set_difference(A.begin(), A.end(),
@@ -85,7 +90,7 @@ repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setDifference(
 
 repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setIntersection(
         const RepoNodeAbstractSet& A,
-        const RepoNodeAbstractSet& B) const
+        const RepoNodeAbstractSet& B)
 {
     RepoNodeAbstractSet aIntersectB;
     std::set_intersection(A.begin(), A.end(),
@@ -98,7 +103,7 @@ repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setIntersection(
 
 void repo::core::Repo3DDiff::printSet(
         const RepoNodeAbstractSet &A,
-        const std::string& label) const
+        const std::string& label)
 {
     std::cerr << label << std::endl;
     RepoNodeAbstractSet::iterator it;

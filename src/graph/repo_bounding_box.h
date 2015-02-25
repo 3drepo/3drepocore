@@ -43,9 +43,16 @@ public :
 			- std::numeric_limits<float>::max(), 
             - std::numeric_limits<float>::max()) {}
 
-	//! Constructs a bounding box out of a mesh as the most min and most max
-	// vertices.
+    /*!
+     * Constructs a bounding box out of a mesh as the most min and most max
+     * vertices.
+     */
 	RepoBoundingBox(const aiMesh *);
+
+    /*!
+     * Constructs a bounding box from given vector of vertices.
+     */
+    RepoBoundingBox(const std::vector<aiVector3D> &vertices);
 
 	//! Empty destructor
     inline ~RepoBoundingBox() {}

@@ -119,6 +119,10 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 	boundingBox = RepoBoundingBox(mesh);
 
     //--------------------------------------------------------------------------
+    // SHA-256 hash
+    vertexHash = hash(*vertices, boundingBox);
+
+    //--------------------------------------------------------------------------
 	// Polygon mesh outline (2D bounding rectangle in XY for the moment)
 	outline = new std::vector<aiVector2t<float>>();
 	boundingBox.toOutline(outline);
@@ -175,7 +179,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 	if (obj.hasField(REPO_NODE_LABEL_NORMALS) &&
 		obj.hasField(REPO_NODE_LABEL_VERTICES_COUNT))
 	{
-		normals = new std::vector<aiVector3t<float>>();
+        normals = new std::vector<aiVector3t<float> >();
 		RepoTranscoderBSON::retrieve(
 			obj.getField(REPO_NODE_LABEL_NORMALS),
 			obj.getField(REPO_NODE_LABEL_VERTICES_COUNT).numberInt(),
@@ -185,22 +189,29 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
     //--------------------------------------------------------------------------
 	// Polygon mesh outline (2D bounding rectangle in XY for the moment)
 	//
-	// TODO
+    if (obj.hasField(REPO_NODE_LABEL_OUTLINE))
+    {
+        //outline = new std::vector<aiVector2D>();
+        // TODO: fill in
+    }
 
     //--------------------------------------------------------------------------
 	// Bounding box
-
     if (obj.hasField(REPO_NODE_LABEL_BOUNDING_BOX))
     {
 		std::pair<aiVector3D, aiVector3D> min_max = RepoTranscoderBSON::retrieveBBox(
-			obj.getField(REPO_NODE_LABEL_BOUNDING_BOX)
-			);
+            obj.getField(REPO_NODE_LABEL_BOUNDING_BOX));
 
 		this->boundingBox.setMin(min_max.first);
 		this->boundingBox.setMax(min_max.second);
     }
 
-
+    //--------------------------------------------------------------------------
+    // SHA-256 hash
+    if (obj.hasField(REPO_NODE_LABEL_SHA256))
+    {
+        vertexHash = obj.getField(REPO_NODE_LABEL_SHA256).toString();
+    }
 
     //--------------------------------------------------------------------------
 	// UV channels
@@ -279,8 +290,6 @@ repo::core::RepoNodeMesh::~RepoNodeMesh()
         for (it = uvChannels->begin(); it != uvChannels->end(); ++it)
         {
             std::vector<aiVector3t<float>> *channel = *it;
-//		for each (std::vector<aiVector3t<float>> * channel in *uvChannels)
-//		{
 			channel->clear();
 			delete channel;
 			channel = NULL;
@@ -304,7 +313,6 @@ repo::core::RepoNodeMesh::~RepoNodeMesh()
 bool repo::core::RepoNodeMesh::operator==(const RepoNodeAbstract& other) const
 {
     const RepoNodeMesh *otherMesh = dynamic_cast<const RepoNodeMesh*>(&other);
-    //return false;
     return otherMesh &&
             RepoNodeAbstract::operator==(other) &&
             (std::equal(this->getVertices()->begin(),
@@ -401,15 +409,27 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 		builder);
 
     //--------------------------------------------------------------------------
+    // SHA-256 hash
+    builder << REPO_NODE_LABEL_SHA256 << vertexHash;
+
+    //--------------------------------------------------------------------------
 	// Outline
-	if (NULL != outline && outline->size() > 0)
+    if (outline && outline->size() > 0)
 		RepoTranscoderBSON::append(
 			REPO_NODE_LABEL_OUTLINE,
 			*outline,
 			builder);
 
     //--------------------------------------------------------------------------
-	// TODO: bi/tangents, vertex colors
+    // TODO: bi/tangents
+
+    //--------------------------------------------------------------------------
+    // Vertex colors
+    if (colors && colors->size())
+        RepoTranscoderBSON::append(
+                    REPO_NODE_LABEL_COLORS,
+                    *colors,
+                    builder);
 
     //--------------------------------------------------------------------------
 	// UV channels
@@ -595,8 +615,6 @@ void repo::core::RepoNodeMesh::toAssimp(
     std::set<const RepoNodeAbstract *>::iterator childrenIt;
     for (childrenIt = children.begin(); childrenIt != children.end(); ++childrenIt)
     {
-//	for each (const RepoNodeAbstract * child in children)
-//	{
 		it = materialMapping.find(*childrenIt);
 		if (materialMapping.end() != it)
 		{
@@ -709,14 +727,13 @@ repo::core::RepoVertex
 	return centroid;
 }
 
-typedef uint64_t hash_type;
-#define HASH_DENSITY 65535
-
 //------------------------------------------------------------------------------
-std::string repo::core::RepoNodeMesh::getVertexHash() const
+std::string repo::core::RepoNodeMesh::hash(
+        const std::vector<aiVector3t<float> >& vertices,
+        const RepoBoundingBox& boundingBox)
 {
 	std::vector<hash_type> vertexHashes;
-	vertexHashes.resize(vertices->size());
+    vertexHashes.resize(vertices.size());
 
 	const aiVector3t<float> &min = boundingBox.getMin();
 	const aiVector3t<float> &max = boundingBox.getMax();
@@ -725,11 +742,11 @@ std::string repo::core::RepoNodeMesh::getVertexHash() const
 	float stride_y = (max.y - min.y);
 	float stride_z = (max.z - min.z);
 
-	for(int v_idx = 0; v_idx < vertices->size(); v_idx++)
+    for(int v_idx = 0; v_idx < vertices.size(); v_idx++)
 	{
-		float norm_x = (vertices->at(v_idx).x - min.x) / stride_x;
-		float norm_y = (vertices->at(v_idx).y - min.y) / stride_y;
-		float norm_z = (vertices->at(v_idx).z - min.z) / stride_z;
+        float norm_x = (vertices.at(v_idx).x - min.x) / stride_x;
+        float norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
+        float norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
 
 		hash_type vertexHash = (hash_type)(HASH_DENSITY * norm_x)
 			+ (hash_type)(HASH_DENSITY * HASH_DENSITY * norm_y)
@@ -738,5 +755,5 @@ std::string repo::core::RepoNodeMesh::getVertexHash() const
 		vertexHashes[v_idx] = vertexHash;
 	}
 
-	return sha256(std::string((char *)(&vertexHashes[0])));
+    return sha256(std::string((char *) &(vertexHashes.at(0))));
 }
