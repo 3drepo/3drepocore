@@ -27,17 +27,17 @@
 //------------------------------------------------------------------------------
 repo::core::RepoNodeMesh::RepoNodeMesh(
 	const unsigned int api,
-	const aiMesh *mesh, 
-	const std::vector<RepoNodeAbstract *> & materials) : 
+	const aiMesh *mesh,
+	const std::vector<RepoNodeAbstract *> & materials) :
 		RepoNodeAbstract (
-			REPO_NODE_TYPE_MESH, 
+			REPO_NODE_TYPE_MESH,
 			api,
 			repo::core::RepoTranscoderString::stringToUUID(
-				mesh->mName.data, 
+				mesh->mName.data,
 				REPO_NODE_UUID_SUFFIX_MESH),
 			mesh->mName.data),
-			vertices(NULL), 
-			faces(NULL), 
+			vertices(NULL),
+			faces(NULL),
 			normals(NULL),
 			outline(NULL),
             uvChannels(NULL),
@@ -48,17 +48,17 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 	// TODO: make sure enough memory can be allocated
 	vertices = new std::vector<aiVector3t<float>>();
 	vertices->reserve(mesh->mNumVertices);
-	vertices->insert(vertices->begin(), 
-		mesh->mVertices, mesh->mVertices + mesh->mNumVertices); 
-	
-	
+	vertices->insert(vertices->begin(),
+		mesh->mVertices, mesh->mVertices + mesh->mNumVertices);
+
+
     //--------------------------------------------------------------------------
 	// Faces
 	if (mesh->HasFaces())
 	{
 		faces = new std::vector<aiFace>();
 		faces->reserve(mesh->mNumFaces);
-		faces->insert(faces->begin(), 
+		faces->insert(faces->begin(),
 			mesh->mFaces, mesh->mFaces + mesh->mNumFaces);
 	}
 
@@ -89,7 +89,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 	{
 
 	}*/
-	
+
     //--------------------------------------------------------------------------
 	// UV channels
 	// Copies only the very first UV channel over
@@ -101,8 +101,8 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		uvChannels->push_back(new std::vector<aiVector3t<float>>());
 		uvChannels->at(0)->reserve(mesh->mNumVertices);
 
-		uvChannels->at(0)->insert(uvChannels->at(0)->begin(), 
-		mesh->mTextureCoords[0], mesh->mTextureCoords[0] + mesh->mNumVertices); 
+		uvChannels->at(0)->insert(uvChannels->at(0)->begin(),
+		mesh->mTextureCoords[0], mesh->mTextureCoords[0] + mesh->mNumVertices);
 	}
 
     // Consider only first color set
@@ -136,25 +136,25 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 
 repo::core::RepoNodeMesh::RepoNodeMesh(
 	const mongo::BSONObj &obj) : RepoNodeAbstract(obj),
-		vertices(NULL), 
-		faces(NULL), 
+		vertices(NULL),
+		faces(NULL),
 		normals(NULL),
 		outline(NULL),
         uvChannels(NULL),
         colors(NULL)
-{	
+{
     //--------------------------------------------------------------------------
 	// Vertices
-	if (obj.hasField(REPO_NODE_LABEL_VERTICES) && 
+	if (obj.hasField(REPO_NODE_LABEL_VERTICES) &&
 		obj.hasField(REPO_NODE_LABEL_VERTICES_COUNT))
-	{		
+	{
 		vertices = new std::vector<aiVector3t<float>>();
 		RepoTranscoderBSON::retrieve(
 			obj.getField(REPO_NODE_LABEL_VERTICES),
 			obj.getField(REPO_NODE_LABEL_VERTICES_COUNT).numberInt(),
 			vertices);
 	}
-	
+
     //--------------------------------------------------------------------------
 	// Faces
 	if (obj.hasField(REPO_NODE_LABEL_FACES) &&
@@ -200,6 +200,8 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		this->boundingBox.setMax(min_max.second);
     }
 
+
+
     //--------------------------------------------------------------------------
 	// UV channels
 	if (obj.hasField(REPO_NODE_LABEL_UV_CHANNELS) &&
@@ -216,10 +218,11 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 			numberOfConcatenatedEntries,
 			&concatenated);
 
-		unsigned int channelsCount = 
+		unsigned int channelsCount =
 			obj.getField(REPO_NODE_LABEL_UV_CHANNELS_COUNT).numberInt();
+
         unsigned int channelSize = (unsigned int) concatenated.size()/channelsCount;
-		uvChannels = 
+		uvChannels =
 			new std::vector<std::vector<aiVector3t<float>> *>(channelsCount);
 
 		// For every uv channel present (usually only one)
@@ -393,10 +396,10 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
     //--------------------------------------------------------------------------
 	// Bounding box
 	RepoTranscoderBSON::append(
-		REPO_NODE_LABEL_BOUNDING_BOX, 
-		boundingBox.toVector(), 
+		REPO_NODE_LABEL_BOUNDING_BOX,
+		boundingBox.toVector(),
 		builder);
-	
+
     //--------------------------------------------------------------------------
 	// Outline
 	if (NULL != outline && outline->size() > 0)
@@ -406,7 +409,7 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 			builder);
 
     //--------------------------------------------------------------------------
-	// TODO: bi/tangents, vertex colors	
+	// TODO: bi/tangents, vertex colors
 
     //--------------------------------------------------------------------------
 	// UV channels
@@ -458,19 +461,19 @@ void repo::core::RepoNodeMesh::retrieveFacesArray(
 	{
 		faces->resize(facesCount);
 		unsigned int * serializedFaces = new unsigned int[facesByteCount/sizeof(unsigned int)];
-		if (NULL != faces && 
-			NULL != serializedFaces && 
+		if (NULL != faces &&
+			NULL != serializedFaces &&
 			facesCount > 0 &&
-			bse.binDataType() == mongo::BinDataGeneral) 
+			bse.binDataType() == mongo::BinDataGeneral)
 		{
-			// Copy over all the integers	
+			// Copy over all the integers
 			int len = (int) facesByteCount;
 			const char *binData = bse.binData(len);
 			memcpy(serializedFaces, binData, facesByteCount);
 
 			// Retrieve numbers of vertices for each face and subsequent
 			// indices into the vertex array.
-			// In API level 1, mesh is represented as 
+			// In API level 1, mesh is represented as
 			// [n1, v1, v2, ..., n2, v1, v2...]
 			unsigned int counter = 0;
 			int mNumIndicesIndex = 0;
@@ -486,9 +489,9 @@ void repo::core::RepoNodeMesh::retrieveFacesArray(
 				(*faces)[counter] = face;
 				mNumIndicesIndex = mNumIndicesIndex + mNumIndices + 1;
 				++counter;
-			}				
-		} 
-			
+			}
+		}
+
 		// Memory cleanup
 		if (NULL != serializedFaces)
 			delete [] serializedFaces;
@@ -505,7 +508,7 @@ void repo::core::RepoNodeMesh::retrieveFacesArray(
 }
 
 void repo::core::RepoNodeMesh::toAssimp(
-		const std::map<const RepoNodeAbstract *, unsigned int> materialMapping, 
+		const std::map<const RepoNodeAbstract *, unsigned int> materialMapping,
 		aiMesh * mesh) const
 {
     //--------------------------------------------------------------------------
@@ -542,7 +545,7 @@ void repo::core::RepoNodeMesh::toAssimp(
 	}
 	else
 		mesh->mNumVertices = 0;
-	
+
     //--------------------------------------------------------------------------
 	// Normals
 	// Make a copy of normals
@@ -566,8 +569,8 @@ void repo::core::RepoNodeMesh::toAssimp(
 			i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i)
 		{
 			aiVector3D * texCoords = new aiVector3D[vertices->size()];
-			std::copy(uvChannels->at(i)->begin(), uvChannels->at(i)->end(), 
-				texCoords);			
+			std::copy(uvChannels->at(i)->begin(), uvChannels->at(i)->end(),
+				texCoords);
 			mesh->mTextureCoords[i] = texCoords;
 			mesh->mNumUVComponents[i] = 2; // UV
 		}
@@ -608,9 +611,9 @@ double repo::core::RepoNodeMesh::getFaceArea(const unsigned int& index) const
 {
 	double area = 0;
 	const aiFace& face = faces->at(index);
-	if (3 == face.mNumIndices || 4 == face.mNumIndices) 
+	if (3 == face.mNumIndices || 4 == face.mNumIndices)
 	{
-		area = getTriangleArea(face, 0, 1, 2);	
+		area = getTriangleArea(face, 0, 1, 2);
 		if (face.mNumIndices == 4) // quadrilateral
 			area +=	getTriangleArea(face, 0, 2, 3);
 	}
@@ -618,12 +621,12 @@ double repo::core::RepoNodeMesh::getFaceArea(const unsigned int& index) const
 }
 
 //------------------------------------------------------------------------------
-double repo::core::RepoNodeMesh::getFacePerimeter(const unsigned int& index) 
+double repo::core::RepoNodeMesh::getFacePerimeter(const unsigned int& index)
 	const
 {
 	double perimeter = 0;
 	const aiFace& face = faces->at(index);
-	aiVector3t<float> v;	
+	aiVector3t<float> v;
 	for (unsigned int i = 0; i < face.mNumIndices; ++i)
 	{
 		if ((face.mNumIndices - 1) == i)
@@ -644,11 +647,11 @@ double repo::core::RepoNodeMesh::getFacesBoundaryLength(
 	double boundaryLength = 0;
 	const aiFace & faceA = faces->at(faceIndexA);
 	const aiFace & faceB = faces->at(faceIndexB);
-		
+
 	std::vector<repo::core::RepoVertex> commonVertices;
 	for (unsigned int i = 0; i < faceA.mNumIndices; ++i)
 	{
-		RepoVertex a(vertices->at(faceA.mIndices[i]));	
+		RepoVertex a(vertices->at(faceA.mIndices[i]));
 		for (unsigned int j = 0; j < faceB.mNumIndices; ++j)
 		{
 			if (a == RepoVertex(vertices->at(faceB.mIndices[j])))
@@ -669,15 +672,15 @@ double repo::core::RepoNodeMesh::getFacesBoundaryLength(
 
 //------------------------------------------------------------------------------
 double repo::core::RepoNodeMesh::getTriangleArea(
-	const aiFace& face, 
+	const aiFace& face,
 	const unsigned int& indexA,
 	const unsigned int& indexB,
 	const unsigned int& indexC) const
 {
 	double area = 0;
 
-	if (indexA < face.mNumIndices && 
-		indexB < face.mNumIndices && 
+	if (indexA < face.mNumIndices &&
+		indexB < face.mNumIndices &&
 		indexC < face.mNumIndices)
 	{
 		const aiVector3t<float>& a = vertices->at(face.mIndices[indexA]);
@@ -685,7 +688,7 @@ double repo::core::RepoNodeMesh::getTriangleArea(
 		const aiVector3t<float>& c = vertices->at(face.mIndices[indexC]);
 		// area = 1/2 * || AB x AC ||
 		const aiVector3D& u = b - a; // vector AB
-		const aiVector3D& v = c - a; // vector AC 
+		const aiVector3D& v = c - a; // vector AC
 		const float& w1 = u.y * v.z - u.z * v.y;
 		const float& w2 = u.z * v.x - u.x * v.z;
 		const float& w3 = u.x * v.y - u.y * v.x;
@@ -695,7 +698,7 @@ double repo::core::RepoNodeMesh::getTriangleArea(
 }
 
 //------------------------------------------------------------------------------
-repo::core::RepoVertex 
+repo::core::RepoVertex
 	repo::core::RepoNodeMesh::getFaceCentroid(unsigned int index) const
 {
 	RepoVertex centroid;
@@ -704,4 +707,36 @@ repo::core::RepoVertex
 		centroid += vertices->at(face.mIndices[i]);
 	centroid /= face.mNumIndices;
 	return centroid;
+}
+
+typedef uint64_t hash_type;
+#define HASH_DENSITY 65535
+
+//------------------------------------------------------------------------------
+std::string repo::core::RepoNodeMesh::getVertexHash() const
+{
+	std::vector<hash_type> vertexHashes;
+	vertexHashes.resize(vertices->size());
+
+	const aiVector3t<float> &min = boundingBox.getMin();
+	const aiVector3t<float> &max = boundingBox.getMax();
+
+	float stride_x = (max.x - min.x);
+	float stride_y = (max.y - min.y);
+	float stride_z = (max.z - min.z);
+
+	for(int v_idx = 0; v_idx < vertices->size(); v_idx++)
+	{
+		float norm_x = (vertices->at(v_idx).x - min.x) / stride_x;
+		float norm_y = (vertices->at(v_idx).y - min.y) / stride_y;
+		float norm_z = (vertices->at(v_idx).z - min.z) / stride_z;
+
+		hash_type vertexHash = (hash_type)(HASH_DENSITY * norm_x)
+			+ (hash_type)(HASH_DENSITY * HASH_DENSITY * norm_y)
+			+ (hash_type)(HASH_DENSITY * HASH_DENSITY * HASH_DENSITY * norm_z);
+
+		vertexHashes[v_idx] = vertexHash;
+	}
+
+	return sha256(std::string((char *)(&vertexHashes[0])));
 }
