@@ -111,6 +111,8 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Recursively converts aiNode and all of its children to a hierarchy
 	// of RepoNodeTransformations. Call with root node of aiScene.
 	// RootNode will be the first entry in transformations vector.
+
+    std::vector<RepoNodeAbstract*> transformations;
     rootNode = new RepoNodeTransformation(scene->mRootNode, this->getMeshesVector(), camerasMap,
                                           transformations,
 										  metadata);
@@ -121,6 +123,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 //	for each (RepoNodeAbstract* transformation in transformations)
         nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(),
                                               (*it)));
+        this->transformations.insert(*it);
     }
 
     for (it = metadata.begin(); it != metadata.end(); ++it)
@@ -159,7 +162,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		if (REPO_NODE_TYPE_TRANSFORMATION == nodeType)
 		{
 			node = new RepoNodeTransformation(obj);
-			transformations.push_back(node);
+            transformations.insert(node);
 		}
 		else if (REPO_NODE_TYPE_MESH == nodeType)
 		{
@@ -242,7 +245,7 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
     {
         materials.insert(materials.end(), thatScene->materials.begin(), thatScene->materials.end());
         meshes.insert(thatScene->meshes.begin(), thatScene->meshes.end());
-        transformations.insert(transformations.end(), thatScene->transformations.begin(), thatScene->transformations.end());
+        transformations.insert(thatScene->transformations.begin(), thatScene->transformations.end());
         textures.insert(textures.end(), thatScene->textures.begin(), thatScene->textures.end());
         cameras.insert(cameras.end(), thatScene->cameras.begin(), thatScene->cameras.end());
         references.insert(references.end(), thatScene->references.begin(), thatScene->references.end());
@@ -343,6 +346,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
     //--------------------------------------------------------------------------
 	// Transformations
 	std::map<const RepoNodeAbstract *, aiNode *> nodesMapping;
+    std::vector<RepoNodeAbstract*> transformations = this->getTransformationsVector();
 	for (unsigned int i = 0; i < transformations.size(); ++i)
 	{
 		aiNode *node = new aiNode();

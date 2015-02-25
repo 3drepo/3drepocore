@@ -129,6 +129,10 @@ public :
 	 */
 	virtual mongo::BSONObj toBSONObj() const = 0;
 
+    //! Returns a string representation of the node, name in this case.
+    virtual std::string toString() const
+    { return name; }
+
     //--------------------------------------------------------------------------
 	//
 	// Graph access
@@ -166,6 +170,9 @@ public :
 
 	//! Returns the shared ID of the node.
     inline boost::uuids::uuid getSharedID() const { return sharedID; }
+
+    std::string getSharedIDString() const
+    { return RepoTranscoderString::toString(getSharedID()); }
 
 	//! Returns the name of the node.
     inline std::string getName() const { return name; }

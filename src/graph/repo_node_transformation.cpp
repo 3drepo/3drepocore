@@ -174,6 +174,9 @@ repo::core::RepoNodeTransformation::~RepoNodeTransformation() {}
 
 bool repo::core::RepoNodeTransformation::operator==(const RepoNodeAbstract& other) const
 {
+
+    std::cerr << "operator== of Transformation";
+
     const RepoNodeTransformation *otherTransformation = dynamic_cast<const RepoNodeTransformation*>(&other);
     return otherTransformation &&
             RepoNodeAbstract::operator==(other) &&
@@ -315,4 +318,26 @@ void repo::core::RepoNodeTransformation::toAssimp(
 		else
 			thisNode->mNumChildren = 0;
 	}
+}
+
+std::string repo::core::RepoNodeTransformation::toString() const
+{
+    std::string ret;
+    ret += RepoTranscoderString::toString(matrix.a1) + ", ";
+    ret += RepoTranscoderString::toString(matrix.a2) + ", ";
+    ret += RepoTranscoderString::toString(matrix.a3) + ", ";
+    ret += RepoTranscoderString::toString(matrix.a4) + "\n";
+    ret += RepoTranscoderString::toString(matrix.b1) + ", ";
+    ret += RepoTranscoderString::toString(matrix.b2) + ", ";
+    ret += RepoTranscoderString::toString(matrix.b3) + ", ";
+    ret += RepoTranscoderString::toString(matrix.b4) + "\n";
+    ret += RepoTranscoderString::toString(matrix.c1) + ", ";
+    ret += RepoTranscoderString::toString(matrix.c2) + ", ";
+    ret += RepoTranscoderString::toString(matrix.c3) + ", ";
+    ret += RepoTranscoderString::toString(matrix.c4) + "\n";
+    ret += RepoTranscoderString::toString(matrix.d1) + ", ";
+    ret += RepoTranscoderString::toString(matrix.d2) + ", ";
+    ret += RepoTranscoderString::toString(matrix.d3) + ", ";
+    ret += RepoTranscoderString::toString(matrix.d4);
+    return ret;
 }

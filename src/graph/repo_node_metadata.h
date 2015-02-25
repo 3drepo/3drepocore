@@ -103,6 +103,9 @@ public :
     //
     //--------------------------------------------------------------------------
 
+    //! Returns metadata subobject.
+    mongo::BSONObj getMetadata() const { return metadata; }
+
     //! BSONObj representation.
     /*!
      * Returns a BSON representation of this metadata object suitable for a
@@ -112,8 +115,10 @@ public :
      */
     mongo::BSONObj toBSONObj() const;
 
-    //! Returns metadata subobject.
-    mongo::BSONObj getMetadata() const { return metadata; }
+    //! Returns string representation of the metadata object.
+    std::string toString() const;
+
+
 
 protected :
 

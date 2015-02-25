@@ -30,19 +30,42 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
     RepoNodeAbstractSet oldMeshes = A->getMeshes();
     RepoNodeAbstractSet newMeshes = B->getMeshes();
 
+
+    RepoNodeAbstractSet meshIntersection = setIntersection(oldMeshes, newMeshes);
+    printSet(meshIntersection, "Matching Meshes");
+
+
+//    // A - B
+//    RepoNodeAbstractSet deletedMeshes = this->setDifference(oldMeshes, newMeshes);
+
+//    // B - A
+//    RepoNodeAbstractSet addedMeshes = this->setDifference(newMeshes, oldMeshes);
+
+//    // A intersection B (meshes in common between A and B)
+//    // This is list of modified and unmodified meshes
+//    RepoNodeAbstractSet commonMeshes = this->setDifference(oldMeshes, deletedMeshes);
+
+
+
+
+
+    RepoNodeAbstractSet oldTransformations = A->getTransformations();
+    RepoNodeAbstractSet newTransformations = B->getTransformations();
+    RepoNodeAbstractSet intersect = setIntersection(oldTransformations, newTransformations);
+    printSet(intersect, "Matching Transformations");
+
     // A - B
-    RepoNodeAbstractSet deletedMeshes = this->setDifference(oldMeshes, newMeshes);
+//    RepoNodeAbstractSet deletedTransformations = this->setDifference(oldTransformations, newTransformations);
 
-    // B - A
-    RepoNodeAbstractSet addedMeshes = this->setDifference(newMeshes, oldMeshes);
+//    // B - A
+//    RepoNodeAbstractSet addedTransformations = this->setDifference(newTransformations, oldTransformations);
 
-    // A intersection B (meshes in common between A and B)
-    // This is list of modified and unmodified meshes
-    RepoNodeAbstractSet commonMeshes = this->setDifference(oldMeshes, deletedMeshes);
+//    // A intersection B
+//    RepoNodeAbstractSet matchingTransformations = this->setDifference(oldTransformations, deletedTransformations);
 
-    printSet(deletedMeshes, "Deleted");
-    printSet(addedMeshes, "Added");
-    printSet(commonMeshes, "Common");
+
+
+
 
     return RepoNodeRevision();
 }
@@ -55,9 +78,23 @@ repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setDifference(
     RepoNodeAbstractSet aMinusB;
     std::set_difference(A.begin(), A.end(),
                         B.begin(), B.end(),
-                        std::inserter(aMinusB, aMinusB.end()));
+                        std::inserter(aMinusB, aMinusB.end()),
+                        RepoNodeAbstractComparator());
     return aMinusB;
 }
+
+repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setIntersection(
+        const RepoNodeAbstractSet& A,
+        const RepoNodeAbstractSet& B) const
+{
+    RepoNodeAbstractSet aIntersectB;
+    std::set_intersection(A.begin(), A.end(),
+                        B.begin(), B.end(),
+                        std::inserter(aIntersectB, aIntersectB.end()),
+                        RepoNodeAbstractComparator());
+    return aIntersectB;
+}
+
 
 void repo::core::Repo3DDiff::printSet(
         const RepoNodeAbstractSet &A,
@@ -66,5 +103,5 @@ void repo::core::Repo3DDiff::printSet(
     std::cerr << label << std::endl;
     RepoNodeAbstractSet::iterator it;
     for (it = A.begin(); it != A.end(); ++it)
-        std::cerr << (*it)->getName() << std::endl;
+        std::cerr << (*it)->getName() << "\t\t\t" << (*it)->getSharedIDString() << std::endl;
 }

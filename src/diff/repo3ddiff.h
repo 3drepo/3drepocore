@@ -47,6 +47,12 @@ public:
             const RepoNodeAbstractSet &A,
             const RepoNodeAbstractSet &B) const;
 
+    //! Set intersection (A intersect B)
+    RepoNodeAbstractSet setIntersection(
+            const RepoNodeAbstractSet &A,
+            const RepoNodeAbstractSet &B) const;
+
+
     void printSet(const RepoNodeAbstractSet &A,
                   const std::string& label = "") const;
 

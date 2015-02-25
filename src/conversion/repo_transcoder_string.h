@@ -21,9 +21,14 @@
 
 #include <vector>
 #include <sstream>
+#include <iostream>
+#include <string>
+#include <cstring>
+#include <cstdint>
 //-----------------------------------------------------------------------------
 #include <boost/uuid/uuid.hpp> 
 #include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>         // streaming operators etc
 #include <boost/functional/hash.hpp>
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
@@ -110,6 +115,9 @@ public :
 
 	//! Returns a string "[a, b, ..., z]" of a given face.
     static std::string toString(const aiFace &f);
+
+    //! Converts uuid to string.
+    static std::string toString(const boost::uuids::uuid &uuid);
 
 }; // end class
 

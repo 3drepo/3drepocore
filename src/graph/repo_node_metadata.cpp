@@ -139,3 +139,19 @@ mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
 
     return builder.obj();
 }
+
+std::string repo::core::RepoNodeMetadata::toString() const
+{
+   // return getMetadata().toString();
+    std::string ret;
+
+    std::vector<mongo::BSONElement> elems;
+    metadata.elems(elems);
+    for (unsigned int i = 0; i < elems.size(); ++i)
+    {
+        ret += elems[i].toString();
+        if (elems.size() - 1 != i)
+            ret += "\n";
+    }
+    return ret;
+}

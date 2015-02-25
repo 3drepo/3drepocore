@@ -160,6 +160,9 @@ public :
         const std::map<const RepoNodeAbstract *, aiNode *> &nodesMapping,
         aiNode *parent) const;
 
+    //! Returns a string representation of a 4x4 matrix separated by new lines.
+    std::string toString() const;
+
 protected :
 
 	aiMatrix4x4 matrix; //!< transformation matrix

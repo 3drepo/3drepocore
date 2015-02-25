@@ -78,7 +78,7 @@ repo::core::RepoNodeAbstract::RepoNodeAbstract(const mongo::BSONObj &obj)
 //
 //------------------------------------------------------------------------------
 
-//! Returns true if the node is the same, false otherwise.
+
 bool repo::core::RepoNodeAbstract::operator==(const RepoNodeAbstract &other) const
 {
     return (this->getType() == other.getType()) &&
@@ -89,6 +89,8 @@ bool repo::core::RepoNodeAbstract::operator==(const RepoNodeAbstract &other) con
 
 bool repo::core::RepoNodeAbstract::operator<(const RepoNodeAbstract& other) const
 {
+    // Two nodes are considered the same as long as they are equal in all
+    // but unique IDs (as those are of course globally unique)
     return this->getType() != other.getType()
             ? this->getType() < other.getType()
             : this->getName() != other.getName()

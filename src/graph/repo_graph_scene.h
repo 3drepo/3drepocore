@@ -110,9 +110,13 @@ public :
 	//! Returns a vector of mesh nodes.
     inline std::vector<RepoNodeAbstract*> getMeshesVector() const
     { return std::vector<RepoNodeAbstract*>(meshes.begin(), meshes.end());  }
-			
+
+    //! Returns a set of transformations.
+    inline RepoNodeAbstractSet getTransformations() const { return transformations; }
+
 	//! Returns a vector of transformation nodes.
-    inline std::vector<RepoNodeAbstract *> getTransformations() const { return transformations; }
+    inline std::vector<RepoNodeAbstract *> getTransformationsVector() const
+    { return std::vector<RepoNodeAbstract*>(transformations.begin(), transformations.end()); }
 
 	//! Returns a vector of texture nodes.
     inline std::vector<RepoNodeTexture *> getTextures() const { return textures; }
@@ -149,7 +153,7 @@ protected :
 
     std::vector<RepoNodeTexture *> textures; //!< Textures
 
-    std::vector<RepoNodeAbstract *> transformations; //!< Transformations
+    RepoNodeAbstractSet transformations; //!< Transformations
 
 }; // end class
 
