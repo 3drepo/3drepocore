@@ -86,3 +86,33 @@ void repo::core::RepoBoundingBox::toOutline(
 	vec->push_back(aiVector2t<float>(max.x, max.y));
 	vec->push_back(aiVector2t<float>(min.x, max.y));
 }
+
+
+std::vector<double> repo::core::RepoBoundingBox::getTransformationMatrix() const
+{
+    std::vector<double> transformation(16);
+
+    RepoVertex centroid = RepoVertex(max+min);
+
+    transformation[0] = 1;
+    transformation[1] = 0;
+    transformation[2] = 0;
+    transformation[3] = 0;
+
+    transformation[4] = 0;
+    transformation[5] = 1;
+    transformation[6] = 0;
+    transformation[7] = 0;
+
+    transformation[8] = 0;
+    transformation[9] = 0;
+    transformation[10] = 1;
+    transformation[11] = 0;
+
+    transformation[12] = centroid.x/2;
+    transformation[13] = centroid.y/2;
+    transformation[14] = centroid.z/2;
+    transformation[15] = 1;
+
+    return transformation;
+}

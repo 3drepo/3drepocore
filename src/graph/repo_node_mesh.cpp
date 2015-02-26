@@ -743,7 +743,7 @@ void repo::core::RepoNodeMesh::setVertexHash()
 {    
     pca.initialize(*vertices);
 
-    setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
+//    setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
 
 //    std::cerr << std::endl;
 //    std::cerr << "------------" << std::endl;
@@ -760,7 +760,7 @@ void repo::core::RepoNodeMesh::setVertexHash()
 
 
 
-  //  setVertexHash(hash(*vertices, boundingBox));
+    setVertexHash(hash(*vertices, boundingBox));
 }
 
 inline float fround(double n, unsigned d)
@@ -772,7 +772,8 @@ inline float fround(double n, unsigned d)
 //------------------------------------------------------------------------------
 std::string repo::core::RepoNodeMesh::hash(
         const std::vector<aiVector3t<float> >& vertices,
-        const RepoBoundingBox& boundingBox)
+        const RepoBoundingBox& boundingBox,
+        int hashDensity)
 {
 	std::vector<hash_type> vertexHashes;
     vertexHashes.resize(vertices.size());
@@ -790,9 +791,9 @@ std::string repo::core::RepoNodeMesh::hash(
         float norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
         float norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
 
-        hash_type vertexHash = (hash_type)(REPO_HASH_DENSITY * norm_x)
-            + (hash_type)(REPO_HASH_DENSITY * REPO_HASH_DENSITY * norm_y)
-            + (hash_type)(REPO_HASH_DENSITY * REPO_HASH_DENSITY * REPO_HASH_DENSITY * norm_z);
+        hash_type vertexHash = (hash_type)(hashDensity * norm_x)
+            + (hash_type)(hashDensity * hashDensity * norm_y)
+            + (hash_type)(hashDensity * hashDensity * hashDensity * norm_z);
 
 		vertexHashes[v_idx] = vertexHash;
 	}

@@ -67,7 +67,7 @@ namespace core {
 //------------------------------------------------------------------------------
 
 typedef uint64_t hash_type;
-#define REPO_HASH_DENSITY 2097152
+#define REPO_HASH_DENSITY 2097152 // 2^21
 
 
 //! Mesh scene graph node, corresponds to aiMesh in Assimp.
@@ -267,9 +267,8 @@ public :
 
 
     //! Returns hash of a given array of [x,y,z] coordinates.
-    static std::string hash(
-            const std::vector<aiVector3t<float> >&,
-            const RepoBoundingBox&);
+    static std::string hash(const std::vector<aiVector3t<float> >&,
+            const RepoBoundingBox&, int hashDensity = REPO_HASH_DENSITY);
 
 protected :
 

@@ -117,6 +117,9 @@ public :
 
     double getLengthZ() const { return max.z - min.z; }
 
+    //! Returns transformation matrix suitable for GLC Lib.
+    std::vector<double> getTransformationMatrix() const;
+
 private :
 
     aiVector3D min; //!< min bounding box vertex

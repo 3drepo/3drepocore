@@ -159,7 +159,7 @@ public :
 	 * such that the translation is in the very last row of the matrix as
 	 * Tx, Ty, Tz, 1
 	 */
-	std::vector<double> getTransformationMatrix() const;
+    std::vector<double> getXYZTransformationMatrix() const;
 
 	//! Transforms a XYZ vertex to UVW space.
 	RepoVertex transformToUVW(const RepoVertex&) const;
@@ -192,6 +192,8 @@ private :
     RepoVertex uvwMin;
 
     RepoVertex uvwMax;
+
+    RepoVertex uvwMean;
 
 	//! A 3x3 row-major rotation matrix from XYZ to UVW coordinate system.
 	aiMatrix3x3t<float> xyzRotationMatrix;

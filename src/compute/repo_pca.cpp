@@ -90,12 +90,17 @@ void repo::core::RepoPCA::initialize(
 
 
     //uvwVertices.reserve(vertices.size());
+    sumOfWeights = 0;
     for (unsigned int i = 0; i < xyzVertices.size(); ++i)
     {
         RepoVertex uvwVertex = transformToUVW(xyzVertices[i]);
         uvwVertex.updateMinMax(uvwMin, uvwMax);
         uvwVertices.push_back(uvwVertex);
+
+        uvwMean += RepoVertex(uvwVertex * (float) uvwVertex.weight);
+        sumOfWeights += uvwVertex.weight;
     }
+    uvwMean /= (float) sumOfWeights; //(float) vertices.size();
 	
     //--------------------------------------------------------------------------
 	// Store the lengths of the eigenvector oriented bounding box and calculate
@@ -185,42 +190,42 @@ bool repo::core::RepoPCA::contains(const RepoVertex & vertex) const
 //
 //------------------------------------------------------------------------------
 
-std::vector<double> repo::core::RepoPCA::getTransformationMatrix() const
+std::vector<double> repo::core::RepoPCA::getXYZTransformationMatrix() const
 {
 	// Assimp is row-major while GLC is plain weird. GLC seems to be row-major
 	// however the translation is in the last row of the transformation matrix
 	// rather than the last column.
 	// See the bottom of to get the idea
 	// http://www.ia.hiof.no/~borres/cgraph/math/threed/p-threed.html
-	std::vector<double> rotation4x4(16);	
+    std::vector<double> transformation(16);
 
-	rotation4x4[0] = xyzRotationMatrix.a1;
-	rotation4x4[1] = xyzRotationMatrix.a2;
-	rotation4x4[2] = xyzRotationMatrix.a3;
-	rotation4x4[3] = 0;
+    transformation[0] = xyzRotationMatrix.a1;
+    transformation[1] = xyzRotationMatrix.a2;
+    transformation[2] = xyzRotationMatrix.a3;
+    transformation[3] = 0;
 
-	rotation4x4[4] = xyzRotationMatrix.b1;
-	rotation4x4[5] = xyzRotationMatrix.b2;
-	rotation4x4[6] = xyzRotationMatrix.b3;
-	rotation4x4[7] = 0;
+    transformation[4] = xyzRotationMatrix.b1;
+    transformation[5] = xyzRotationMatrix.b2;
+    transformation[6] = xyzRotationMatrix.b3;
+    transformation[7] = 0;
 
-	rotation4x4[8] = xyzRotationMatrix.c1;
-	rotation4x4[9] = xyzRotationMatrix.c2;
-	rotation4x4[10] = xyzRotationMatrix.c3;
-	rotation4x4[11] = 0;
+    transformation[8] = xyzRotationMatrix.c1;
+    transformation[9] = xyzRotationMatrix.c2;
+    transformation[10] = xyzRotationMatrix.c3;
+    transformation[11] = 0;
 
-	rotation4x4[12] = xyzCentroid.x;
-	rotation4x4[13] = xyzCentroid.y;
-	rotation4x4[14] = xyzCentroid.z;
-	rotation4x4[15] = 1;
+    transformation[12] = xyzCentroid.x;
+    transformation[13] = xyzCentroid.y;
+    transformation[14] = xyzCentroid.z;
+    transformation[15] = 1;
 	
-	return rotation4x4;
+    return transformation;
 }
 
 repo::core::RepoVertex repo::core::RepoPCA::transformToUVW(const RepoVertex& v) 
 	const
 {
-	return RepoVertex(xyzRotationMatrix * (v - xyzMean));
+    return RepoVertex(xyzRotationMatrix * (v - xyzMean));
 }
 
 repo::core::RepoVertex repo::core::RepoPCA::transformToXYZ(const RepoVertex& v)
