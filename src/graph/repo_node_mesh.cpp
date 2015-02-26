@@ -732,6 +732,13 @@ repo::core::RepoVertex
 	return centroid;
 }
 
+std::string repo::core::RepoNodeMesh::getVertexHash()
+{
+    if (vertexHash.empty())
+        setVertexHash();
+    return vertexHash;
+}
+
 void repo::core::RepoNodeMesh::setVertexHash()
 {    
     pca.initialize(*vertices);

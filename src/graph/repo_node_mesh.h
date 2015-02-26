@@ -213,8 +213,7 @@ public :
     const RepoBoundingBox &getBoundingBox() const
     { return boundingBox; }  
 
-	std::string getVertexHash() const
-    { return vertexHash; }
+    std::string getVertexHash();
 
 	//! Returns the area of a face identified by its index.
 	double getFaceArea(const unsigned int & index) const;
