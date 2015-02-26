@@ -67,7 +67,7 @@ namespace core {
 //------------------------------------------------------------------------------
 
 typedef uint64_t hash_type;
-#define REPO_HASH_DENSITY 65535
+#define REPO_HASH_DENSITY 2097152
 
 
 //! Mesh scene graph node, corresponds to aiMesh in Assimp.
@@ -213,7 +213,7 @@ public :
     const RepoBoundingBox &getBoundingBox() const
     { return boundingBox; }  
 
-    std::string getVertexHash() const
+	std::string getVertexHash() const
     { return vertexHash; }
 
 	//! Returns the area of a face identified by its index.
@@ -267,12 +267,14 @@ public :
 		std::vector<aiFace> * faces);
 
 
-    //! Returns sha256 hash of a given array of [x,y,z] coordinates.
+    //! Returns hash of a given array of [x,y,z] coordinates.
     static std::string hash(
             const std::vector<aiVector3t<float> >&,
             const RepoBoundingBox&);
 
 protected :
+
+    std::string vertexHash;
 
     std::vector<aiVector3t<float> >* vertices; //!< Vertices of this mesh.
 
@@ -297,8 +299,6 @@ protected :
 
     RepoPCA pca;
 
-    //! Sha256 hash of vertices.
-    std::string vertexHash;
 
 	//! UV channels per vertex
 	/*!

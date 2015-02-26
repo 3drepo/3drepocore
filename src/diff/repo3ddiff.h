@@ -19,8 +19,7 @@
 #define REPO_3D_DIFF_H
 
 #include <set>
-#include <unordered_set>
-
+#include <map>
 
 #include "../repocoreglobal.h"
 
@@ -32,7 +31,7 @@
 namespace repo {
 namespace core {
 
-typedef std::unordered_multiset<RepoNodeAbstract*, RepoNodeMeshHasher> RepoSelfSimilarSet;
+typedef std::multimap<std::string, RepoNodeAbstract*> RepoSelfSimilarSet;
 
 class REPO_CORE_EXPORT Repo3DDiff
 {
@@ -72,8 +71,17 @@ public :
                   const std::string& label = std::string());
 
     static RepoSelfSimilarSet toSelfSimilarSet(const RepoNodeAbstractSet &x)
-    { return RepoSelfSimilarSet(x.begin(), x.end()); }
+    {
+		RepoSelfSimilarSet rsss;
 
+		for (auto n = x.begin(); n != x.end(); ++n)
+        {
+            RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*n);
+            rsss.insert(std::make_pair(mesh->getVertexHash(), *n));
+		}
+
+		return rsss;
+	}
 
 private :
 

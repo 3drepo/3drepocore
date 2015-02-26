@@ -19,6 +19,7 @@
 #include "repo_node_mesh.h"
 
 #include <algorithm>
+#include <functional>
 
 //------------------------------------------------------------------------------
 //
@@ -210,7 +211,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
     // SHA-256 hash
     if (obj.hasField(REPO_NODE_LABEL_SHA256))
     {
-        vertexHash = obj.getField(REPO_NODE_LABEL_SHA256).toString();
+        vertexHash = obj.getField(REPO_NODE_LABEL_SHA256).numberInt();
     }
 
     //--------------------------------------------------------------------------
@@ -411,7 +412,10 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
     //--------------------------------------------------------------------------
     // SHA-256 hash
     if (!vertexHash.empty())
-        builder << REPO_NODE_LABEL_SHA256 << vertexHash;
+    {
+	// TODO: Fix this call
+	//builder << REPO_NODE_LABEL_SHA256 << (long unsigned int)(vertexHash);
+    }
 
     //--------------------------------------------------------------------------
 	// Outline
@@ -752,6 +756,12 @@ void repo::core::RepoNodeMesh::setVertexHash()
   //  setVertexHash(hash(*vertices, boundingBox));
 }
 
+inline float fround(double n, unsigned d)
+{
+  unsigned p = d - (unsigned)log10(n);
+  return (float)(floor(n * pow(10.0, p) + 0.5) / pow(10.0, p));
+}
+
 //------------------------------------------------------------------------------
 std::string repo::core::RepoNodeMesh::hash(
         const std::vector<aiVector3t<float> >& vertices,
@@ -780,19 +790,28 @@ std::string repo::core::RepoNodeMesh::hash(
 		vertexHashes[v_idx] = vertexHash;
 	}
 
-      size_t bufSize = vertices.size() * sizeof(hash_type);
-//    char *buf = new char[vertices.size() * sizeof(hash_type) + sizeof(float) * 6];
+	std::sort(vertexHashes.begin(), vertexHashes.end());
+	vertexHashes.erase(std::unique(vertexHashes.begin(), vertexHashes.end()), vertexHashes.end());
 
-//    memcpy(buf, (char *)(&vertexHashes[0]), vertices.size() * sizeof(hash_type));
-//    unsigned int idx = vertices.size() * sizeof(hash_type);
+	size_t bufSize = vertexHashes.size() * sizeof(hash_type) + sizeof(float) * 3;
+    char *buf = new char[bufSize];
 
-//    *((float *)(buf + idx)) = min.x;
-//    *((float *)(buf + idx + sizeof(float))) = min.y;
-//    *((float *)(buf + idx + 2 * sizeof(float))) = min.z;
+    memcpy(buf, (char *)(&vertexHashes[0]), vertexHashes.size() * sizeof(hash_type));
+    unsigned int idx = vertexHashes.size() * sizeof(hash_type);
 
-//    *((float *)(buf + idx + 3 * sizeof(float))) = max.x;
-//    *((float *)(buf + idx + 4 * sizeof(float))) = max.y;
-//    *((float *)(buf + idx + 5 * sizeof(float))) = max.z;
+	/*
+	stride_x = (float)(floor((double)stride_x * 10000.0) / 10000.0);
+	stride_y = (float)(floor((double)stride_y * 10000.0) / 10000.0);
+	stride_z = (float)(floor((double)stride_z * 10000.0) / 10000.0);
+	*/
 
-    return std::string((char *)(&vertexHashes[0]), bufSize);
+	stride_x = fround(stride_x, 3);
+	stride_y = fround(stride_y, 3);
+	stride_z = fround(stride_z, 3);
+
+    *((float *)(buf + idx)) = stride_x;
+    *((float *)(buf + idx + sizeof(float))) = stride_y;
+    *((float *)(buf + idx + 2 * sizeof(float))) = stride_z;
+
+    return sha256(std::string(buf, bufSize));
 }
