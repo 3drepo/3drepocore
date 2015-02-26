@@ -75,9 +75,9 @@ public :
 		RepoSelfSimilarSet rsss;
 
 		for (auto n = x.begin(); n != x.end(); ++n)
-		{
-			RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*n);
-			rsss.insert(std::make_pair<std::string, RepoNodeAbstract*>(mesh->getVertexHash(), mesh));
+        {
+            RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*n);
+            rsss.insert(std::make_pair(mesh->getVertexHash(), *n));
 		}
 
 		return rsss;
