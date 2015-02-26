@@ -755,5 +755,18 @@ std::string repo::core::RepoNodeMesh::hash(
 		vertexHashes[v_idx] = vertexHash;
 	}
 
-    return sha256(std::string((char *)(&vertexHashes[0])));
+    char *buf = new char[vertices.size() * sizeof(hash_type) + sizeof(float) * 6];
+
+    memcpy(buf, (char *)(&vertexHashes[0]), vertices.size() * sizeof(hash_type));
+    unsigned int idx = vertices.size() * sizeof(hash_type);
+
+    *((float *)(buf + idx)) = min.x;
+    *((float *)(buf + idx + sizeof(float))) = min.y;
+    *((float *)(buf + idx + 2 * sizeof(float))) = min.z;
+
+    *((float *)(buf + idx + 3 * sizeof(float))) = max.x;
+    *((float *)(buf + idx + 4 * sizeof(float))) = max.y;
+    *((float *)(buf + idx + 5 * sizeof(float))) = max.z;
+
+    return sha256(std::string(buf));
 }
