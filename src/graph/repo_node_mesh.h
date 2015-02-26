@@ -23,6 +23,7 @@
 #include "repo_node_abstract.h"
 #include "repo_bounding_box.h"
 #include "../primitives/repo_vertex.h"
+#include "../compute/repo_pca.h"
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 
@@ -75,7 +76,7 @@ typedef uint64_t hash_type;
  * 'n' is the number of consecutive vertex indices 'v' that contribute to a
  * single face.
  */
-class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
 {
 
 public :
@@ -210,7 +211,7 @@ public :
 
     //! Returns bounding box of the mesh.
     const RepoBoundingBox &getBoundingBox() const
-    { return boundingBox; }
+    { return boundingBox; }  
 
     std::string getVertexHash() const
     { return vertexHash; }
@@ -240,6 +241,14 @@ public :
 	//! Returns the centroid of a face.
 	RepoVertex getFaceCentroid(unsigned int index) const;
 
+    RepoPCA getPCA() const { return pca; }
+
+    void setVertexHash(const std::string& hash)
+    { this->vertexHash = hash; }
+
+    //! Calculates the vertex hash by first PCA-aligning the vertices.
+    void setVertexHash();
+
     //--------------------------------------------------------------------------
 	//
 	// Faces
@@ -265,7 +274,7 @@ public :
 
 protected :
 
-    std::vector<aiVector3D>* vertices; //!< Vertices of this mesh.
+    std::vector<aiVector3t<float> >* vertices; //!< Vertices of this mesh.
 
 	//! Faces of the mesh. Each face points to several vertices by the indices.
     std::vector<aiFace>* faces;
@@ -274,7 +283,7 @@ protected :
 	/*!
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
-    std::vector<aiVector3D>* normals;
+    std::vector<aiVector3t<float> >* normals;
 
 	//! 2D outline of this mesh.
 	/*!
@@ -286,6 +295,8 @@ protected :
     //! Axis-aligned local coords bounding box.
     RepoBoundingBox boundingBox;
 
+    RepoPCA pca;
+
     //! Sha256 hash of vertices.
     std::string vertexHash;
 
@@ -294,7 +305,7 @@ protected :
 	 * A mesh can have multiple UV channels per vertex, each channel
 	 * is the length of the number of vertices.
 	 */
-    std::vector<std::vector<aiVector3D>*>* uvChannels;
+    std::vector<std::vector<aiVector3t<float> >*>* uvChannels;
 
     //! Vertex colors of this mesh.
     std::vector<aiColor4D>* colors;
@@ -303,8 +314,12 @@ protected :
 
 
 struct RepoNodeMeshHasher {
-    size_t operator()(const RepoNodeAbstract* mesh) const
-    { return hash<std::string>()(((RepoNodeMesh*)mesh)->getVertexHash()); }
+    size_t operator()(const RepoNodeAbstract* node) const
+    {
+        RepoNodeMesh* mesh = ((RepoNodeMesh*)node);
+        if (mesh->getVertexHash().empty())
+            mesh->setVertexHash();
+        return hash<std::string>()(mesh->getVertexHash()); }
 };
 
 } // end namespace core

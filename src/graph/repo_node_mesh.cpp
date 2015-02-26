@@ -120,7 +120,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 
     //--------------------------------------------------------------------------
     // SHA-256 hash
-    vertexHash = hash(*vertices, boundingBox);
+    //vertexHash = hash(*vertices, boundingBox);
 
     //--------------------------------------------------------------------------
 	// Polygon mesh outline (2D bounding rectangle in XY for the moment)
@@ -410,7 +410,8 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 
     //--------------------------------------------------------------------------
     // SHA-256 hash
-    builder << REPO_NODE_LABEL_SHA256 << vertexHash;
+    if (!vertexHash.empty())
+        builder << REPO_NODE_LABEL_SHA256 << vertexHash;
 
     //--------------------------------------------------------------------------
 	// Outline
@@ -727,6 +728,30 @@ repo::core::RepoVertex
 	return centroid;
 }
 
+void repo::core::RepoNodeMesh::setVertexHash()
+{    
+    pca.initialize(*vertices);
+
+    setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
+
+//    std::cerr << std::endl;
+//    std::cerr << "------------" << std::endl;
+//    std::cerr << "PCA Vertices" << std::endl;
+//    std::cerr << "BB: " << pca.getUVWBoundingBox() << std::endl;
+//    for (auto v : pca.getUnweightedUVWVertices())
+//        std::cerr << RepoVertex(v) << std::endl;
+
+//    std::cerr << "Vertices" << std::endl;
+//    std::cerr << "BB: " << boundingBox << std::endl;
+//    for (auto v : *vertices)
+//        std::cerr << RepoVertex(v) << std::endl;
+
+
+
+
+  //  setVertexHash(hash(*vertices, boundingBox));
+}
+
 //------------------------------------------------------------------------------
 std::string repo::core::RepoNodeMesh::hash(
         const std::vector<aiVector3t<float> >& vertices,
@@ -755,18 +780,19 @@ std::string repo::core::RepoNodeMesh::hash(
 		vertexHashes[v_idx] = vertexHash;
 	}
 
-    char *buf = new char[vertices.size() * sizeof(hash_type) + sizeof(float) * 6];
+      size_t bufSize = vertices.size() * sizeof(hash_type);
+//    char *buf = new char[vertices.size() * sizeof(hash_type) + sizeof(float) * 6];
 
-    memcpy(buf, (char *)(&vertexHashes[0]), vertices.size() * sizeof(hash_type));
-    unsigned int idx = vertices.size() * sizeof(hash_type);
+//    memcpy(buf, (char *)(&vertexHashes[0]), vertices.size() * sizeof(hash_type));
+//    unsigned int idx = vertices.size() * sizeof(hash_type);
 
-    *((float *)(buf + idx)) = min.x;
-    *((float *)(buf + idx + sizeof(float))) = min.y;
-    *((float *)(buf + idx + 2 * sizeof(float))) = min.z;
+//    *((float *)(buf + idx)) = min.x;
+//    *((float *)(buf + idx + sizeof(float))) = min.y;
+//    *((float *)(buf + idx + 2 * sizeof(float))) = min.z;
 
-    *((float *)(buf + idx + 3 * sizeof(float))) = max.x;
-    *((float *)(buf + idx + 4 * sizeof(float))) = max.y;
-    *((float *)(buf + idx + 5 * sizeof(float))) = max.z;
+//    *((float *)(buf + idx + 3 * sizeof(float))) = max.x;
+//    *((float *)(buf + idx + 4 * sizeof(float))) = max.y;
+//    *((float *)(buf + idx + 5 * sizeof(float))) = max.z;
 
-    return sha256(std::string(buf));
+    return std::string((char *)(&vertexHashes[0]), bufSize);
 }

@@ -21,6 +21,9 @@
 #include <set>
 #include <math.h>
 #include <vector>
+#include <ostream>
+#include <sstream>
+#include <iostream>
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 //------------------------------------------------------------------------------
@@ -97,6 +100,13 @@ public :
 		: (!isEqual(y,v.y) 
 		? y < v.y 
         : z < v.z); }
+
+    friend std::ostream& operator<<(std::ostream& os, const RepoVertex &v)
+    {
+        os << "[" << v.x << ", " << v.y << ", " << v.z << "]";
+        return os;
+    }
+
 
 	//! Returns true if vertices are the same within a threshold.
 	bool operator==(const RepoVertex & v) const

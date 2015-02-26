@@ -23,13 +23,13 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 {
 	if (mesh->mNumVertices)
 	{
-		min = mesh->mVertices[0];
-		max = mesh->mVertices[0];
+        min = RepoVertex(mesh->mVertices[0]);
+        max = RepoVertex(mesh->mVertices[0]);
 	}
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		aiVector3t<float> tmp = mesh->mVertices[i];
+        RepoVertex tmp = RepoVertex(mesh->mVertices[i]);
 
 		min.x = std::min(min.x,tmp.x);
 		min.y = std::min(min.y,tmp.y);
@@ -41,8 +41,7 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 	}
 }
 
-repo::core::RepoBoundingBox::RepoBoundingBox(
-        const std::vector<aiVector3D> &vertices)
+repo::core::RepoBoundingBox::RepoBoundingBox(const std::vector<RepoVertex> &vertices)
 {
     if (vertices.size())
     {
@@ -70,9 +69,9 @@ bool repo::core::RepoBoundingBox::operator==(const RepoBoundingBox& other) const
             this->getMax() == other.getMax();
 }
 
-std::vector<aiVector3t<float>> repo::core::RepoBoundingBox::toVector() const
+std::vector<aiVector3D> repo::core::RepoBoundingBox::toVector() const
 {
-	std::vector<aiVector3t<float>> vec;
+    std::vector<aiVector3D> vec;
 	vec.push_back(min);
 	vec.push_back(max);
 	return vec;
