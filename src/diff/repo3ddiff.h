@@ -32,40 +32,53 @@
 namespace repo {
 namespace core {
 
+typedef std::unordered_multiset<RepoNodeAbstract*, RepoNodeMeshHasher> RepoSelfSimilarSet;
+
 class REPO_CORE_EXPORT Repo3DDiff
 {
 
 public:
 
     //! Default empty constructor.
-    Repo3DDiff() {}
+    Repo3DDiff(const RepoGraphScene* A,
+               const RepoGraphScene* B);
 
     //! Default empty destructor.
     ~Repo3DDiff() {}
 
-    RepoNodeRevision diff(const RepoGraphScene* A,
-            const RepoGraphScene* B) const;
+    RepoNodeRevision diff() const;
+
+    RepoSelfSimilarSet getSelfSimilarSetA() const
+    { return toSelfSimilarSet(A->getMeshes()); }
+
+    RepoSelfSimilarSet getSelfSimilarSetB() const
+    { return toSelfSimilarSet(B->getMeshes()); }
 
 
 public :
 
     //! Set difference (A - B)
     static RepoNodeAbstractSet setDifference(
-            const RepoNodeAbstractSet &A,
-            const RepoNodeAbstractSet &B);
+            const RepoNodeAbstractSet &a,
+            const RepoNodeAbstractSet &b);
 
     //! Set intersection (A intersect B)
     static RepoNodeAbstractSet setIntersection(
-            const RepoNodeAbstractSet &A,
-            const RepoNodeAbstractSet &B);
+            const RepoNodeAbstractSet &a,
+            const RepoNodeAbstractSet &b);
 
 
-    static void printSet(const RepoNodeAbstractSet &A,
+    static void printSet(const RepoNodeAbstractSet &x,
                   const std::string& label = std::string());
+
+    static RepoSelfSimilarSet toSelfSimilarSet(const RepoNodeAbstractSet &x)
+    { return RepoSelfSimilarSet(x.begin(), x.end()); }
 
 
 private :
 
+    const RepoGraphScene* A;
+    const RepoGraphScene* B;
 
 }; // end class
 

@@ -18,14 +18,14 @@
 
 #include "repo3ddiff.h"
 
-//repo::core::Repo3DDiff::Repo3DDiff()
-//{
-//}
+repo::core::Repo3DDiff::Repo3DDiff(
+    const RepoGraphScene* A,
+    const RepoGraphScene* B)
+    : A(A)
+    , B(B) {}
 
 
-repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
-        const RepoGraphScene* A,
-        const RepoGraphScene* B) const
+repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff() const
 {
     RepoNodeAbstractSet oldMeshes = A->getMeshes();
     RepoNodeAbstractSet newMeshes = B->getMeshes();
@@ -35,12 +35,11 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
 //    printSet(meshIntersection, "Matching Meshes");
 
 
-    std::unordered_multiset<core::RepoNodeAbstract*,RepoNodeMeshHasher>
-            hashMultiSet(oldMeshes.begin(), oldMeshes.end());
 
-    std::cerr << "Hash set:" << std::endl;
-    for (const core::RepoNodeAbstract* x: hashMultiSet)
-        std::cerr << ((core::RepoNodeMesh*)(x))->getVertexHash() << std::endl;
+//    RepoSelfSimilarSet hasMultiSet = toSelfSimilarSet(oldMeshes);
+//    std::cerr << "Hash set:" << std::endl;
+//    for (const core::RepoNodeAbstract* x: hasMultiSet)
+//        std::cerr << ((core::RepoNodeMesh*)(x))->getVertexHash() << std::endl;
 
 
 
@@ -85,37 +84,34 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff(
 //
 //------------------------------------------------------------------------------
 
-repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setDifference(
-        const RepoNodeAbstractSet& A,
-        const RepoNodeAbstractSet& B)
+repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setDifference(const RepoNodeAbstractSet& a,
+        const RepoNodeAbstractSet& b)
 {
     RepoNodeAbstractSet aMinusB;
-    std::set_difference(A.begin(), A.end(),
-                        B.begin(), B.end(),
+    std::set_difference(a.begin(), a.end(),
+                        b.begin(), b.end(),
                         std::inserter(aMinusB, aMinusB.end()),
                         RepoNodeAbstractComparator());
     return aMinusB;
 }
 
-repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setIntersection(
-        const RepoNodeAbstractSet& A,
-        const RepoNodeAbstractSet& B)
+repo::core::RepoNodeAbstractSet repo::core::Repo3DDiff::setIntersection(const RepoNodeAbstractSet& a,
+        const RepoNodeAbstractSet& b)
 {
     RepoNodeAbstractSet aIntersectB;
-    std::set_intersection(A.begin(), A.end(),
-                        B.begin(), B.end(),
+    std::set_intersection(a.begin(), a.end(),
+                        b.begin(), b.end(),
                         std::inserter(aIntersectB, aIntersectB.end()),
                         RepoNodeAbstractComparator());
     return aIntersectB;
 }
 
 
-void repo::core::Repo3DDiff::printSet(
-        const RepoNodeAbstractSet &A,
+void repo::core::Repo3DDiff::printSet(const RepoNodeAbstractSet &x,
         const std::string& label)
 {
     std::cerr << label << std::endl;
     RepoNodeAbstractSet::iterator it;
-    for (it = A.begin(); it != A.end(); ++it)
+    for (it = x.begin(); it != x.end(); ++it)
         std::cerr << (*it)->getName() << "\t\t\t" << (*it)->getSharedIDString() << std::endl;
 }
