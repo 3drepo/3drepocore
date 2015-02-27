@@ -96,7 +96,7 @@ public :
 			std::min(std::max(p.x, min.x), max.x),
 			std::min(std::max(p.y, min.y), max.y),
 			std::min(std::max(p.z, min.z), max.z));
-		return RepoCalc::distancePointToPoint<T>(p, q);
+        return RepoVertex::distancePointToPoint<T>(p, q);
 	}
 
 	//! Returns axis-aligned bounding box of a face.
