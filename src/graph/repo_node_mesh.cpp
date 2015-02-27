@@ -740,7 +740,7 @@ std::string repo::core::RepoNodeMesh::getVertexHash()
 }
 
 void repo::core::RepoNodeMesh::setVertexHash()
-{    
+{
     pca.initialize(*vertices);
 
     setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
@@ -803,12 +803,15 @@ std::string repo::core::RepoNodeMesh::hash(
         double norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
         double norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
 
-        hash_type vertexHash = (hash_type)round(hashDensity * norm_x
-            + hashDensity * hashDensity * norm_y
-            + hashDensity * hashDensity * hashDensity * norm_z);
+		hash_type x_coord = (hash_type)round(hashDensity * norm_x);
+		hash_type y_coord = (hash_type)round(hashDensity * norm_y);
+		hash_type z_coord = (hash_type)round(hashDensity * norm_z);
 
+		hash_type vertexIndex = x_coord
+			+ (hash_type)round(hashDensity * y_coord)
+			+ (hash_type)round(hashDensity * hashDensity * z_coord);
 
-		vertexHashes[v_idx] = vertexHash;
+		vertexHashes[v_idx] = vertexIndex;
 
         if (vertices.size() < 100)
             std::cerr << "[ " << norm_x << ", " << norm_y << ", " << norm_z << " ]";

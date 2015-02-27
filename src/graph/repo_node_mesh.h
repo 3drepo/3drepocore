@@ -211,7 +211,7 @@ public :
 
     //! Returns bounding box of the mesh.
     const RepoBoundingBox &getBoundingBox() const
-    { return boundingBox; }  
+    { return boundingBox; }
 
     std::string getVertexHash();
 
@@ -268,7 +268,7 @@ public :
 
     //! Returns hash of a given array of [x,y,z] coordinates.
     static std::string hash(const std::vector<aiVector3t<float> > &,
-            const RepoBoundingBox&, double hashDensity = 5000);
+            const RepoBoundingBox&, double hashDensity = 500);
 
 protected :
 

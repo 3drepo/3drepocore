@@ -33,7 +33,7 @@ namespace core {
 //! Eigen-decomposition for a symmetric 3x3 real matrix.
 /*!
  * Eigen-decomposition class for symmetric 3x3 matrices. C++ port of a public
- * domain Java library JAMA by Connelly Barnes. Modified by Jozef Dobos for 
+ * domain Java library JAMA by Connelly Barnes. Modified by Jozef Dobos for
  * 3D Repo framework.
  * See http://barnesc.blogspot.sk/2007/02/eigenvectors-of-3x3-symmetric-matrix.html
  */
@@ -58,7 +58,7 @@ public :
 		return mean;
     }
 
-	
+
 	template <class T>
 	static double triangleArea(
 		const aiVector3t<T>& a,
@@ -67,13 +67,13 @@ public :
 	{
 		// see http://maths.ucd.ie/courses/math1200/algebra/section5-3.pdf
 		aiVector3D u = b - a; // vector AB
-		aiVector3D v = c - a; // vector AC 
+		aiVector3D v = c - a; // vector AC
 
 		// area = 1/2 * || AB x AC ||
 		float w1 = u.y * v.z - u.z * v.y;
 		float w2 = u.z * v.x - u.x * v.z;
 		float w3 = u.x * v.y - u.y * v.x;
-		double area = 0.5 * sqrt(w1 * w1 + w2 * w2 + w3 * w3);	
+		double area = 0.5 * sqrt(w1 * w1 + w2 * w2 + w3 * w3);
 		return area;
     }
 
@@ -96,7 +96,7 @@ public :
 			std::min(std::max(p.x, min.x), max.x),
 			std::min(std::max(p.y, min.y), max.y),
 			std::min(std::max(p.z, min.z), max.z));
-		return RepoCalc::distancePointToPoint<T>(p, q);
+		return RepoVertex::distancePointToPoint<T>(p, q);
 	}
 
 	//! Returns axis-aligned bounding box of a face.
@@ -117,11 +117,11 @@ public :
 		for (unsigned int i = 0; i < face.mNumIndices; ++i)
 		{
 			aiVector3t<T> vertex = mesh->mVertices[face.mIndices[i]];
-			
+
 			min.x = std::min(min.x, vertex.x);
 			min.y = std::min(min.y, vertex.y);
 			min.z = std::min(min.z, vertex.z);
-			
+
 			max.x = std::max(max.x, vertex.x);
 			max.y = std::max(max.y, vertex.y);
 			max.z = std::max(max.z, vertex.z);
@@ -137,7 +137,7 @@ public :
 
 	//! Returns a 3x3 covariance matrix from the given vertices and their mean.
 	static aiMatrix3x3t<double> covarianceMatrix(
-		const std::vector<RepoVertex>& vertices, 
+		const std::vector<RepoVertex>& vertices,
 		const RepoVertex& mean);
 
 	//-------------------------------------------------------------------------
@@ -152,13 +152,13 @@ public :
 	 * and corresponding eigenvalues in d.
 	 */
 	static void eigenvalueDecomposition(
-		const aiMatrix3x3t<double>& A, 
-		double V[3][3], 
+		const aiMatrix3x3t<double>& A,
+		double V[3][3],
 		double d[3]);
 
 	//! Symmetric Householder reduction to tridiagonal form.
 	/*!
-	 * This is derived from the Algol procedures tred2 by Bowdler, Martin, 
+	 * This is derived from the Algol procedures tred2 by Bowdler, Martin,
 	 * Reinsch, and Wilkinson, Handbook for Auto. Comp., Vol.ii-Linear Algebra,
 	 * and the corresponding Fortran subroutine in EISPACK.
 	 */
@@ -166,7 +166,7 @@ public :
 
 	//! Symmetric tridiagonal QL algorithm.
 	/*!
-	 * This is derived from the Algol procedures tql2, by Bowdler, Martin, 
+	 * This is derived from the Algol procedures tql2, by Bowdler, Martin,
 	 * Reinsch, and Wilkinson, Handbook for Auto. Comp., Vol.ii-Linear Algebra,
 	 * and the corresponding Fortran subroutine in EISPACK.
 	 */
