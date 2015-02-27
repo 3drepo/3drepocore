@@ -196,7 +196,7 @@ private :
     RepoVertex uvwMean;
 
 	//! A 3x3 row-major rotation matrix from XYZ to UVW coordinate system.
-	aiMatrix3x3t<float> xyzRotationMatrix;
+	aiMatrix3x3t<float> uvwRotationMatrix;
 
     //--------------------------------------------------------------------------
 	//
@@ -210,7 +210,7 @@ private :
      * The inverse rotation back to the original XYZ space from UVW. For this
 	 * matrix it holds that T^-1 == T'
 	 */
-	aiMatrix3x3t<float> uvwRotationMatrix;
+	aiMatrix3x3t<float> xyzRotationMatrix;
 
     //--------------------------------------------------------------------------
 	//

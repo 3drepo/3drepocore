@@ -743,7 +743,7 @@ void repo::core::RepoNodeMesh::setVertexHash()
 {    
     pca.initialize(*vertices);
 
-//    setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
+    setVertexHash(hash(pca.getUnweightedUVWVertices(), pca.getUVWBoundingBox()));
 
 //    std::cerr << std::endl;
 //    std::cerr << "------------" << std::endl;
@@ -760,7 +760,7 @@ void repo::core::RepoNodeMesh::setVertexHash()
 
 
 
-    setVertexHash(hash(*vertices, boundingBox));
+//    setVertexHash(hash(*vertices, boundingBox));
 }
 
 inline float fround(double n, unsigned d)
@@ -771,11 +771,23 @@ inline float fround(double n, unsigned d)
 
 //------------------------------------------------------------------------------
 std::string repo::core::RepoNodeMesh::hash(
-        const std::vector<aiVector3t<float> >& vertices,
+        const std::vector<aiVector3t<float> >& originalVertices,
         const RepoBoundingBox& boundingBox,
-        int hashDensity)
+        double hashDensity)
 {
+    std::cerr << std::endl;
+    std::cerr << "Mesh" << std::endl;
 	std::vector<hash_type> vertexHashes;
+
+
+    std::set<aiVector3t<float> > verticesSet(originalVertices.begin(), originalVertices.end());
+    std::vector<aiVector3t<float> > vertices(verticesSet.begin(), verticesSet.end());
+
+
+//    std::sort(vertices.begin(), vertices.end(), RepoaiVertexComparator());
+//    auto uniqueEnd = std::unique(vertices.begin(), vertices.end(), RepoaiVertexComparator());
+//    vertices.erase(uniqueEnd, vertices.end());
+
     vertexHashes.resize(vertices.size());
 
 	const aiVector3t<float> &min = boundingBox.getMin();
@@ -787,21 +799,33 @@ std::string repo::core::RepoNodeMesh::hash(
 
     for(int v_idx = 0; v_idx < vertices.size(); v_idx++)
 	{
-        float norm_x = (vertices.at(v_idx).x - min.x) / stride_x;
-        float norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
-        float norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
+        double norm_x = (vertices.at(v_idx).x - min.x) / stride_x;
+        double norm_y = (vertices.at(v_idx).y - min.y) / stride_y;
+        double norm_z = (vertices.at(v_idx).z - min.z) / stride_z;
 
-        hash_type vertexHash = (hash_type)(hashDensity * norm_x)
-            + (hash_type)(hashDensity * hashDensity * norm_y)
-            + (hash_type)(hashDensity * hashDensity * hashDensity * norm_z);
+        hash_type vertexHash = (hash_type)round(hashDensity * norm_x
+            + hashDensity * hashDensity * norm_y
+            + hashDensity * hashDensity * hashDensity * norm_z);
+
 
 		vertexHashes[v_idx] = vertexHash;
+
+        if (vertices.size() < 100)
+            std::cerr << "[ " << norm_x << ", " << norm_y << ", " << norm_z << " ]";
 	}
 
-	std::sort(vertexHashes.begin(), vertexHashes.end());
-	vertexHashes.erase(std::unique(vertexHashes.begin(), vertexHashes.end()), vertexHashes.end());
+    std::cerr << std::endl;
 
-	size_t bufSize = vertexHashes.size() * sizeof(hash_type) + sizeof(float) * 3;
+    std::sort(vertexHashes.begin(), vertexHashes.end());
+//    std::unique(vertexHashes.begin(), vertexHashes.end());
+
+    for(auto v : vertexHashes)
+    {
+        std::cerr << v << " ";
+    }
+    std::cerr << std::endl;
+
+    size_t bufSize = vertexHashes.size() * sizeof(hash_type) + sizeof(float) * 3;
     char *buf = new char[bufSize];
 
     memcpy(buf, (char *)(&vertexHashes[0]), vertexHashes.size() * sizeof(hash_type));
@@ -820,6 +844,8 @@ std::string repo::core::RepoNodeMesh::hash(
     *((float *)(buf + idx)) = stride_x;
     *((float *)(buf + idx + sizeof(float))) = stride_y;
     *((float *)(buf + idx + 2 * sizeof(float))) = stride_z;
+
+    std::cerr << stride_x << " " << stride_y << " " << stride_z << " " << sha256(std::string(buf, bufSize)) << std::endl;
 
     return sha256(std::string(buf, bufSize));
 }

@@ -67,21 +67,21 @@ void repo::core::RepoPCA::initialize(
 	// Get the rotation matrix to transform from XYZ to eigenVectors UVW space.
 	// See http://ocw.mit.edu/courses/aeronautics-and-astronautics/16-07-dynamics-fall-2009/lecture-notes/MIT16_07F09_Lec03.pdf
 	// page 10.
-	xyzRotationMatrix.a1 = principalComponents[U].vector * RepoVertex::X_AXIS;
-	xyzRotationMatrix.a2 = principalComponents[U].vector * RepoVertex::Y_AXIS;
-	xyzRotationMatrix.a3 = principalComponents[U].vector * RepoVertex::Z_AXIS;
+    uvwRotationMatrix.a1 = principalComponents[U].vector.x;// * RepoVertex::X_AXIS;
+    uvwRotationMatrix.a2 = principalComponents[U].vector.y;// * RepoVertex::Y_AXIS;
+    uvwRotationMatrix.a3 = principalComponents[U].vector.z;// * RepoVertex::Z_AXIS;
 
-	xyzRotationMatrix.b1 = principalComponents[V].vector * RepoVertex::X_AXIS;
-	xyzRotationMatrix.b2 = principalComponents[V].vector * RepoVertex::Y_AXIS;
-	xyzRotationMatrix.b3 = principalComponents[V].vector * RepoVertex::Z_AXIS;
+    uvwRotationMatrix.b1 = principalComponents[V].vector.x;// * RepoVertex::X_AXIS;
+    uvwRotationMatrix.b2 = principalComponents[V].vector.y;// * RepoVertex::Y_AXIS;
+    uvwRotationMatrix.b3 = principalComponents[V].vector.z;// * RepoVertex::Z_AXIS;
 
-	xyzRotationMatrix.c1 = principalComponents[W].vector * RepoVertex::X_AXIS;
-	xyzRotationMatrix.c2 = principalComponents[W].vector * RepoVertex::Y_AXIS;
-	xyzRotationMatrix.c3 = principalComponents[W].vector * RepoVertex::Z_AXIS;
+    uvwRotationMatrix.c1 = principalComponents[W].vector.x;// * RepoVertex::X_AXIS;
+    uvwRotationMatrix.c2 = principalComponents[W].vector.y;// * RepoVertex::Y_AXIS;
+    uvwRotationMatrix.c3 = principalComponents[W].vector.z;// * RepoVertex::Z_AXIS;
 
     //--------------------------------------------------------------------------
 	// The inverse rotation, in this particular case T^-1 == T'
-	uvwRotationMatrix = aiMatrix3x3t<float>(xyzRotationMatrix).Transpose();
+    xyzRotationMatrix = aiMatrix3x3t<float>(uvwRotationMatrix).Transpose();
 	
     //--------------------------------------------------------------------------
 	// Rotate the vertices around the xyzMean to the UVW space to get the bbox.
@@ -199,19 +199,21 @@ std::vector<double> repo::core::RepoPCA::getXYZTransformationMatrix() const
 	// http://www.ia.hiof.no/~borres/cgraph/math/threed/p-threed.html
     std::vector<double> transformation(16);
 
-    transformation[0] = xyzRotationMatrix.a1;
-    transformation[1] = xyzRotationMatrix.a2;
-    transformation[2] = xyzRotationMatrix.a3;
+    aiMatrix3x3t<float>tempTranspose = aiMatrix3x3t<float>(xyzRotationMatrix).Transpose();
+
+    transformation[0] = tempTranspose.a1;
+    transformation[1] = tempTranspose.a2;
+    transformation[2] = tempTranspose.a3;
     transformation[3] = 0;
 
-    transformation[4] = xyzRotationMatrix.b1;
-    transformation[5] = xyzRotationMatrix.b2;
-    transformation[6] = xyzRotationMatrix.b3;
+    transformation[4] = tempTranspose.b1;
+    transformation[5] = tempTranspose.b2;
+    transformation[6] = tempTranspose.b3;
     transformation[7] = 0;
 
-    transformation[8] = xyzRotationMatrix.c1;
-    transformation[9] = xyzRotationMatrix.c2;
-    transformation[10] = xyzRotationMatrix.c3;
+    transformation[8] = tempTranspose.c1;
+    transformation[9] = tempTranspose.c2;
+    transformation[10] = tempTranspose.c3;
     transformation[11] = 0;
 
     transformation[12] = xyzCentroid.x;
@@ -225,11 +227,11 @@ std::vector<double> repo::core::RepoPCA::getXYZTransformationMatrix() const
 repo::core::RepoVertex repo::core::RepoPCA::transformToUVW(const RepoVertex& v) 
 	const
 {
-    return RepoVertex(xyzRotationMatrix * (v - xyzMean));
+    return RepoVertex(uvwRotationMatrix * (v - xyzMean));
 }
 
 repo::core::RepoVertex repo::core::RepoPCA::transformToXYZ(const RepoVertex& v)
 	const
 {
-	return RepoVertex((uvwRotationMatrix * v) + xyzMean);
+    return RepoVertex((xyzRotationMatrix * v) + xyzMean);
 }

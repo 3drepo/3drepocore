@@ -116,7 +116,7 @@ public :
 				isEqual(z, v.z));
     }
 
-	bool isEqual(const float& a, const float& b) const
+    static bool isEqual(const float& a, const float& b)
     { return std::abs(a - b) <= 0.000001; }
 
 	bool operator!=(const RepoVertex & v) const
@@ -261,6 +261,23 @@ struct RepoVertexPair
 	const RepoVertex a;
 	const RepoVertex b;
 };
+
+struct RepoaiVertexComparator
+{
+    bool operator()(const aiVector3t<float>& a, const aiVector3t<float>& b)
+    { return (a.x != b.x)
+        ? a.x < b.x
+        : (a.y != b.y)
+        ? a.y < b.y
+        : a.z < b.z; }
+
+    friend bool operator==(const aiVector3t<float>&a, const aiVector3t<float>& b)
+    {
+        return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+    }
+};
+
+
 
 //------------------------------------------------------------------------------
 

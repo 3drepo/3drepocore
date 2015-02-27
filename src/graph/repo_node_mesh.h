@@ -267,8 +267,8 @@ public :
 
 
     //! Returns hash of a given array of [x,y,z] coordinates.
-    static std::string hash(const std::vector<aiVector3t<float> >&,
-            const RepoBoundingBox&, int hashDensity = REPO_HASH_DENSITY);
+    static std::string hash(const std::vector<aiVector3t<float> > &,
+            const RepoBoundingBox&, double hashDensity = 5000);
 
 protected :
 
