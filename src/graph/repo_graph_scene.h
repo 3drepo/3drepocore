@@ -19,8 +19,7 @@
 #define REPO_GRAPH_SCENE_H
 
 #include <vector>
-#include <iostream>     // std::cout
-#include <fstream>      // std::ifstream
+
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
 //-----------------------------------------------------------------------------

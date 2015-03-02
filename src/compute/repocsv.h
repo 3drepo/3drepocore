@@ -19,12 +19,18 @@
 #ifndef REPO_CSV_H
 #define REPO_CSV_H
 
+#include <list>
+#include <iostream>     // std::cout
+#include <fstream>      // std::ifstream
+//------------------------------------------------------------------------------
 #include "../graph/repo_graph_scene.h"
 #include "../graph/repo_node_abstract.h"
 #include "../graph/repo_node_metadata.h"
 
+
+
 namespace repo {
-namespace gui {
+namespace core {
 
 class RepoCSV
 {
@@ -39,11 +45,11 @@ public:
             RepoGraphScene* scene,
             const std::string& path,
             const bool exactMatch,
-            const char delimeter);
+            const char delimeter = ',');
 
 }; // end class
 
-} // end namespace gui
+} // end namespace core
 } // end namespace repo
 
 #endif // REPO_CSV_H

@@ -26,16 +26,31 @@ void repo::core::RepoCSV::addCSVMetadata(
 {
     ifstream file(path);
     std::string value;
+
+    int lineCounter = 0;
+
+    std::list<std::string> tokens;
     while (file.good())
     {
          // read a string until next comma: http://www.cplusplus.com/reference/string/getline/
          std::getline(file, value, delimeter);
 
-         std::cerr << value << ", ";
+         //tokens
+         std::cerr << value << delimeter;
 
 
          if (value == "\n")
+         {
              std::cerr << std::endl;
+             lineCounter++;
+
+             if (1 == lineCounter) // first line (header)
+             {
+
+             }
+         }
+         else
+             tokens.
     }
 
 }
