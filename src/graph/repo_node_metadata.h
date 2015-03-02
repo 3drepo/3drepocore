@@ -55,6 +55,10 @@ public :
     inline RepoNodeMetadata() :
         RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1) {}
 
+    RepoNodeMetadata(const std::list<std::string>& keys,
+                     const std::list<std::string>& values,
+                     const string& name);
+
 	//! Constructs Metadata scene graph node from Assimp's aiMetaData.
     /*!
      * Same as all other components, it has to have a uuid, type, api

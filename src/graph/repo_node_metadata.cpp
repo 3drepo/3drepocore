@@ -87,6 +87,36 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
 }
 
 repo::core::RepoNodeMetadata::RepoNodeMetadata(
+        const std::list<std::string>& keys,
+        const std::list<std::string>& values,
+        const string& name)
+    : RepoNodeAbstract(
+          REPO_NODE_TYPE_METADATA,
+          REPO_NODE_API_LEVEL_1,
+          repo::core::RepoTranscoderString::stringToUUID(
+              name,
+              REPO_NODE_UUID_SUFFIX_METADATA),
+          name)
+{
+    if (keys.size() != values.size())
+        std::cerr << "Metadata '" << name << "' size of keys: " << keys.size() << " differs from size of values: " << values.size() << std::endl;
+
+    mongo::BSONObjBuilder builder;
+    std::list<std::string>::const_iterator kit = keys.begin();
+    std::list<std::string>::const_iterator vit = values.begin();
+    for (; kit != keys.end() && vit != values.end(); ++kit, ++vit)
+    {
+        // TODO: check if value is a number and if so, store as a number rather than string!
+        std::string key = *kit;
+        std::string value = *vit;
+        if (!key.empty() && !value.empty())
+            builder << key << value;
+    }
+    this->metadata = builder.obj();
+
+}
+
+repo::core::RepoNodeMetadata::RepoNodeMetadata(
         const mongo::BSONObj &metadata,
         const string &name)
     : RepoNodeAbstract(

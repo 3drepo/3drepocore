@@ -26,13 +26,12 @@
 #include "../graph/repo_graph_scene.h"
 #include "../graph/repo_node_abstract.h"
 #include "../graph/repo_node_metadata.h"
-
-
+#include "../repocoreglobal.h"
 
 namespace repo {
 namespace core {
 
-class RepoCSV
+class REPO_CORE_EXPORT RepoCSV
 {
 
 public:
@@ -41,11 +40,13 @@ public:
 
     ~RepoCSV() {}
 
-    void addCSVMetadata(
-            RepoGraphScene* scene,
+    /*!
+     * If given headers list is empty, takes the first line as the headers.
+     */
+    static RepoNodeAbstractSet readMetadata(
             const std::string& path,
-            const bool exactMatch,
-            const char delimeter = ',');
+            const char delimeter = ',',
+            std::list<string>& headers = std::list<std::string>());
 
 }; // end class
 

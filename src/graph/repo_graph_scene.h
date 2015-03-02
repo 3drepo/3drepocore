@@ -87,8 +87,7 @@ public :
     void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
 
     //! Adds given file as metadata by name.
-    void addMetadata(RepoNodeAbstract* meta,
-                     const std::string& parentName,
+    void addMetadata(const RepoNodeAbstractSet& metadata,
                      bool exactMatch = true);
 
     //--------------------------------------------------------------------------

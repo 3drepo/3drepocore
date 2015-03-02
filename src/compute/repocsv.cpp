@@ -18,39 +18,47 @@
 
 #include "repocsv.h"
 
-void repo::core::RepoCSV::addCSVMetadata(
-        RepoGraphScene* scene,
+repo::core::RepoNodeAbstractSet repo::core::RepoCSV::readMetadata(
         const std::string& path,
-        const bool exactMatch,
-        const char delimeter)
+        const char delimeter,
+        std::list<string>& headers)
 {
     ifstream file(path);
     std::string value;
 
-    int lineCounter = 0;
+    RepoNodeAbstractSet metadata;
+
+    unsigned long long lineCounter = 0;
 
     std::list<std::string> tokens;
     while (file.good())
     {
-         // read a string until next comma: http://www.cplusplus.com/reference/string/getline/
-         std::getline(file, value, delimeter);
-
-         //tokens
-         std::cerr << value << delimeter;
+        // read a string until next comma: http://www.cplusplus.com/reference/string/getline/
+        std::getline(file, value, delimeter);
+        // std::cerr << value << delimeter;
 
 
-         if (value == "\n")
-         {
-             std::cerr << std::endl;
-             lineCounter++;
+        if (value != "\n")
+            tokens.push_back(value);
+        else
+        {
+            // std::cerr << std::endl;
+            lineCounter++;
 
-             if (1 == lineCounter) // first line (header)
-             {
-
-             }
-         }
-         else
-             tokens.
+            if (headers.empty()) // first line (header)
+                headers = tokens;
+            else
+            {
+                // Meta
+                if (tokens.size())
+                {
+                    std::string name = *tokens.begin();
+                    metadata.insert(new RepoNodeMetadata(headers, tokens, name));
+                }
+            }
+            tokens.clear();
+        }
     }
 
+    return metadata;
 }

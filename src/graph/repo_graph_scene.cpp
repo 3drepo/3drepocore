@@ -257,11 +257,25 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
 
 
 void repo::core::RepoGraphScene::addMetadata(
-        RepoNodeAbstract* meta,
-        const std::string& parentName,
+        const RepoNodeAbstractSet& metadata,
         bool exactMatch)
 {
+    for (RepoNodeAbstract* transformation : transformations)
+    {
+        std::string transformationName = transformation->getName();
+        if (!exactMatch)
+            transformationName = transformationName.substr(0, transformationName.find(" "));
 
+        for (RepoNodeAbstract* meta : metadata)
+        {
+            if (meta->getName() == transformationName)
+            {
+                transformation->addChild(meta);
+                meta->addParent(transformation);
+            }
+        }
+
+    }
 }
 
 //------------------------------------------------------------------------------
