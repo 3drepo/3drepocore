@@ -41,9 +41,9 @@ repo::core::RepoNodeAbstractSet repo::core::RepoCSV::readMetadata(
         else
         {
             lineCounter++;
-            for (std::string token : tokens)
-                std::cerr << token << ", ";
-            std::cerr << std::endl;
+//            for (std::string token : tokens)
+//                std::cerr << token << ", ";
+//            std::cerr << std::endl;
 
             if (headers.empty()) // first line (header)
                 headers = tokens;

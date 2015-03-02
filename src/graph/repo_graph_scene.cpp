@@ -16,6 +16,8 @@
  */
 
 #include "repo_graph_scene.h"
+#include <algorithm>
+#include <string>
 
 //------------------------------------------------------------------------------
 //
@@ -260,19 +262,27 @@ void repo::core::RepoGraphScene::addMetadata(
         const RepoNodeAbstractSet& metadata,
         bool exactMatch)
 {
+
     for (RepoNodeAbstract* transformation : transformations)
     {
         std::string transformationName = transformation->getName();
         if (!exactMatch)
+        {
             transformationName = transformationName.substr(0, transformationName.find(" "));
+            std::transform(transformationName.begin(), transformationName.end(),transformationName.begin(), std::toupper);
+        }
 
         for (RepoNodeAbstract* meta : metadata)
         {
+            // TODO: improve efficiency by storing in std::map
+            std::string metaName = meta->getName();
+            if (!exactMatch)
+                std::transform(metaName.begin(), metaName.end(),metaName.begin(), std::toupper);
 
-            std::cerr << meta->getName() << " <> " << transformation->getName() << " <> " << transformationName << std::endl;
-            if (meta->getName() == transformationName)
+            std::cerr << metaName << " <> " << transformation->getName() << " <> " << transformationName << std::endl;
+            if (metaName == transformationName)
             {
-                std::cerr << meta->getName() << std::endl;
+               // std::cerr << meta->getName() << std::endl;
                 transformation->addChild(meta);
                 meta->addParent(transformation);
             }
