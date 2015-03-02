@@ -33,17 +33,17 @@ repo::core::RepoNodeAbstractSet repo::core::RepoCSV::readMetadata(
     std::list<std::string> tokens;
     while (file.good())
     {
-        // read a string until next comma: http://www.cplusplus.com/reference/string/getline/
+        // Read a string until next comma:
+        // See http://www.cplusplus.com/reference/string/getline/
         std::getline(file, value, delimeter);
-        // std::cerr << value << delimeter;
-
-
         if (value != "\n")
             tokens.push_back(value);
         else
         {
-            // std::cerr << std::endl;
             lineCounter++;
+            for (std::string token : tokens)
+                std::cerr << token << ", ";
+            std::cerr << std::endl;
 
             if (headers.empty()) // first line (header)
                 headers = tokens;

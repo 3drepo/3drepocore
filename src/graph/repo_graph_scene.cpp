@@ -268,8 +268,11 @@ void repo::core::RepoGraphScene::addMetadata(
 
         for (RepoNodeAbstract* meta : metadata)
         {
+
+            std::cerr << meta->getName() << " <> " << transformation->getName() << " <> " << transformationName << std::endl;
             if (meta->getName() == transformationName)
             {
+                std::cerr << meta->getName() << std::endl;
                 transformation->addChild(meta);
                 meta->addParent(transformation);
             }
