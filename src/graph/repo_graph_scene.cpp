@@ -256,6 +256,13 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
 }
 
 
+void repo::core::RepoGraphScene::addMetadata(RepoNodeAbstract* meta,
+                 const std::string& parentName,
+                 bool exactMatch = true)
+{
+
+}
+
 //------------------------------------------------------------------------------
 //
 // Export

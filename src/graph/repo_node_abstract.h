@@ -67,6 +67,7 @@ public :
 	 *             does not have to be unique
 	 * \sa RepoNodeAbstract() and ~RepoNodeAbstract()
 	 */
+    // TODO: fix the shared ID so that it is not based on name any more.
 	inline RepoNodeAbstract(
 		const std::string &type,
 		const unsigned int api = REPO_NODE_API_LEVEL_0,
@@ -74,7 +75,7 @@ public :
 		const std::string &name = std::string()) : 
 			type(type), 
 			api(api), 
-			sharedID(sharedId),
+            sharedID(boost::uuids::random_generator()()),
 			uniqueID(boost::uuids::random_generator()()), 
             name(name) {}
 

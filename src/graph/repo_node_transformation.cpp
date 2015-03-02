@@ -80,8 +80,11 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 	// Collect metadata and add as a child
 	if (node->mMetaData)
 	{
+        std::string metadataName = node->mName.data;
+        if (metadataName == "<transformation>")
+            metadataName = "<metadata>";
 		repo::core::RepoNodeMetadata *metachild =
-            new RepoNodeMetadata(node->mMetaData, node->mName.data);
+            new RepoNodeMetadata(node->mMetaData, metadataName);
 
 		this->addChild(metachild);
 		metachild->addParent(this);

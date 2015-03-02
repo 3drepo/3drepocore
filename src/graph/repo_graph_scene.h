@@ -19,6 +19,8 @@
 #define REPO_GRAPH_SCENE_H
 
 #include <vector>
+#include <iostream>     // std::cout
+#include <fstream>      // std::ifstream
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
 //-----------------------------------------------------------------------------
@@ -85,6 +87,10 @@ public :
      */
     void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
 
+    //! Adds given file as metadata by name.
+    void addMetadata(RepoNodeAbstract* meta,
+                     const std::string& parentName,
+                     bool exactMatch = true);
 
     //--------------------------------------------------------------------------
 	//
