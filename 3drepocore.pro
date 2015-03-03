@@ -73,7 +73,9 @@ HEADERS +=  src/repocore.h\
             src/sha256/sha256.h \
             src/compute/repo_pca.h \
             src/compute/repo_eigen.h \
-    src/compute/repocsv.h
+            src/compute/repocsv.h \
+            src/compute/repographoptimizer.h \
+            src/graph/repo_node_types.h
 
 SOURCES +=  src/repocore.cpp \
             src/repologger.cpp \
@@ -108,7 +110,8 @@ SOURCES +=  src/repocore.cpp \
                         src/diff/repo3ddiff.cpp \
             src/compute/repo_pca.cpp \
             src/compute/repo_eigen.cpp \
-    src/compute/repocsv.cpp
+    src/compute/repocsv.cpp \
+    src/compute/repographoptimizer.cpp
 
 
 

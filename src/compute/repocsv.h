@@ -71,6 +71,11 @@ public:
     //! Sets the delimiter
     void setDelimiter(char delimiter) { this->delimiter = delimiter; }
 
+    //--------------------------------------------------------------------------
+    //
+    // Static helpers
+    //
+    //--------------------------------------------------------------------------
 
     //! Debugging printing.
     static void print(std::list<std::list<string> > &matrix);

@@ -178,4 +178,3 @@ void repo::core::RepoGraphAbstract::clear()
     }
     nodesByUniqueID.clear();
 }
-

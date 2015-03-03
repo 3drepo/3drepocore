@@ -421,6 +421,47 @@ std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 	return names;
 }
 
+
+
+
+
+void repo::core::RepoGraphScene::removeNodeRecursively(RepoNodeAbstract* node)
+{
+
+
+    // Remove from parents
+    for (const RepoNodeAbstract* p : node->getParents())
+    {
+        RepoNodeAbstract* parent = const_cast<RepoNodeAbstract*>(p);
+        parent->removeChild(node);
+        node->removeParent(parent);
+    }
+
+    // Check children
+    for (const RepoNodeAbstract* c : node->getChildren())
+    {
+        RepoNodeAbstract* child = const_cast<RepoNodeAbstract*>(c);
+        child->removeParent(node);
+        node->removeChild(child);
+
+        // If orphaned (no other parents), delelte the child as well
+        if (child->getParents().size() == 0)
+            removeNodeRecursively(child);
+    }
+
+    // TODO: remove also from materials, textures, etc
+    nodesByUniqueID.erase(node->getUniqueID());
+    transformations.erase(node);
+    meshes.erase(node);
+
+    // Clean up memory
+    delete node;
+    node = 0;
+}
+
+
+
+
 //------------------------------------------------------------------------------
 //
 // Protected

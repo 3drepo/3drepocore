@@ -143,6 +143,13 @@ public :
     //! Clears contents but does not deallocate memory!
     void clear();
 
+
+    /*!
+     * Recursively removes node and any of its orphaned children.
+     * Warning: Deletes memory and sets nodes to NULL.
+     */
+    virtual void removeNodeRecursively(RepoNodeAbstract* node);
+
 protected :
 
     // TODO: The vectors should be lists or sets to prevent excessive copying!

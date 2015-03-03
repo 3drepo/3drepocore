@@ -187,11 +187,22 @@ public :
     //! Returns children of the node.
     inline std::set<const RepoNodeAbstract *> getChildren() const { return children; }
 
+    template<class T>
+    std::set<T> getChildren() const
+    { return getNodesOfType<T>(children); }
+
     //! Returns parents of the node.
     inline std::set<const RepoNodeAbstract *> getParents() const { return parents; }
 
+    template<class T>
+    std::set<T> getParents() const
+    { return getNodesOfType<T>(parents); }
+
     void setName(const std::string& name)
     { this->name = name; }
+
+    bool isTransformation() const
+    { return REPO_NODE_TYPE_TRANSFORMATION == getType(); }
 
     //--------------------------------------------------------------------------
 	//
@@ -215,8 +226,13 @@ public :
 	 * not affect the parent node to prevent infinite cycles.
 	 * \sa addChild()
 	 */
-	inline void addParent(const RepoNodeAbstract * parent) 
+    inline void addParent(const RepoNodeAbstract* parent)
     { parents.insert(parent); parentSharedIDs.insert(parent->sharedID); }
+
+    //! Returns true if parent is removed successfully, false otherwise.
+    bool removeParent(const RepoNodeAbstract* parent)
+    { return 1 == parents.erase(parent) && 1 == parentSharedIDs.erase(parent->sharedID); }
+
 
 	//! Sets children of this node.
 	/*!
@@ -234,8 +250,12 @@ public :
 	 * not affect the child node to prevent infinite cycles.
 	 * \sa addParent()
 	 */
-	inline void addChild(const RepoNodeAbstract * child)
+    inline void addChild(const RepoNodeAbstract* child)
         { children.insert(child); }
+
+    //! Returns true if child is found and removed, false otherwise.
+    bool removeChild(const RepoNodeAbstract* child)
+    { return 1 == children.erase(child); }
 
 	//! Recursively retrieves all possible paths from this node to the root
 	static std::vector<std::vector<boost::uuids::uuid> > 
@@ -259,6 +279,21 @@ public :
 	
 	//! Returns the current time in milliseconds.
 	static mongo::Date_t currentTimestamp();
+
+
+    //! Returns a set of nodes that are of the specific type only.
+    template<class T>
+    static std::set<T> getNodesOfType(std::set<const RepoNodeAbstract*> set)
+    {
+        std::set<T> ret;
+        for (auto node : set)
+        {
+            T child = dynamic_cast<T>(node);
+            if (child)
+                ret.insert(child);
+        }
+        return ret;
+    }
 
 protected :
 	
@@ -301,7 +336,7 @@ protected :
 	/*! 
 	 * Parents are a std:set to make sure all entries are unique.		  
 	 */
-	std::set<const RepoNodeAbstract *> parents; 
+    std::set<const RepoNodeAbstract *> parents;
 
 	/*!
 	 * Shared IDs of the parents. Needs to be in sync with
@@ -314,7 +349,8 @@ protected :
 	/*! 
 	 * Children are a std:set to make sure all entries are unique.		  
 	 */
-	std::set<const RepoNodeAbstract *> children; 
+    // TODO: remove const
+    std::set<const RepoNodeAbstract *> children;
 
 }; // end class
 

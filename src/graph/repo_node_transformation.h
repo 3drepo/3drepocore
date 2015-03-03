@@ -32,7 +32,7 @@ namespace core {
 // Fields specific to transformation only
 //
 //------------------------------------------------------------------------------
-#define REPO_NODE_TYPE_TRANSFORMATION				"transformation"
+
 #define REPO_NODE_LABEL_MATRIX						"matrix"
 #define REPO_NODE_UUID_SUFFIX_TRANSFORMATION		"12" //!< uuid suffix
 //------------------------------------------------------------------------------
@@ -162,6 +162,10 @@ public :
 
     //! Returns a string representation of a 4x4 matrix separated by new lines.
     std::string toString() const;
+
+    //! Returns true if this transformation is identity within small epsilon, false otherwise.
+    bool isIdentity() const
+    { return matrix.IsIdentity(); }
 
 protected :
 
