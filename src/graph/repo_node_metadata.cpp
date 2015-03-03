@@ -96,10 +96,10 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
           repo::core::RepoTranscoderString::stringToUUID(
               name,
               REPO_NODE_UUID_SUFFIX_METADATA),
-          name)
+           name)
 {
     if (keys.size() != values.size())
-        std::cerr << "Metadata '" << name << "' size of keys: " << keys.size() << " differs from size of values: " << values.size() << std::endl;
+        std::cerr << "Metadata '" << name << "' size of keys = " << keys.size() << " differs from size of values = " << values.size() << std::endl;
 
     mongo::BSONObjBuilder builder;
     std::list<std::string>::const_iterator kit = keys.begin();
@@ -170,7 +170,7 @@ mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
     return builder.obj();
 }
 
-std::string repo::core::RepoNodeMetadata::toString() const
+std::string repo::core::RepoNodeMetadata::toString(std::string separator) const
 {
    // return getMetadata().toString();
     std::string ret;
@@ -181,7 +181,7 @@ std::string repo::core::RepoNodeMetadata::toString() const
     {
         ret += elems[i].toString();
         if (elems.size() - 1 != i)
-            ret += "\n";
+            ret += separator;
     }
     return ret;
 }

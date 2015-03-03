@@ -258,10 +258,11 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
 }
 
 
-void repo::core::RepoGraphScene::addMetadata(
+repo::core::RepoNodeAbstractSet repo::core::RepoGraphScene::addMetadata(
         const RepoNodeAbstractSet& metadata,
         bool exactMatch)
 {
+    RepoNodeAbstractSet matches;
 
     for (RepoNodeAbstract* transformation : transformations)
     {
@@ -279,16 +280,18 @@ void repo::core::RepoGraphScene::addMetadata(
             if (!exactMatch)
                 std::transform(metaName.begin(), metaName.end(),metaName.begin(), std::toupper);
 
-            std::cerr << metaName << " <> " << transformation->getName() << " <> " << transformationName << std::endl;
             if (metaName == transformationName)
             {
-               // std::cerr << meta->getName() << std::endl;
                 transformation->addChild(meta);
                 meta->addParent(transformation);
+                addNodeByUniqueID(meta);
+                this->metadata.push_back(meta);
+
+                matches.insert(meta);
             }
         }
-
     }
+    return matches;
 }
 
 //------------------------------------------------------------------------------

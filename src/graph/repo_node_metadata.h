@@ -119,8 +119,11 @@ public :
      */
     mongo::BSONObj toBSONObj() const;
 
+    //! Returns string representation of the metadata object separated by new lines.
+    std::string toString() const { return toString("\n"); }
+
     //! Returns string representation of the metadata object.
-    std::string toString() const;
+    std::string toString(std::string separator) const;
 
 
 

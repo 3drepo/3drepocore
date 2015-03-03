@@ -87,7 +87,7 @@ public :
     void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
 
     //! Adds given file as metadata by name.
-    void addMetadata(const RepoNodeAbstractSet& metadata,
+    RepoNodeAbstractSet addMetadata(const RepoNodeAbstractSet& metadata,
                      bool exactMatch = true);
 
     //--------------------------------------------------------------------------
@@ -144,6 +144,8 @@ public :
     void clear();
 
 protected :
+
+    // TODO: The vectors should be lists or sets to prevent excessive copying!
 
 	std::vector<RepoNodeAbstract *> cameras; //!< Cameras
 

@@ -19,9 +19,12 @@
 #ifndef REPO_CSV_H
 #define REPO_CSV_H
 
+#include <vector>
 #include <list>
 #include <iostream>     // std::cout
 #include <fstream>      // std::ifstream
+#include <sstream>
+#include <string>
 //------------------------------------------------------------------------------
 #include "../graph/repo_graph_scene.h"
 #include "../graph/repo_node_abstract.h"
@@ -31,24 +34,56 @@
 namespace repo {
 namespace core {
 
+
+//! Based on http://www.cplusplus.com/forum/general/17771/#msg89751
 class REPO_CORE_EXPORT RepoCSV
 {
 
 public:
 
-    RepoCSV() {}
+    RepoCSV(char delimiter = ',') : delimiter(delimiter) {}
 
     ~RepoCSV() {}
+
+    //--------------------------------------------------------------------------
+
+    //! Reads a single line. Same as operator>> but with class members access.
+    istream& readLine(istream& stream,
+            std::list<string> &tokenizedLine);
+
+    //! Reads the entire file. Same as operator>> but with class members access.
+    istream& readFile(
+            istream& stream,
+            std::list<std::list<std::string> >& data);
+
+    //--------------------------------------------------------------------------
 
     /*!
      * If given headers list is empty, takes the first line as the headers.
      */
-    static RepoNodeAbstractSet readMetadata(
+    RepoNodeAbstractSet readMetadata(
             const std::string& path,
-            const char delimeter = ',',
             std::list<string>& headers = std::list<std::string>());
 
+    //! Returns the delimiter.
+    char getDelimiter() const { return delimiter; }
+
+    //! Sets the delimiter
+    void setDelimiter(char delimiter) { this->delimiter = delimiter; }
+
+
+    //! Debugging printing.
+    static void print(std::list<std::list<string> > &matrix);
+
+    //! Debugging printing.
+    static void print(RepoNodeAbstractSet& set);
+
+private :
+
+    char delimiter;
+
 }; // end class
+
 
 } // end namespace core
 } // end namespace repo
