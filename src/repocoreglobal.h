@@ -20,6 +20,13 @@
 #ifndef REPO_CORE_GLOBAL_H
 #define REPO_CORE_GLOBAL_H
 
+#pragma warning( disable : 4996 )
+#pragma warning( disable : 4267 )
+#pragma warning( disable : 4251 )
+#pragma warning( disable : 4244 )
+#pragma warning( disable : 4100 )
+#pragma warning( disable : 4005 )
+
 //------------------------------------------------------------------------------
 #if defined(_WIN32) || defined(_WIN64)
 #   define Q_DECL_EXPORT __declspec(dllexport)
@@ -35,11 +42,6 @@
 #else
 #   define REPO_CORE_EXPORT Q_DECL_IMPORT
 #endif
-
-//------------------------------------------------------------------------------
-
-namespace repo {
-namespace core {
 
 //------------------------------------------------------------------------------
 // Constants
@@ -74,8 +76,5 @@ namespace core {
 #define REPO_MEDIA_TYPE_SVG      "image/svg+xml"            //! Scalable Vector Graphics
 
 //------------------------------------------------------------------------------
-
-} // end namespace core
-} // end namespace repo
 
 #endif // REPO_CORE_GLOBAL_H
