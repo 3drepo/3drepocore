@@ -45,9 +45,20 @@ public:
      */
     static RepoNodeAbstractSet readMetadata(
             const std::string& path,
-            const char delimeter = ',',
-            std::list<string>& headers = std::list<std::string>());
+            std::list<string>& headers,
+            const char delimeter = ','
+			);
 
+    /*!
+     * If given headers list is empty, takes the first line as the headers.
+     */
+    static RepoNodeAbstractSet readMetadata(
+            const std::string& path,
+            const char delimeter = ',')
+	{
+		std::list<string> tmp;
+		return readMetadata(path, tmp, delimeter);
+	}
 }; // end class
 
 } // end namespace core

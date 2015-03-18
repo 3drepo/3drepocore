@@ -20,8 +20,8 @@
 
 repo::core::RepoNodeAbstractSet repo::core::RepoCSV::readMetadata(
         const std::string& path,
-        const char delimeter,
-        std::list<string>& headers)
+        std::list<string>& headers,
+        const char delimeter)
 {
     ifstream file(path);
     std::string value;
