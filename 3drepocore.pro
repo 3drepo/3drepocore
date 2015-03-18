@@ -68,8 +68,14 @@ HEADERS +=  src/repocore.h\
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
-			src/graph/sha256/sha256.h \
-    src/primitives/repoimage.h
+			src/primitives/repoimage.h \
+            src/diff/repo3ddiff.h \
+            src/sha256/sha256.h \
+            src/compute/repo_pca.h \
+            src/compute/repo_eigen.h \
+            src/compute/repocsv.h \
+            src/compute/repographoptimizer.h \
+            src/graph/repo_node_types.h
 
 SOURCES +=  src/repocore.cpp \
             src/repologger.cpp \
@@ -99,8 +105,13 @@ SOURCES +=  src/repocore.cpp \
             src/conversion/repo_transcoder_bson.cpp \
             src/conversion/repo_transcoder_string.cpp \
             src/compute/render.cpp \
-			src/graph/sha256/sha256.cpp \
-    src/primitives/repoimage.cpp
+            src/sha256/sha256.cpp \
+			src/primitives/repoimage.cpp \
+                        src/diff/repo3ddiff.cpp \
+            src/compute/repo_pca.cpp \
+            src/compute/repo_eigen.cpp \
+    src/compute/repocsv.cpp \
+    src/compute/repographoptimizer.cpp
 
 
 

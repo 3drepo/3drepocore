@@ -17,6 +17,8 @@
 
 #include "repo_transcoder_string.h"
 
+
+
 boost::uuids::uuid repo::core::RepoTranscoderString::stringToUUID(
 	const std::string text, 
 	const std::string suffix)
@@ -74,6 +76,13 @@ std::string repo::core::RepoTranscoderString::toString(const aiFace &f)
 	}
 	str += "]";
 	return str;
+}
+
+std::string repo::core::RepoTranscoderString::toString(const boost::uuids::uuid &u)
+{
+    std::stringstream stream;
+    stream << u;
+    return stream.str();
 }
 
 

@@ -21,6 +21,9 @@
 #include <set>
 #include <math.h>
 #include <vector>
+#include <ostream>
+#include <sstream>
+#include <iostream>
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 //------------------------------------------------------------------------------
@@ -98,6 +101,13 @@ public :
 		? y < v.y 
         : z < v.z); }
 
+    friend std::ostream& operator<<(std::ostream& os, const RepoVertex &v)
+    {
+        os << "[" << v.x << ", " << v.y << ", " << v.z << "]";
+        return os;
+    }
+
+
 	//! Returns true if vertices are the same within a threshold.
 	bool operator==(const RepoVertex & v) const
 	{
@@ -106,7 +116,7 @@ public :
 				isEqual(z, v.z));
     }
 
-	bool isEqual(const float& a, const float& b) const
+    static bool isEqual(const float& a, const float& b)
     { return std::abs(a - b) <= 0.000001; }
 
 	bool operator!=(const RepoVertex & v) const
@@ -251,6 +261,23 @@ struct RepoVertexPair
 	const RepoVertex a;
 	const RepoVertex b;
 };
+
+struct RepoaiVertexComparator
+{
+    bool operator()(const aiVector3t<float>& a, const aiVector3t<float>& b)
+    { return (a.x != b.x)
+        ? a.x < b.x
+        : (a.y != b.y)
+        ? a.y < b.y
+        : a.z < b.z; }
+
+    friend bool operator==(const aiVector3t<float>&a, const aiVector3t<float>& b)
+    {
+        return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+    }
+};
+
+
 
 //------------------------------------------------------------------------------
 

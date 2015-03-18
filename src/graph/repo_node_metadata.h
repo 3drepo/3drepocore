@@ -55,6 +55,10 @@ public :
     inline RepoNodeMetadata() :
         RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1) {}
 
+    RepoNodeMetadata(const std::list<std::string>& keys,
+                     const std::list<std::string>& values,
+                     const string& name);
+
 	//! Constructs Metadata scene graph node from Assimp's aiMetaData.
     /*!
      * Same as all other components, it has to have a uuid, type, api
@@ -63,7 +67,7 @@ public :
      * \param metadata aiMetadata metadata object
      * \sa RepoNodeMetadata()
      */
-    RepoNodeMetadata(const aiMetadata *metadata);
+    RepoNodeMetadata(const aiMetadata *metadata, const std::string &name);
 
 	//! Constructs metadata scene graph component from a BSON object.
     /*!
@@ -103,6 +107,9 @@ public :
     //
     //--------------------------------------------------------------------------
 
+    //! Returns metadata subobject.
+    mongo::BSONObj getMetadata() const { return metadata; }
+
     //! BSONObj representation.
     /*!
      * Returns a BSON representation of this metadata object suitable for a
@@ -112,8 +119,13 @@ public :
      */
     mongo::BSONObj toBSONObj() const;
 
-    //! Returns metadata subobject.
-    mongo::BSONObj getMetadata() const { return metadata; }
+    //! Returns string representation of the metadata object separated by new lines.
+    std::string toString() const { return toString("\n"); }
+
+    //! Returns string representation of the metadata object.
+    std::string toString(std::string separator) const;
+
+
 
 protected :
 

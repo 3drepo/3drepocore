@@ -16,6 +16,8 @@
  */
 
 #include "repo_graph_scene.h"
+#include <algorithm>
+#include <string>
 
 //------------------------------------------------------------------------------
 //
@@ -63,14 +65,14 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Meshes
 	if (scene->HasMeshes())
 	{
-		meshes.reserve(scene->mNumMeshes);
+        //meshes.reserve(scene->mNumMeshes);
 		for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 		{
 			RepoNodeAbstract* mesh = new RepoNodeMesh(
 				REPO_NODE_API_LEVEL_1,
 				scene->mMeshes[i],
 				materials);
-			meshes.push_back(mesh);
+            meshes.insert(mesh);
 			nodesByUniqueID.insert(std::make_pair(mesh->getUniqueID(), mesh));
 		}
 	}
@@ -111,7 +113,9 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Recursively converts aiNode and all of its children to a hierarchy
 	// of RepoNodeTransformations. Call with root node of aiScene.
 	// RootNode will be the first entry in transformations vector.
-    rootNode = new RepoNodeTransformation(scene->mRootNode, meshes, camerasMap,
+
+    std::vector<RepoNodeAbstract*> transformations;
+    rootNode = new RepoNodeTransformation(scene->mRootNode, this->getMeshesVector(), camerasMap,
                                           transformations,
 										  metadata);
 
@@ -121,6 +125,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 //	for each (RepoNodeAbstract* transformation in transformations)
         nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(),
                                               (*it)));
+        this->transformations.insert(*it);
     }
 
     for (it = metadata.begin(); it != metadata.end(); ++it)
@@ -159,12 +164,12 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		if (REPO_NODE_TYPE_TRANSFORMATION == nodeType)
 		{
 			node = new RepoNodeTransformation(obj);
-			transformations.push_back(node);
+            transformations.insert(node);
 		}
 		else if (REPO_NODE_TYPE_MESH == nodeType)
 		{
 			node = new RepoNodeMesh(obj);
-			meshes.push_back(node);
+            meshes.insert(node);
 		}
 		else if (REPO_NODE_TYPE_MATERIAL == nodeType)
 		{
@@ -241,8 +246,8 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
     if (thatScene)
     {
         materials.insert(materials.end(), thatScene->materials.begin(), thatScene->materials.end());
-        meshes.insert(meshes.end(), thatScene->meshes.begin(), thatScene->meshes.end());
-        transformations.insert(transformations.end(), thatScene->transformations.begin(), thatScene->transformations.end());
+        meshes.insert(thatScene->meshes.begin(), thatScene->meshes.end());
+        transformations.insert(thatScene->transformations.begin(), thatScene->transformations.end());
         textures.insert(textures.end(), thatScene->textures.begin(), thatScene->textures.end());
         cameras.insert(cameras.end(), thatScene->cameras.begin(), thatScene->cameras.end());
         references.insert(references.end(), thatScene->references.begin(), thatScene->references.end());
@@ -252,6 +257,42 @@ void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbs
     thatGraph->clear();
 }
 
+
+repo::core::RepoNodeAbstractSet repo::core::RepoGraphScene::addMetadata(
+        const RepoNodeAbstractSet& metadata,
+        bool exactMatch)
+{
+    RepoNodeAbstractSet matches;
+
+    for (RepoNodeAbstract* transformation : transformations)
+    {
+        std::string transformationName = transformation->getName();
+        if (!exactMatch)
+        {
+            transformationName = transformationName.substr(0, transformationName.find(" "));
+            std::transform(transformationName.begin(), transformationName.end(),transformationName.begin(), std::toupper);
+        }
+
+        for (RepoNodeAbstract* meta : metadata)
+        {
+            // TODO: improve efficiency by storing in std::map
+            std::string metaName = meta->getName();
+            if (!exactMatch)
+                std::transform(metaName.begin(), metaName.end(),metaName.begin(), std::toupper);
+
+            if (metaName == transformationName)
+            {
+                transformation->addChild(meta);
+                meta->addParent(transformation);
+                addNodeByUniqueID(meta);
+                this->metadata.push_back(meta);
+
+                matches.insert(meta);
+            }
+        }
+    }
+    return matches;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -303,12 +344,14 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 	std::map<const RepoNodeAbstract *, unsigned int> meshesMapping;
 	if (NULL != mMeshes)
 	{
-		for (unsigned int i = 0; i < meshes.size(); ++i)
-		{
+
+        RepoNodeAbstractSet::iterator it = meshes.begin();
+        for (unsigned int i = 0; it != meshes.end(); ++it, ++i)
+        {
 			aiMesh *mesh = new aiMesh();
-			((RepoNodeMesh *) meshes[i])->toAssimp(materialsMapping, mesh);
+            ((RepoNodeMesh*) *it)->toAssimp(materialsMapping, mesh);
 			mMeshes[i] = mesh;
-			meshesMapping.insert(std::make_pair(meshes[i], i));
+            meshesMapping.insert(std::make_pair(*it, i));
 		}
 		scene->mMeshes = mMeshes;
         scene->mNumMeshes = (unsigned int) meshes.size();
@@ -341,6 +384,7 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
     //--------------------------------------------------------------------------
 	// Transformations
 	std::map<const RepoNodeAbstract *, aiNode *> nodesMapping;
+    std::vector<RepoNodeAbstract*> transformations = this->getTransformationsVector();
 	for (unsigned int i = 0; i < transformations.size(); ++i)
 	{
 		aiNode *node = new aiNode();
@@ -371,10 +415,52 @@ void repo::core::RepoGraphScene::toAssimp(aiScene *scene) const
 std::vector<std::string> repo::core::RepoGraphScene::getNamesOfMeshes() const
 {
 	std::vector<std::string> names(meshes.size());
-	for (unsigned int i = 0; i < names.size(); ++i)
-		names[i] = meshes[i]->getName();
+    RepoNodeAbstractSet::iterator it = meshes.begin();
+    for (unsigned int i = 0; it != meshes.end(); ++it, ++i)
+        names[i] = (*it)->getName();
 	return names;
 }
+
+
+
+
+
+void repo::core::RepoGraphScene::removeNodeRecursively(RepoNodeAbstract* node)
+{
+
+
+    // Remove from parents
+    for (const RepoNodeAbstract* p : node->getParents())
+    {
+        RepoNodeAbstract* parent = const_cast<RepoNodeAbstract*>(p);
+        parent->removeChild(node);
+        node->removeParent(parent);
+    }
+
+    // Check children
+    for (const RepoNodeAbstract* c : node->getChildren())
+    {
+        RepoNodeAbstract* child = const_cast<RepoNodeAbstract*>(c);
+        child->removeParent(node);
+        node->removeChild(child);
+
+        // If orphaned (no other parents), delelte the child as well
+        if (child->getParents().size() == 0)
+            removeNodeRecursively(child);
+    }
+
+    // TODO: remove also from materials, textures, etc
+    nodesByUniqueID.erase(node->getUniqueID());
+    transformations.erase(node);
+    meshes.erase(node);
+
+    // Clean up memory
+    delete node;
+    node = 0;
+}
+
+
+
 
 //------------------------------------------------------------------------------
 //

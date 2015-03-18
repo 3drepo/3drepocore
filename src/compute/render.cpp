@@ -1,3 +1,20 @@
+/**
+ *  Copyright (C) 2015 3D Repo Ltd
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "render.h"
 
 inline void bufferWrite(char *buf, int position, uint16_t val)
@@ -8,7 +25,7 @@ inline void bufferWrite(char *buf, int position, uint16_t val)
 
 void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 {
-    const std::vector<RepoNodeAbstract *> &meshesAlias = scene->getMeshes();
+    const std::vector<RepoNodeAbstract *> &meshesAlias = scene->getMeshesVector();
 
     // Process all the meshes and compute PopBuffers
     for(std::vector<RepoNodeAbstract *>::const_iterator it = meshesAlias.begin();

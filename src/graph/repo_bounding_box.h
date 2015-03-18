@@ -23,6 +23,7 @@
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
 #include "../repocoreglobal.h"
+#include "../primitives/repo_vertex.h"
 
 namespace repo {
 namespace core {
@@ -43,9 +44,20 @@ public :
 			- std::numeric_limits<float>::max(), 
             - std::numeric_limits<float>::max()) {}
 
-	//! Constructs a bounding box out of a mesh as the most min and most max
-	// vertices.
+    /*!
+     * Constructs a bounding box out of a mesh as the most min and most max
+     * vertices.
+     */
 	RepoBoundingBox(const aiMesh *);
+
+    /*!
+     * Constructs a bounding box from given vector of vertices.
+     */
+    RepoBoundingBox(const std::vector<RepoVertex> &vertices);
+
+    RepoBoundingBox(const RepoVertex& min, const RepoVertex& max)
+        : min(min)
+        , max(max) {}
 
 	//! Empty destructor
     inline ~RepoBoundingBox() {}
@@ -59,10 +71,16 @@ public :
     //! Returns true if the given bounding box is identical, false otherwise.
     virtual bool operator==(const RepoBoundingBox&) const;
 
+    friend std::ostream& operator<<(std::ostream& os, const RepoBoundingBox &b)
+    {
+        os << RepoVertex(b.min) << ", " << RepoVertex(b.max);
+        return os;
+    }
+
     //--------------------------------------------------------------------------
 
 	//! Returns a vector representation as [min, max].
-	std::vector<aiVector3t<float> > toVector() const;
+    std::vector<aiVector3D> toVector() const;
 
 	//! Returns a polygon outline as a bounding rectangle in XY plane.
 	void toOutline(std::vector<aiVector2t<float> > * vec) const;
@@ -74,9 +92,13 @@ public :
     //
     //--------------------------------------------------------------------------
 
-    void setMin(aiVector3t<float> &min) { this->min = min; }
+    void setMin(const RepoVertex &min) { this->min = min; }
 
-    void setMax(aiVector3t<float> &max) { this->max = max; }
+    void setMin(const aiVector3D& min) { setMin(RepoVertex(min)); }
+
+    void setMax(const RepoVertex &max) { this->max = max; }
+
+    void setMax(const aiVector3D& max) { setMax(RepoVertex(max)); }
 
     //--------------------------------------------------------------------------
     //
@@ -85,15 +107,24 @@ public :
     //--------------------------------------------------------------------------
 
 
-    const aiVector3D& getMin() const { return min; }
+    aiVector3D getMin() const { return min; }
 
-    const aiVector3D& getMax() const { return max; }
+    aiVector3D getMax() const { return max; }
+
+    double getLengthX() const { return max.x - min.x; }
+
+    double getLengthY() const { return max.y - min.y; }
+
+    double getLengthZ() const { return max.z - min.z; }
+
+    //! Returns transformation matrix suitable for GLC Lib.
+    std::vector<double> getTransformationMatrix() const;
 
 private :
 
-    aiVector3t<float> min; //!< min bounding box vertex
+    aiVector3D min; //!< min bounding box vertex
 
-    aiVector3t<float> max; //!< max bounding box vertex
+    aiVector3D max; //!< max bounding box vertex
 
 }; // end class
 

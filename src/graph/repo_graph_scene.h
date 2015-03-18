@@ -19,6 +19,7 @@
 #define REPO_GRAPH_SCENE_H
 
 #include <vector>
+
 //-----------------------------------------------------------------------------
 #include "assimp/scene.h"
 //-----------------------------------------------------------------------------
@@ -85,6 +86,9 @@ public :
      */
     void append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph);
 
+    //! Adds given file as metadata by name.
+    RepoNodeAbstractSet addMetadata(const RepoNodeAbstractSet& metadata,
+                     bool exactMatch = true);
 
     //--------------------------------------------------------------------------
 	//
@@ -104,11 +108,19 @@ public :
 	//! Returns a vector of material nodes.
     inline std::vector<RepoNodeAbstract *> getMaterials() const { return materials; }
 
+    //! Returns a set of meshes.
+    inline RepoNodeAbstractSet getMeshes() const { return meshes; }
+
 	//! Returns a vector of mesh nodes.
-    inline std::vector<RepoNodeAbstract *> getMeshes() const { return meshes; }
-			
+    inline std::vector<RepoNodeAbstract*> getMeshesVector() const
+    { return std::vector<RepoNodeAbstract*>(meshes.begin(), meshes.end());  }
+
+    //! Returns a set of transformations.
+    inline RepoNodeAbstractSet getTransformations() const { return transformations; }
+
 	//! Returns a vector of transformation nodes.
-    inline std::vector<RepoNodeAbstract *> getTransformations() const { return transformations; }
+    inline std::vector<RepoNodeAbstract *> getTransformationsVector() const
+    { return std::vector<RepoNodeAbstract*>(transformations.begin(), transformations.end()); }
 
 	//! Returns a vector of texture nodes.
     inline std::vector<RepoNodeTexture *> getTextures() const { return textures; }
@@ -131,21 +143,30 @@ public :
     //! Clears contents but does not deallocate memory!
     void clear();
 
+
+    /*!
+     * Recursively removes node and any of its orphaned children.
+     * Warning: Deletes memory and sets nodes to NULL.
+     */
+    virtual void removeNodeRecursively(RepoNodeAbstract* node);
+
 protected :
 
-    std::vector<RepoNodeAbstract *> materials; //!< Materials
-	
-	std::vector<RepoNodeAbstract *> meshes; //!< Meshes
-
-	std::vector<RepoNodeAbstract *> transformations; //!< Transformations
-	
-	std::vector<RepoNodeTexture *> textures; //!< Textures
+    // TODO: The vectors should be lists or sets to prevent excessive copying!
 
 	std::vector<RepoNodeAbstract *> cameras; //!< Cameras
 
-    std::vector<RepoNodeAbstract *> references; //!< References
+    RepoNodeAbstractSet meshes; //!< Meshes
+
+    std::vector<RepoNodeAbstract *> materials; //!< Materials
 
     std::vector<RepoNodeAbstract *> metadata; //!< Metadata
+
+    std::vector<RepoNodeAbstract *> references; //!< References
+
+    std::vector<RepoNodeTexture *> textures; //!< Textures
+
+    RepoNodeAbstractSet transformations; //!< Transformations
 
 }; // end class
 

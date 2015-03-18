@@ -23,12 +23,13 @@
 #include "repo_node_abstract.h"
 #include "repo_bounding_box.h"
 #include "../primitives/repo_vertex.h"
+#include "../compute/repo_pca.h"
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 
 //------------------------------------------------------------------------------
 #include <stdint.h>
-#include "sha256/sha256.h"
+#include "../sha256/sha256.h"
 
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
@@ -59,9 +60,14 @@ namespace core {
 #define REPO_NODE_LABEL_UV_CHANNELS				"uv_channels" //!< uv channels array
 #define REPO_NODE_LABEL_UV_CHANNELS_COUNT		"uv_channels_count"
 #define REPO_NODE_LABEL_UV_CHANNELS_BYTE_COUNT	"uv_channels_byte_count"
+#define REPO_NODE_LABEL_SHA256                  "sha256"
+#define REPO_NODE_LABEL_COLORS                  "colors"
 //------------------------------------------------------------------------------
 #define REPO_NODE_UUID_SUFFIX_MESH				"08" //!< uuid suffix
 //------------------------------------------------------------------------------
+
+typedef uint64_t hash_type;
+#define REPO_HASH_DENSITY 2097152 // 2^21
 
 
 //! Mesh scene graph node, corresponds to aiMesh in Assimp.
@@ -70,7 +76,7 @@ namespace core {
  * 'n' is the number of consecutive vertex indices 'v' that contribute to a
  * single face.
  */
-class REPO_CORE_EXPORT REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
+class REPO_CORE_EXPORT RepoNodeMesh : public RepoNodeAbstract
 {
 
 public :
@@ -205,8 +211,11 @@ public :
     const std::vector<aiColor4D > *getColors() const
     { return colors; }
 
+    //! Returns bounding box of the mesh.
     const RepoBoundingBox &getBoundingBox() const
-    {   return boundingBox; }
+    { return boundingBox; }
+
+    std::string getVertexHash();
 
 	//! Returns the area of a face identified by its index.
 	double getFaceArea(const unsigned int & index) const;
@@ -233,6 +242,14 @@ public :
 	//! Returns the centroid of a face.
 	RepoVertex getFaceCentroid(unsigned int index) const;
 
+    RepoPCA getPCA() const { return pca; }
+
+    void setVertexHash(const std::string& hash)
+    { this->vertexHash = hash; }
+
+    //! Calculates the vertex hash by first PCA-aligning the vertices.
+    void setVertexHash();
+
     //--------------------------------------------------------------------------
 	//
 	// Faces
@@ -250,25 +267,37 @@ public :
 		const unsigned int facesCount,
 		std::vector<aiFace> * faces);
 
+
+    //! Returns hash of a given array of [x,y,z] coordinates.
+    static std::string hash(const std::vector<aiVector3t<float> > &,
+            const RepoBoundingBox&, double hashDensity = 500);
+
 protected :
 
-    std::vector<aiVector3D > *vertices; //!< Vertices of this mesh.
+    std::string vertexHash;
+
+    std::vector<aiVector3t<float> >* vertices; //!< Vertices of this mesh.
 
 	//! Faces of the mesh. Each face points to several vertices by the indices.
-	std::vector<aiFace> * faces;
+    std::vector<aiFace>* faces;
 
 	//! Normals of this mesh.
 	/*!
 	 * Assimp assigns QNaN to normals for points and lines.
 	 */
-    std::vector<aiVector3D > *normals;
+    std::vector<aiVector3t<float> >* normals;
 
 	//! 2D outline of this mesh.
 	/*!
 	 * Outline is a XY orthographic projection of the mesh. The simplest
 	 * example is a bounding rectangle.
 	 */
-    std::vector<aiVector2D > *outline;
+    std::vector<aiVector2D>* outline;
+
+    //! Axis-aligned local coords bounding box.
+    RepoBoundingBox boundingBox;
+
+    RepoPCA pca;
 
 	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box.
 
@@ -277,12 +306,22 @@ protected :
 	 * A mesh can have multiple UV channels per vertex, each channel
 	 * is the length of the number of vertices.
 	 */
-    std::vector<std::vector<aiVector3D >*> *uvChannels;
+    std::vector<std::vector<aiVector3t<float> >*>* uvChannels;
 
     //! Vertex colors of this mesh.
-    std::vector<aiColor4D > *colors;
+    std::vector<aiColor4D>* colors;
 
 }; // end class
+
+
+struct RepoNodeMeshHasher {
+    size_t operator()(const RepoNodeAbstract* node) const
+    {
+        RepoNodeMesh* mesh = ((RepoNodeMesh*)node);
+        if (mesh->getVertexHash().empty())
+            mesh->setVertexHash();
+        return hash<std::string>()(mesh->getVertexHash()); }
+};
 
 } // end namespace core
 } // end namespace repo

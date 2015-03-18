@@ -23,13 +23,13 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 {
 	if (mesh->mNumVertices)
 	{
-		min = mesh->mVertices[0];
-		max = mesh->mVertices[0];
+        min = RepoVertex(mesh->mVertices[0]);
+        max = RepoVertex(mesh->mVertices[0]);
 	}
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
-		aiVector3t<float> tmp = mesh->mVertices[i];
+        RepoVertex tmp = RepoVertex(mesh->mVertices[i]);
 
 		min.x = std::min(min.x,tmp.x);
 		min.y = std::min(min.y,tmp.y);
@@ -41,15 +41,37 @@ repo::core::RepoBoundingBox::RepoBoundingBox(const aiMesh * mesh)
 	}
 }
 
+repo::core::RepoBoundingBox::RepoBoundingBox(const std::vector<RepoVertex> &vertices)
+{
+    if (vertices.size())
+    {
+        min = vertices[0];
+        max = vertices[0];
+    }
+
+    for (unsigned int i = 0; i < vertices.size(); ++i)
+    {
+        aiVector3D tmp = vertices[i];
+
+        min.x = std::min(min.x,tmp.x);
+        min.y = std::min(min.y,tmp.y);
+        min.z = std::min(min.z,tmp.z);
+
+        max.x = std::max(max.x,tmp.x);
+        max.y = std::max(max.y,tmp.y);
+        max.z = std::max(max.z,tmp.z);
+    }
+}
+
 bool repo::core::RepoBoundingBox::operator==(const RepoBoundingBox& other) const
 {
     return this->getMin() == other.getMin() &&
             this->getMax() == other.getMax();
 }
 
-std::vector<aiVector3t<float>> repo::core::RepoBoundingBox::toVector() const
+std::vector<aiVector3D> repo::core::RepoBoundingBox::toVector() const
 {
-	std::vector<aiVector3t<float>> vec;
+    std::vector<aiVector3D> vec;
 	vec.push_back(min);
 	vec.push_back(max);
 	return vec;
@@ -63,4 +85,34 @@ void repo::core::RepoBoundingBox::toOutline(
 	vec->push_back(aiVector2t<float>(max.x, min.y));
 	vec->push_back(aiVector2t<float>(max.x, max.y));
 	vec->push_back(aiVector2t<float>(min.x, max.y));
+}
+
+
+std::vector<double> repo::core::RepoBoundingBox::getTransformationMatrix() const
+{
+    std::vector<double> transformation(16);
+
+    RepoVertex centroid = RepoVertex(max+min);
+
+    transformation[0] = 1;
+    transformation[1] = 0;
+    transformation[2] = 0;
+    transformation[3] = 0;
+
+    transformation[4] = 0;
+    transformation[5] = 1;
+    transformation[6] = 0;
+    transformation[7] = 0;
+
+    transformation[8] = 0;
+    transformation[9] = 0;
+    transformation[10] = 1;
+    transformation[11] = 0;
+
+    transformation[12] = centroid.x/2;
+    transformation[13] = centroid.y/2;
+    transformation[14] = centroid.z/2;
+    transformation[15] = 1;
+
+    return transformation;
 }

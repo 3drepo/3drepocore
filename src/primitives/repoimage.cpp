@@ -71,9 +71,7 @@ std::vector<char> repo::core::RepoImage::getData() const
     int length = 0;
     const char* data = getData(length);
     if (data)
-    {
         ret = std::vector<char>(data, data + length);
-    }
     return ret;
 }
 
@@ -83,8 +81,6 @@ const char *repo::core::RepoImage::getData(int &length) const
     const char* data;
     if (hasField(REPO_LABEL_DATA) &&
         mongo::BSONType::BinData == (bse = getField(REPO_LABEL_DATA)).type())
-    {
          data = bse.binData(length);
-    }
     return data;
 }

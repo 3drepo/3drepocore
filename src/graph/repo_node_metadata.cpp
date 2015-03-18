@@ -19,8 +19,16 @@
 #include "../conversion/repo_transcoder_bson.h"
 
 //! Constructs Metadata scene graph node from Assimp's aiMetaData
-repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
- RepoNodeAbstract(REPO_NODE_TYPE_METADATA, REPO_NODE_API_LEVEL_1)
+repo::core::RepoNodeMetadata::RepoNodeMetadata(
+        const aiMetadata *metaIn,
+        const std::string& name)
+    : RepoNodeAbstract(
+          REPO_NODE_TYPE_METADATA,
+          REPO_NODE_API_LEVEL_1,
+          repo::core::RepoTranscoderString::stringToUUID(
+              name,
+              REPO_NODE_UUID_SUFFIX_METADATA),
+          name)
 {
 	mongo::BSONObjBuilder builder;
 
@@ -28,6 +36,10 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
 	{
 		std::string key(metaIn->mKeys[i].C_Str());
 		aiMetadataEntry &currentValue = metaIn->mValues[i];
+
+        if (key == "IfcGloballyUniqueId")
+            std::cerr << "TODO: fix IfcGloballyUniqueId in RepoMetadata" << std::endl;
+
 
 		switch(currentValue.mType)
 		{
@@ -72,6 +84,36 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(const aiMetadata *metaIn) :
 	}
 
 	this->metadata = builder.obj();
+}
+
+repo::core::RepoNodeMetadata::RepoNodeMetadata(
+        const std::list<std::string>& keys,
+        const std::list<std::string>& values,
+        const string& name)
+    : RepoNodeAbstract(
+          REPO_NODE_TYPE_METADATA,
+          REPO_NODE_API_LEVEL_1,
+          repo::core::RepoTranscoderString::stringToUUID(
+              name,
+              REPO_NODE_UUID_SUFFIX_METADATA),
+           name)
+{
+    if (keys.size() != values.size())
+        std::cerr << "Metadata '" << name << "' size of keys = " << keys.size() << " differs from size of values = " << values.size() << std::endl;
+
+    mongo::BSONObjBuilder builder;
+    std::list<std::string>::const_iterator kit = keys.begin();
+    std::list<std::string>::const_iterator vit = values.begin();
+    for (; kit != keys.end() && vit != values.end(); ++kit, ++vit)
+    {
+        // TODO: check if value is a number and if so, store as a number rather than string!
+        std::string key = *kit;
+        std::string value = *vit;
+        if (!key.empty() && !value.empty())
+            builder << key << value;
+    }
+    this->metadata = builder.obj();
+
 }
 
 repo::core::RepoNodeMetadata::RepoNodeMetadata(
@@ -126,4 +168,20 @@ mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
         builder << REPO_NODE_LABEL_METADATA << this->metadata;
 
     return builder.obj();
+}
+
+std::string repo::core::RepoNodeMetadata::toString(std::string separator) const
+{
+   // return getMetadata().toString();
+    std::string ret;
+
+    std::vector<mongo::BSONElement> elems;
+    metadata.elems(elems);
+    for (unsigned int i = 0; i < elems.size(); ++i)
+    {
+        ret += elems[i].toString();
+        if (elems.size() - 1 != i)
+            ret += separator;
+    }
+    return ret;
 }

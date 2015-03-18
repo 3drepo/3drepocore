@@ -307,18 +307,22 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 {
 	std::string nodeName = node->mName.data;
 	if (nodeName.empty())
-		nodeName = "transformation";
-	nodeName += ":";
-	
-	//-------------------------------------------------------------------------
-	std::map<std::string, int>::iterator it = occurenceCounter->find(nodeName);
-	if (occurenceCounter->end() == it)
-		occurenceCounter->insert(std::make_pair(nodeName, 0));
-	else
     {
-		it->second++;
-        node->mName = nodeName + std::to_string(it->second);//repo::toString(it->second);
-	}
+        nodeName = "<transformation>";
+        node->mName = nodeName;
+    }
+
+//	nodeName += ":";
+	
+//	//-------------------------------------------------------------------------
+//	std::map<std::string, int>::iterator it = occurenceCounter->find(nodeName);
+//	if (occurenceCounter->end() == it)
+//		occurenceCounter->insert(std::make_pair(nodeName, 0));
+//	else
+//    {
+//		it->second++;
+//        node->mName = nodeName + std::to_string(it->second);
+//	}
 
 	//-------------------------------------------------------------------------
 	// for every mesh this node points to
@@ -337,18 +341,21 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 		std::string meshName = mesh->mName.data;
 
 		if (meshName.empty())
-			meshName = "mesh";
-		meshName += ":";
+        {
+            meshName = "<mesh>";
+            mesh->mName = meshName;
+        }
+//		meshName += ":";
 
-		//---------------------------------------------------------------------
-		std::map<std::string, int>::iterator it = occurenceCounter->find(meshName);
-		if (occurenceCounter->end() == it)
-			occurenceCounter->insert(std::make_pair(meshName, 0));
-		else
-		{
-			it->second++;
-            mesh->mName = meshName + std::to_string(it->second);//repo::toString(it->second);
-		}
+//		//---------------------------------------------------------------------
+//		std::map<std::string, int>::iterator it = occurenceCounter->find(meshName);
+//		if (occurenceCounter->end() == it)
+//			occurenceCounter->insert(std::make_pair(meshName, 0));
+//		else
+//		{
+//			it->second++;
+//            mesh->mName = meshName + std::to_string(it->second);
+//		}
 	}
 }
 
@@ -366,19 +373,23 @@ void repo::core::AssimpWrapper::enforceUniqueNames(
 		std::string materialName = name.data;
 
 		if (materialName.empty())
+        {
 			materialName = "material";
-		materialName += ":";
+            material->AddProperty(new aiString(materialName), AI_MATKEY_NAME);
+        }
 
-		//---------------------------------------------------------------------
-		std::map<std::string, int>::iterator it = occurenceCounter->find(materialName);
-		if (occurenceCounter->end() == it)
-			occurenceCounter->insert(std::make_pair(materialName, 0));
-		else
-		{
-			it->second++;
-            materialName = materialName + std::to_string(it->second); //repo::toString(it->second);
-			material->AddProperty(new aiString(materialName), AI_MATKEY_NAME);	
-		}
+//        materialName += ":";
+
+//		//---------------------------------------------------------------------
+//		std::map<std::string, int>::iterator it = occurenceCounter->find(materialName);
+//		if (occurenceCounter->end() == it)
+//			occurenceCounter->insert(std::make_pair(materialName, 0));
+//		else
+//		{
+//			it->second++;
+//            materialName = materialName + std::to_string(it->second);
+//			material->AddProperty(new aiString(materialName), AI_MATKEY_NAME);
+//		}
 	}
 }
 
