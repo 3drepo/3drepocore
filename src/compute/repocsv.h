@@ -62,8 +62,20 @@ public:
      * If given headers list is empty, takes the first line as the headers.
      */
     RepoNodeAbstractSet readMetadata(
+            std::list<string>& headers,
+            const char delimeter = ','
+			);
+
+    /*!
+     * If given headers list is empty, takes the first line as the headers.
+     */
+    static RepoNodeAbstractSet readMetadata(
             const std::string& path,
-            std::list<string>& headers = std::list<std::string>());
+            const char delimeter = ',')
+	{
+		std::list<string> tmp;
+		return readMetadata(path, tmp, delimeter);
+	}
 
     //! Returns the delimiter.
     char getDelimiter() const { return delimiter; }

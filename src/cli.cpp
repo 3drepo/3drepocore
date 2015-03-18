@@ -29,7 +29,7 @@ std::string prog_name;
 
 void print_usage()
 {
-	std::cout << prog_name << " <server> <port> <username> <password> [" << HelpStr << "|" << CacheStr << "|" << DBListStr << "|" << ExportStr << "] [db_name] [export_filename]" << std::endl;	
+	std::cout << prog_name << " <server> <port> <username> <password> [" << HelpStr << "|" << CacheStr << "|" << DBListStr << "|" << ExportStr << "] [db_name] [export_filename]" << std::endl;
 }
 
 void getHeadRevision(repo::core::MongoClientWrapper &mongo, std::string dbname, repo::core::RepoGraphScene *& sceneLoader)
@@ -42,7 +42,7 @@ void getHeadRevision(repo::core::MongoClientWrapper &mongo, std::string dbname, 
 	fieldsToReturn.push_back(REPO_NODE_LABEL_CURRENT_UNIQUE_IDS);
 
 	std::cout << "Loading full collection .... ";
-	repo::core::RepoCore core;	
+	repo::core::RepoCore core;
 	mongo.fetchEntireCollection(dbname, "scene", data);
 	std::cout << "done." << std::endl;
 
@@ -58,7 +58,7 @@ enum Params
 int main(int argc, char **argv)
 {
 	prog_name = std::string(argv[ProgName]);
-	
+
 	if (argc < (OperationParam + 1))
 	{
 		print_usage();
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	{
 		print_usage();
 		return 0;
-	} 
+	}
 
 	repo::core::MongoClientWrapper mongo;
 	std::cout << "Connecting to " << host << " " << port << std::endl;
@@ -88,9 +88,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!operation.compare(DBListStr)) {
-		std::list<std::string> databases = mongo.getDbs();
-
-		databases.sort();
+		std::list<std::string> databases = mongo.getDatabases(true);
 
 		for(std::list<std::string>::iterator db = databases.begin(); db != databases.end(); ++db)
 		{
@@ -114,7 +112,7 @@ int main(int argc, char **argv)
 
 		aiScene *scene = new aiScene();
 		sceneLoader->toAssimp(scene);
-	
+
 		std::map<std::string, QImage> nameTextures;
 		std::vector<repo::core::RepoNodeTexture*> textures = sceneLoader->getTextures();
 
@@ -122,10 +120,10 @@ int main(int argc, char **argv)
 		{
 			repo::core::RepoNodeTexture *repoTex = textures[i];
 			const unsigned char* data = (unsigned char*) repoTex->getData();
-			QImage image = QImage::fromData(data, repoTex->getDataSize());
+			QImage image = QImage::fromData(data, repoTex->getRawDataSize());
 			nameTextures.insert(std::make_pair(repoTex->getName(), image));
 		}
-	
+
 		QFileInfo fileInfo(QString::fromStdString(exportname));
 		QDir directory = fileInfo.absoluteDir();
 		QString fileExtension = fileInfo.completeSuffix();
@@ -149,7 +147,7 @@ int main(int argc, char **argv)
 			{
 				repo::core::RepoNodeTexture* tex = (*it);
 				const unsigned char* data = (unsigned char*) tex->getData();
-				QImage image = QImage::fromData(data, tex->getDataSize());
+				QImage image = QImage::fromData(data, tex->getRawDataSize());
 				QString filename = QString::fromStdString(tex->getName());
 
 				if (scene->HasTextures())
@@ -158,7 +156,7 @@ int main(int argc, char **argv)
 					name = name.substr(1, name.size());
 					filename = QString::fromStdString(name + embeddedTextureExtension);
 				}
-				
+
 				QFileInfo fi(directory, filename);
 				image.save(fi.absoluteFilePath());
 			}

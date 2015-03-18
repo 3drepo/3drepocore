@@ -45,7 +45,8 @@ istream& repo::core::RepoCSV::readFile(istream& stream,
 
 repo::core::RepoNodeAbstractSet repo::core::RepoCSV::readMetadata(
         const std::string& path,
-        std::list<string>& headers)
+        std::list<string>& headers,
+        const char delimeter)
 {
     RepoNodeAbstractSet metadata;
     ifstream file(path);
