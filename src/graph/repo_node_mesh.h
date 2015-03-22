@@ -299,8 +299,6 @@ protected :
 
     RepoPCA pca;
 
-	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box.
-
 	//! UV channels per vertex
 	/*!
 	 * A mesh can have multiple UV channels per vertex, each channel
