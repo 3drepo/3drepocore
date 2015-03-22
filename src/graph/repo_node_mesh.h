@@ -205,6 +205,8 @@ public :
     const std::vector<aiVector2D> *getOutline() const
     { return outline; }
 
+	std::string getVertexHash() const;
+
     //! Returns the vertices colors.
     const std::vector<aiColor4D > *getColors() const
     { return colors; }
@@ -297,6 +299,7 @@ protected :
 
     RepoPCA pca;
 
+	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box.
 
 	//! UV channels per vertex
 	/*!

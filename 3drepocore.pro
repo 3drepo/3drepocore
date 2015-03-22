@@ -68,7 +68,7 @@ HEADERS +=  src/repocore.h\
             src/conversion/repo_transcoder_bson.h \
             src/conversion/repo_transcoder_string.h \
             src/compute/render.h \
-            src/primitives/repoimage.h \
+			src/primitives/repoimage.h \
             src/diff/repo3ddiff.h \
             src/sha256/sha256.h \
             src/compute/repo_pca.h \

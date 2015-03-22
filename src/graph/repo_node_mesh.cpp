@@ -135,6 +135,8 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		this->addChild(materials[mesh->mMaterialIndex]);
 		materials[mesh->mMaterialIndex]->addParent(this);
 	}
+
+	std::cerr << getVertexHash() << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -206,6 +208,8 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		this->boundingBox.setMin(min_max.first);
 		this->boundingBox.setMax(min_max.second);
     }
+
+
 
     //--------------------------------------------------------------------------
     // SHA-256 hash
@@ -413,8 +417,8 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
     // SHA-256 hash
     if (!vertexHash.empty())
     {
-	// TODO: Fix this call
-	//builder << REPO_NODE_LABEL_SHA256 << (long unsigned int)(vertexHash);
+		// TODO: Fix this call - needs to be fixed as int conversion is overloaded
+		//builder << REPO_NODE_LABEL_SHA256 << (long unsigned int)(vertexHash);
     }
 
     //--------------------------------------------------------------------------
@@ -426,7 +430,7 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 			builder);
 
     //--------------------------------------------------------------------------
-    // TODO: bi/tangents
+	// TODO: bi/tangents, vertex colors
 
     //--------------------------------------------------------------------------
     // Vertex colors
