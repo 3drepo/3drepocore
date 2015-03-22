@@ -126,6 +126,14 @@ public:
             const std::string &database,
             const std::string &collection);
 
+    //! Returns project.history
+    static std::string getHistoryCollectionName(const std::string& project)
+    {   return project + "." + REPO_COLLECTION_HISTORY;}
+
+    //! Returns project.scene
+    static std::string getSceneCollectionName(const std::string& project)
+    { return project + "." + REPO_COLLECTION_SCENE; }
+
     //--------------------------------------------------------------------------
 	//
 	// Connection and authentication

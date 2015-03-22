@@ -336,7 +336,7 @@ std::string repo::core::MongoClientWrapper::getUsername(
 		username = it->second.first;
 	else if (ADMIN_DATABASE != database)
 		username = getUsername(ADMIN_DATABASE);
-	return username;
+    return !username.empty() ? username : "anonymous";
 }
 
 //------------------------------------------------------------------------------
