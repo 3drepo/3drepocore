@@ -30,6 +30,7 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc
 //------------------------------------------------------------------------------
+#include "primitives/repocollstats.h"
 
 #include "repocoreglobal.h"
 
@@ -224,13 +225,29 @@ public:
     //! Returns connection status on a given database.
     mongo::BSONObj getConnectionStatus(const std::string &database);
 
-	//! Returns stats for collection
-    mongo::BSONObj getCollectionStats(
+    //! Returns stats for a collection.
+    repo::core::RepoCollStats getCollectionStats(const std::string &ns);
+
+    //! Returns stats for a collection.
+    repo::core::RepoCollStats getCollectionStats(
             const std::string &database,
             const std::string &collection);
 
-	//! Returns the size of the collection in bytes as long long.
+    /*!
+     * Returns the size of the collection in bytes as long long.
+     * See http://docs.mongodb.org/manual/reference/command/collStats/#collStats.size
+     */
     long long getCollectionSize(const mongo::BSONObj &statsObj);
+
+    /*!
+     * Returns the storage size of the collection in bytes as long long.
+     * See http://docs.mongodb.org/manual/reference/command/collStats/#collStats.storageSize
+     */
+    long long getCollectionStorageSize(const mongo::BSONObj& statsObj);
+
+    void getCollectionSizes(const mongo::BSONObj& statsObj,
+                            long long& size,
+                            long long& storageSize);
 
 	//! Returns the size of the collection in bytes as long long.
     long long getCollectionSize(
@@ -241,7 +258,6 @@ public:
      * (db.collection)
      */
     long long getCollectionSize(const std::string &ns);
-
 
 	//! Returns a collection name from namespace (db.collection)
     std::string nsGetCollection(const std::string &ns);

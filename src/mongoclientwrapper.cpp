@@ -445,11 +445,16 @@ mongo::BSONObj repo::core::MongoClientWrapper::getConnectionStatus(
 
 //------------------------------------------------------------------------------
 
-mongo::BSONObj repo::core::MongoClientWrapper::getCollectionStats(
+repo::core::RepoCollStats repo::core::MongoClientWrapper::getCollectionStats(const std::string& ns)
+{
+    return getCollectionStats(nsGetDB(ns), nsGetCollection(ns));
+}
+
+repo::core::RepoCollStats repo::core::MongoClientWrapper::getCollectionStats(
 	const std::string &database, 
 	const std::string &collection)
 {
-	mongo::BSONObj info;
+    mongo::BSONObj info;
 	try {	
 		mongo::BSONObjBuilder builder;
 		builder.append("collstats", collection);
@@ -466,7 +471,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::getCollectionStats(
 	{
         log(std::string(e.what()));
 	}
-	return info;
+    return RepoCollStats(info);
 }
 
 long long repo::core::MongoClientWrapper::getCollectionSize(
@@ -476,6 +481,24 @@ long long repo::core::MongoClientWrapper::getCollectionSize(
 	if (!statsObj.isEmpty())
 		size = statsObj.getField("size").safeNumberLong();
 	return size;
+}
+
+long long repo::core::MongoClientWrapper::getCollectionStorageSize(
+        const mongo::BSONObj& statsObj)
+{
+    long long size = 0;
+    if (!statsObj.isEmpty())
+        size = statsObj.getField("storageSize").safeNumberLong();
+    return size;
+}
+
+void repo::core::MongoClientWrapper::getCollectionSizes(
+        const mongo::BSONObj& statsObj,
+        long long& size,
+        long long& storageSize)
+{
+    size = getCollectionSize(statsObj);
+    storageSize = getCollectionStorageSize(statsObj);
 }
 
 //------------------------------------------------------------------------------
