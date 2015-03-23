@@ -59,6 +59,9 @@
 #define REPO_LABEL_USER         "user"
 #define REPO_LABEL_WIDTH		"width"
 
+#define REPO_COLLECTION_HISTORY "history"
+#define REPO_COLLECTION_SCENE   "scene"
+
 //------------------------------------------------------------------------------
 // Media Types a.k.a. as Multipurpose Internet Mail Extensions (MIME) Types
 // http://www.iana.org/assignments/media-types/media-types.xhtml#image

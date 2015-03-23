@@ -75,7 +75,7 @@ public:
             const char delimeter = ',')
 	{
 		std::list<string> tmp;
-		return readMetadata(path, tmp, delimeter);
+        return readMetadata(path, tmp);
 	}
 
     //! Returns the delimiter.
