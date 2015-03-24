@@ -75,7 +75,7 @@ public :
 		const std::string &name = std::string()) : 
 			type(type), 
 			api(api), 
-            sharedID(boost::uuids::random_generator()()),
+            sharedID(sharedId),
 			uniqueID(boost::uuids::random_generator()()), 
             name(name) {}
 
