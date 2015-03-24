@@ -233,32 +233,6 @@ public:
             const std::string &database,
             const std::string &collection);
 
-    /*!
-     * Returns the size of the collection in bytes as long long.
-     * See http://docs.mongodb.org/manual/reference/command/collStats/#collStats.size
-     */
-    long long getCollectionSize(const mongo::BSONObj &statsObj);
-
-    /*!
-     * Returns the storage size of the collection in bytes as long long.
-     * See http://docs.mongodb.org/manual/reference/command/collStats/#collStats.storageSize
-     */
-    long long getCollectionStorageSize(const mongo::BSONObj& statsObj);
-
-    void getCollectionSizes(const mongo::BSONObj& statsObj,
-                            long long& size,
-                            long long& storageSize);
-
-	//! Returns the size of the collection in bytes as long long.
-    long long getCollectionSize(
-            const std::string &database,
-            const std::string &collection);
-	
-    /*! Returns the size of the collection in bytes as long long from namespace
-     * (db.collection)
-     */
-    long long getCollectionSize(const std::string &ns);
-
 	//! Returns a collection name from namespace (db.collection)
     std::string nsGetCollection(const std::string &ns);
 

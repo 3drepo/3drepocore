@@ -474,48 +474,6 @@ repo::core::RepoCollStats repo::core::MongoClientWrapper::getCollectionStats(
     return RepoCollStats(info);
 }
 
-long long repo::core::MongoClientWrapper::getCollectionSize(
-    const mongo::BSONObj &statsObj)
-{
-	long long size = 0;
-	if (!statsObj.isEmpty())
-		size = statsObj.getField("size").safeNumberLong();
-	return size;
-}
-
-long long repo::core::MongoClientWrapper::getCollectionStorageSize(
-        const mongo::BSONObj& statsObj)
-{
-    long long size = 0;
-    if (!statsObj.isEmpty())
-        size = statsObj.getField("storageSize").safeNumberLong();
-    return size;
-}
-
-void repo::core::MongoClientWrapper::getCollectionSizes(
-        const mongo::BSONObj& statsObj,
-        long long& size,
-        long long& storageSize)
-{
-    size = getCollectionSize(statsObj);
-    storageSize = getCollectionStorageSize(statsObj);
-}
-
-//------------------------------------------------------------------------------
-
-long long repo::core::MongoClientWrapper::getCollectionSize(
-	const std::string &database, 
-	const std::string &collection)
-{
-	return getCollectionSize(getCollectionStats(database, collection));
-}
-
-//------------------------------------------------------------------------------
-
-long long repo::core::MongoClientWrapper::getCollectionSize(const std::string &ns)
-{
-	return getCollectionSize(nsGetDB(ns), nsGetCollection(ns));
-}
 
 //------------------------------------------------------------------------------
 
