@@ -385,6 +385,9 @@ public:
     //! Drops given database.
     bool dropDatabase(const std::string& database);
 
+    //! Drops database.collection
+    bool dropCollection(const std::string& ns);
+
     //--------------------------------------------------------------------------
 	//
 	// Insertion

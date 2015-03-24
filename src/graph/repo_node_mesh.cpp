@@ -136,7 +136,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		materials[mesh->mMaterialIndex]->addParent(this);
 	}
 
-	std::cerr << getVertexHash() << std::endl;
+    //std::cerr << getVertexHash() << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -779,8 +779,8 @@ std::string repo::core::RepoNodeMesh::hash(
         const RepoBoundingBox& boundingBox,
         double hashDensity)
 {
-    std::cerr << std::endl;
-    std::cerr << "Mesh" << std::endl;
+//    std::cerr << std::endl;
+//    std::cerr << "Mesh" << std::endl;
 	std::vector<hash_type> vertexHashes;
 
 
@@ -817,20 +817,20 @@ std::string repo::core::RepoNodeMesh::hash(
 
 		vertexHashes[v_idx] = vertexIndex;
 
-        if (vertices.size() < 100)
-            std::cerr << "[ " << norm_x << ", " << norm_y << ", " << norm_z << " ]";
+//        if (vertices.size() < 100)
+//            std::cerr << "[ " << norm_x << ", " << norm_y << ", " << norm_z << " ]";
 	}
 
-    std::cerr << std::endl;
+//    std::cerr << std::endl;
 
     std::sort(vertexHashes.begin(), vertexHashes.end());
 //    std::unique(vertexHashes.begin(), vertexHashes.end());
 
-    for(auto v : vertexHashes)
-    {
-        std::cerr << v << " ";
-    }
-    std::cerr << std::endl;
+//    for(auto v : vertexHashes)
+//    {
+//        std::cerr << v << " ";
+//    }
+//    std::cerr << std::endl;
 
     size_t bufSize = vertexHashes.size() * sizeof(hash_type) + sizeof(float) * 3;
     char *buf = new char[bufSize];
@@ -852,7 +852,7 @@ std::string repo::core::RepoNodeMesh::hash(
     *((float *)(buf + idx + sizeof(float))) = stride_y;
     *((float *)(buf + idx + 2 * sizeof(float))) = stride_z;
 
-    std::cerr << stride_x << " " << stride_y << " " << stride_z << " " << sha256(std::string(buf, bufSize)) << std::endl;
+//    std::cerr << stride_x << " " << stride_y << " " << stride_z << " " << sha256(std::string(buf, bufSize)) << std::endl;
 
     return sha256(std::string(buf, bufSize));
 }

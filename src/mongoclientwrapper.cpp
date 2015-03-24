@@ -945,6 +945,19 @@ bool repo::core::MongoClientWrapper::dropDatabase(const std::string &database)
 	return checkForError();
 }
 
+bool repo::core::MongoClientWrapper::dropCollection(const std::string& ns)
+{
+    try {
+        mongo::BSONObj info;
+        clientConnection.dropCollection(ns, &info);
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }
+    return checkForError();
+}
+
 //------------------------------------------------------------------------------
 
 void repo::core::MongoClientWrapper::insertRecord(
