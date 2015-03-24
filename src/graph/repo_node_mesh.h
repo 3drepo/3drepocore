@@ -294,8 +294,7 @@ protected :
 	 */
     std::vector<aiVector2D>* outline;
 
-    //! Axis-aligned local coords bounding box.
-    RepoBoundingBox boundingBox;
+	RepoBoundingBox boundingBox; //!< Axis-aligned local coords bounding box.
 
     RepoPCA pca;
 

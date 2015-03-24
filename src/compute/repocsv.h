@@ -58,21 +58,24 @@ public:
 
     //--------------------------------------------------------------------------
 
+  /*!
+     * Load meta data from file
+     */
+
+    RepoNodeAbstractSet readMetadata(
+            const std::string& path,
+			std::list<string>& headers,
+            const char delimeter = ',');
+
     /*!
-     * If given headers list is empty, takes the first line as the headers.
+     * if given headers list is empty, takes the first line as the headers.
      */
     RepoNodeAbstractSet readMetadata(
             const std::string& path,
-            std::list<string>& headers);
-
-    /*!
-     * If given headers list is empty, takes the first line as the headers.
-     */
-    RepoNodeAbstractSet readMetadata(
-            const std::string& path)
+            const char delimeter = ',')
 	{
 		std::list<string> tmp;
-        return readMetadata(path, tmp);
+        return readMetadata(path, tmp, delimeter);
 	}
 
     //! Returns the delimiter.

@@ -162,6 +162,12 @@ protected :
     bool isUniqueID;
 
 
+    //! TODO: make use of
+    boost::uuids::uuid branchID;
+
+
+
+
 }; // end class
 
 } // end namespace core
