@@ -28,9 +28,7 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_TRANSFORMATION,
 			REPO_NODE_API_LEVEL_1,
-			repo::core::RepoTranscoderString::stringToUUID(
-				node->mName.data,
-				REPO_NODE_UUID_SUFFIX_TRANSFORMATION),
+            boost::uuids::random_generator()(),
 			node->mName.data),
 		matrix(node->mTransformation) {}
 
@@ -44,9 +42,7 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_TRANSFORMATION,
 			REPO_NODE_API_LEVEL_1,
-			repo::core::RepoTranscoderString::stringToUUID(
-				node->mName.data,
-				REPO_NODE_UUID_SUFFIX_TRANSFORMATION),
+            boost::uuids::random_generator()(),
 			node->mName.data),
 		matrix(node->mTransformation)
 {
@@ -85,10 +81,8 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
             metadataName = "<metadata>";
 		repo::core::RepoNodeMetadata *metachild =
             new RepoNodeMetadata(node->mMetaData, metadataName);
-
 		this->addChild(metachild);
 		metachild->addParent(this);
-
 		metadata.push_back(metachild);
 	}
 
@@ -106,9 +100,7 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 				metadata);
 		this->addChild(child);
 		child->addParent(this);
-
 	}
-
 }
 
 repo::core::RepoNodeTransformation::RepoNodeTransformation(
@@ -289,8 +281,6 @@ void repo::core::RepoNodeTransformation::toAssimp(
         for (childrenIt = children.begin(); childrenIt != children.end(); ++childrenIt)
         {
             const RepoNodeAbstract *child = *childrenIt;
-//		for each (const RepoNodeAbstract * child in children)
-//		{
 			it = nodesMapping.find(child);
 			if (nodesMapping.end() != it)
 			{

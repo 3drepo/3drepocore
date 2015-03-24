@@ -29,9 +29,7 @@ repo::core::RepoNodeMaterial::RepoNodeMaterial(
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_MATERIAL, 
 			REPO_NODE_API_LEVEL_1,
-			repo::core::RepoTranscoderString::stringToUUID(
-				name,
-				REPO_NODE_UUID_SUFFIX_MATERIAL),
+            boost::uuids::random_generator()(),
 			name) ,
 			ambient(NULL),
 			diffuse(NULL),

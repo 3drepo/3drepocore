@@ -25,9 +25,7 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
     : RepoNodeAbstract(
           REPO_NODE_TYPE_METADATA,
           REPO_NODE_API_LEVEL_1,
-          repo::core::RepoTranscoderString::stringToUUID(
-              name,
-              REPO_NODE_UUID_SUFFIX_METADATA),
+          boost::uuids::random_generator()(),
           name)
 {
 	mongo::BSONObjBuilder builder;
@@ -93,9 +91,7 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
     : RepoNodeAbstract(
           REPO_NODE_TYPE_METADATA,
           REPO_NODE_API_LEVEL_1,
-          repo::core::RepoTranscoderString::stringToUUID(
-              name,
-              REPO_NODE_UUID_SUFFIX_METADATA),
+          boost::uuids::random_generator()(),
            name)
 {
     if (keys.size() != values.size())
@@ -122,9 +118,7 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
     : RepoNodeAbstract(
           REPO_NODE_TYPE_METADATA,
           REPO_NODE_API_LEVEL_1,
-          repo::core::RepoTranscoderString::stringToUUID(
-              name,
-              REPO_NODE_UUID_SUFFIX_METADATA),
+          boost::uuids::random_generator()(),
           name)
     , metadata(metadata)
 {}

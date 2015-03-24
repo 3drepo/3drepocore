@@ -27,9 +27,7 @@ repo::core::RepoNodeCamera::RepoNodeCamera(
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_CAMERA, 
 			REPO_NODE_API_LEVEL_1,
-			repo::core::RepoTranscoderString::stringToUUID(
-				camera->mName.data,
-				REPO_NODE_UUID_SUFFIX_CAMERA),
+            boost::uuids::random_generator()(),
 			camera->mName.data)
 {
     //--------------------------------------------------------------------------

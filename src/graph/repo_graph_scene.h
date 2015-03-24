@@ -109,9 +109,9 @@ public :
     //! Returns a set of meshes.
     inline RepoNodeAbstractSet getMeshes() const { return meshes; }
 
-	//! Returns a vector of mesh nodes.
-    inline std::vector<RepoNodeAbstract*> getMeshesVector() const
-    { return std::vector<RepoNodeAbstract*>(meshes.begin(), meshes.end());  }
+//	//! Returns a vector of mesh nodes.
+//    inline std::vector<RepoNodeAbstract*> getMeshesVector() const
+//    { return std::vector<RepoNodeAbstract*>(meshes.begin(), meshes.end());  }
 
     //! Returns a set of transformations.
     inline RepoNodeAbstractSet getTransformations() const { return transformations; }

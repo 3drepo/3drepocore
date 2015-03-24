@@ -31,9 +31,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
     : RepoNodeAbstract (
             REPO_NODE_TYPE_REFERENCE,
             REPO_NODE_API_LEVEL_1,
-            repo::core::RepoTranscoderString::stringToUUID(
-                name,
-                REPO_NODE_UUID_SUFFIX_REFERENCE),
+            boost::uuids::random_generator()(),
             name)
     , project(project)
     , owner(owner)

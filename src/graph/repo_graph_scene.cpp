@@ -64,9 +64,9 @@ repo::core::RepoGraphScene::RepoGraphScene(
 
     //--------------------------------------------------------------------------
 	// Meshes
+    std::vector<RepoNodeAbstract*> meshesVector;
 	if (scene->HasMeshes())
 	{
-        //meshes.reserve(scene->mNumMeshes);
 		for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 		{
 			RepoNodeAbstract* mesh = new RepoNodeMesh(
@@ -74,6 +74,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 				scene->mMeshes[i],
 				materials);
             meshes.insert(mesh);
+            meshesVector.push_back(mesh);
 			nodesByUniqueID.insert(std::make_pair(mesh->getUniqueID(), mesh));
 		}
 	}
@@ -116,23 +117,22 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// RootNode will be the first entry in transformations vector.
 
     std::vector<RepoNodeAbstract*> transformations;
-    rootNode = new RepoNodeTransformation(scene->mRootNode, this->getMeshesVector(), camerasMap,
+    rootNode = new RepoNodeTransformation(scene->mRootNode,
+                                          meshesVector,
+                                          camerasMap,
                                           transformations,
 										  metadata);
 
     std::vector<RepoNodeAbstract *>::iterator it;
     for (it = transformations.begin(); it != transformations.end(); ++it)
     {
-//	for each (RepoNodeAbstract* transformation in transformations)
-        nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(),
-                                              (*it)));
+        nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(), (*it)));
         this->transformations.insert(*it);
     }
 
     for (it = metadata.begin(); it != metadata.end(); ++it)
     {
-        nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(),
-                                              (*it)));
+        nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(), (*it)));
     }
 
 }

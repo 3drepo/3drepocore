@@ -28,9 +28,7 @@ repo::core::RepoNodeTexture::RepoNodeTexture(
     : RepoNodeAbstract (
 			REPO_NODE_TYPE_TEXTURE, 
 			REPO_NODE_API_LEVEL_1,
-			repo::core::RepoTranscoderString::stringToUUID(
-				name, 
-				REPO_NODE_UUID_SUFFIX_TEXTURE),
+            boost::uuids::random_generator()(),
             name)
     , width(width)
     , height(height) /*,

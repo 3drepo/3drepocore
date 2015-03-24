@@ -33,9 +33,7 @@ repo::core::RepoNodeMesh::RepoNodeMesh(
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_MESH,
 			api,
-			repo::core::RepoTranscoderString::stringToUUID(
-				mesh->mName.data,
-				REPO_NODE_UUID_SUFFIX_MESH),
+            boost::uuids::random_generator()(),
 			mesh->mName.data),
 			vertices(NULL),
 			faces(NULL),

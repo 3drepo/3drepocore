@@ -25,10 +25,11 @@ inline void bufferWrite(char *buf, int position, uint16_t val)
 
 void repo::core::Renderer::renderToBSONs(std::vector<mongo::BSONObj> &out)
 {
-    const std::vector<RepoNodeAbstract *> &meshesAlias = scene->getMeshesVector();
+    //const std::vector<RepoNodeAbstract *> &meshesAlias = scene->getMeshesVector();
+    const RepoNodeAbstractSet &meshesAlias = scene->getMeshes();
 
     // Process all the meshes and compute PopBuffers
-    for(std::vector<RepoNodeAbstract *>::const_iterator it = meshesAlias.begin();
+    for(RepoNodeAbstractSet::const_iterator it = meshesAlias.begin();
         it != meshesAlias.end(); ++it)
     {
         RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*it);
