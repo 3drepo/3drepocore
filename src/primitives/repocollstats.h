@@ -31,27 +31,36 @@ class REPO_CORE_EXPORT RepoCollStats : public RepoBSON
 
 public:
 
+    //! Default constructor.
     RepoCollStats() : RepoBSON() {}
 
+    //! Constructor from given bson document.
     RepoCollStats(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
-    ~RepoCollStats() {}
+    //! Empty destructor.
+    ~RepoCollStats();
 
+    //--------------------------------------------------------------------------
 
     //! Actual size on disk.
     long long getActualSizeOnDisk() const;
 
-    std::string getDatabase(const std::string& ns) const;
+    //! Returns database from given namespace.
+    static std::string getDatabase(const std::string& ns);
 
+    //! Returns database.
     std::string getDatabase() const;
 
     //! Returns the number of objects or documents in this collection.
     long long getCount() const;
 
+    //! Returns collection.
     std::string getCollection() const;
 
-    std::string getCollection(const string &ns) const;
+    //! Returns collection from given namespace.
+    static std::string getCollection(const string &ns);
 
+    //! Returns namespace.
     std::string getNs() const;
 
     //! Returns different sizes depending on name.

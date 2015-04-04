@@ -17,18 +17,19 @@
 
 #include "repocollstats.h"
 
+repo::core::RepoCollStats::~RepoCollStats() {}
+
 long long repo::core::RepoCollStats::getActualSizeOnDisk() const
 {
     return getSize() + 16 * getCount() + getTotalIndexSize();
 }
-
 
 std::string repo::core::RepoCollStats::getDatabase() const
 {
     return getDatabase(getNs());
 }
 
-std::string repo::core::RepoCollStats::getDatabase(const std::string& ns) const
+std::string repo::core::RepoCollStats::getDatabase(const std::string& ns)
 {
     std::string database = ns;
     const char *str = ns.c_str();
@@ -48,7 +49,7 @@ std::string repo::core::RepoCollStats::getCollection() const
     return getCollection(getNs());
 }
 
-std::string repo::core::RepoCollStats::getCollection(const std::string& ns) const
+std::string repo::core::RepoCollStats::getCollection(const std::string& ns)
 {
     std::string collection = ns;
     const char *p;
@@ -64,7 +65,6 @@ std::string repo::core::RepoCollStats::getNs() const
         ns = getField("ns").String();
     return ns;
 }
-
 
 long long repo::core::RepoCollStats::getSize(const std::string& name) const
 {
@@ -83,7 +83,6 @@ long long repo::core::RepoCollStats::getStorageSize() const
 {
     return getSize("storageSize");
 }
-
 
 long long repo::core::RepoCollStats::getTotalIndexSize() const
 {
