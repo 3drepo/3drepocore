@@ -58,9 +58,16 @@
 #define REPO_LABEL_ROLES        "roles"
 #define REPO_LABEL_USER         "user"
 #define REPO_LABEL_WIDTH		"width"
+#define REPO_LABEL_TYPE         "type"
 
-#define REPO_COLLECTION_HISTORY "history"
-#define REPO_COLLECTION_SCENE   "scene"
+#define REPO_LABEL_DESCRIPTION  "desc"
+#define REPO_LABEL_OWNER        "owner"
+#define REPO_LABEL_PERMISSIONS  "permissions"
+#define REPO_LABEL_USERS        "users"
+
+#define REPO_COLLECTION_HISTORY     "history"
+#define REPO_COLLECTION_SCENE       "scene"
+#define REPO_COLLECTION_SETTINGS    "settings"
 
 //------------------------------------------------------------------------------
 // Media Types a.k.a. as Multipurpose Internet Mail Extensions (MIME) Types
