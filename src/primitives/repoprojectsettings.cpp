@@ -23,9 +23,10 @@ int repo::core::RepoProjectSettings::getPermissions() const
 {
     int permissions = 0;
     std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
-    for (unsigned int i = 0; i < arr; ++i)
+    for (unsigned int i = 0; i < arr.size(); ++i)
     {
-        int val = (arr[i]).Integer();
+        mongo::BSONElement e = arr[i];
+        int val = e.Int();
         permissions += val * 10^i;
     }
     return permissions;
@@ -35,7 +36,7 @@ std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const
 {
     std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_USERS).Array();
     std::vector<std::string> users(arr.size());
-    for (unsigned int i = 0; i < arr; ++i)
+    for (unsigned int i = 0; i < arr.size(); ++i)
         users[i] = arr[i].String();
     return users;
 }

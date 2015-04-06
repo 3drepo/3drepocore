@@ -45,25 +45,25 @@
 
 //------------------------------------------------------------------------------
 // Constants
-#define REPO_ADMIN              "admin"             //! Admin database
-#define REPO_SYSTEM_USERS       "system.users"      //! Users collection
-#define REPO_SYSTEM_ROLES       "system.roles"      //! Roles collection
+#define REPO_ADMIN                  "admin"             //! Admin database
+#define REPO_SYSTEM_USERS           "system.users"      //! Users collection
+#define REPO_SYSTEM_ROLES           "system.roles"      //! Roles collection
 
-#define REPO_LABEL_ID           "_id"
-#define REPO_LABEL_AVATAR       "avatar"
-#define REPO_LABEL_DATA         "data"
-#define REPO_LABEL_HEIGHT		"height"
-#define REPO_LABEL_MEDIA_TYPE   "media_type"
-#define REPO_LABEL_ROLE         "role"
-#define REPO_LABEL_ROLES        "roles"
-#define REPO_LABEL_USER         "user"
-#define REPO_LABEL_WIDTH		"width"
-#define REPO_LABEL_TYPE         "type"
+#define REPO_LABEL_ID               "_id"
+#define REPO_LABEL_AVATAR           "avatar"
+#define REPO_LABEL_DATA             "data"
+#define REPO_LABEL_HEIGHT           "height"
+#define REPO_LABEL_MEDIA_TYPE       "media_type"
+#define REPO_LABEL_ROLE             "role"
+#define REPO_LABEL_ROLES            "roles"
+#define REPO_LABEL_USER             "user"
+#define REPO_LABEL_WIDTH            "width"
+#define REPO_LABEL_TYPE             "type"
 
-#define REPO_LABEL_DESCRIPTION  "desc"
-#define REPO_LABEL_OWNER        "owner"
-#define REPO_LABEL_PERMISSIONS  "permissions"
-#define REPO_LABEL_USERS        "users"
+#define REPO_LABEL_DESCRIPTION      "desc"
+#define REPO_LABEL_OWNER            "owner"
+#define REPO_LABEL_PERMISSIONS      "permissions"
+#define REPO_LABEL_USERS            "users"
 
 #define REPO_COLLECTION_HISTORY     "history"
 #define REPO_COLLECTION_SCENE       "scene"
