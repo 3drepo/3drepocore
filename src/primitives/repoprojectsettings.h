@@ -42,8 +42,7 @@ public:
     inline RepoProjectSettings copy() const { return RepoProjectSettings(RepoBSON::copy()); }
 
     //! Returns the project name.
-    std::string getProject() const
-    { return getField(REPO_LABEL_ID).String(); }
+    std::string getProject() const;
 
     //! Returns description of the project.
     std::string getDescription() const
@@ -53,8 +52,8 @@ public:
     std::string getOwner() const
     { return getField(REPO_LABEL_OWNER).String(); }
 
-    //! Returns unix-style permissions of the project, eg 777.
-    int getPermissions() const;
+    //! Returns unix-style permissions of the project, eg "777".
+    std::string getPermissionsString() const;
 
     //! Returns type of the project.
     std::string getType() const

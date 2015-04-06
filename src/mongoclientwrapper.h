@@ -409,7 +409,9 @@ public:
 
 		"_id" field is excluded by default unless explicitly stated in the list.
 	*/
-	static mongo::BSONObj fieldsToReturn(const std::list<std::string>& list);
+    static mongo::BSONObj fieldsToReturn(
+            const std::list<std::string>& list,
+            bool excludeIdField = false);
 
 
 

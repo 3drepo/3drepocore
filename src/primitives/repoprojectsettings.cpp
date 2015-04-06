@@ -19,17 +19,21 @@
 
 repo::core::RepoProjectSettings::~RepoProjectSettings() {}
 
-int repo::core::RepoProjectSettings::getPermissions() const
+std::string repo::core::RepoProjectSettings::getProject() const
 {
-    int permissions = 0;
+    std::string project;
+    if (hasField("_id"))
+        project = getField("_id").String();
+    return project;
+}
+
+std::string repo::core::RepoProjectSettings::getPermissionsString() const
+{
+    std::stringstream ss;
     std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
     for (unsigned int i = 0; i < arr.size(); ++i)
-    {
-        mongo::BSONElement e = arr[i];
-        int val = e.Int();
-        permissions += val * 10^i;
-    }
-    return permissions;
+        ss << arr[i].Int();
+    return ss.str();
 }
 
 std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const

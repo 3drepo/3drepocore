@@ -945,10 +945,10 @@ void repo::core::MongoClientWrapper::insertRecords(
 //------------------------------------------------------------------------------
 
 mongo::BSONObj repo::core::MongoClientWrapper::fieldsToReturn(
-        const std::list<std::string>& fields)
+        const std::list<std::string>& fields,
+        bool excludeIdField)
 {
 	mongo::BSONObjBuilder fieldsToReturn;
-	bool excludeIdField = true;
     std::list<std::string>::const_iterator it;
     for (it = fields.begin(); it != fields.end(); ++it)
 	{
