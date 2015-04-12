@@ -19,28 +19,27 @@
 
 repo::core::RepoProjectSettings::~RepoProjectSettings() {}
 
-std::string repo::core::RepoProjectSettings::getProject() const
-{
-    std::string project;
-    if (hasField("_id"))
-        project = getField("_id").String();
-    return project;
-}
-
 std::string repo::core::RepoProjectSettings::getPermissionsString() const
 {
     std::stringstream ss;
-    std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
-    for (unsigned int i = 0; i < arr.size(); ++i)
-        ss << arr[i].Int();
+    if (hasField(REPO_LABEL_PERMISSIONS))
+    {
+        std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
+        for (unsigned int i = 0; i < arr.size(); ++i)
+            ss << arr[i].Int();
+    }
     return ss.str();
 }
 
 std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const
 {
-    std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_USERS).Array();
-    std::vector<std::string> users(arr.size());
-    for (unsigned int i = 0; i < arr.size(); ++i)
-        users[i] = arr[i].String();
+    std::vector<std::string> users;
+    if (hasField(REPO_LABEL_USERS))
+    {
+        std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_USERS).Array();
+        users.resize(arr.size());
+        for (unsigned int i = 0; i < arr.size(); ++i)
+            users[i] = arr[i].String();
+    }
     return users;
 }

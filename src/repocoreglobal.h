@@ -45,9 +45,9 @@
 
 //------------------------------------------------------------------------------
 // Constants
-#define REPO_ADMIN                  "admin"             //! Admin database
-#define REPO_SYSTEM_USERS           "system.users"      //! Users collection
-#define REPO_SYSTEM_ROLES           "system.roles"      //! Roles collection
+#define REPO_ADMIN                  "admin"             //!< Admin database
+#define REPO_SYSTEM_USERS           "system.users"      //!< Users collection
+#define REPO_SYSTEM_ROLES           "system.roles"      //!< Roles collection
 
 #define REPO_LABEL_ID               "_id"
 #define REPO_LABEL_AVATAR           "avatar"
@@ -62,6 +62,7 @@
 
 #define REPO_LABEL_DESCRIPTION      "desc"
 #define REPO_LABEL_OWNER            "owner"
+#define REPO_LABEL_GROUP            "group"
 #define REPO_LABEL_PERMISSIONS      "permissions"
 #define REPO_LABEL_USERS            "users"
 
@@ -74,16 +75,16 @@
 // http://www.iana.org/assignments/media-types/media-types.xhtml#image
 // http://doc.qt.io/qt-5/qimagereader.html
 
-#define REPO_MEDIA_TYPE_BMP     "image/bmp"                 //! Windows Bitmap
-#define REPO_MEDIA_TYPE_GIF     "image/gif"                 //! Graphic Interchange Format
-#define REPO_MEDIA_TYPE_JPG     "image/jpeg"                //! Joint Photographic Experts Group
-#define REPO_MEDIA_TYPE_PNG     "image/png"                 //! Portable Network Graphics
-#define REPO_MEDIA_TYPE_PBM     "image/x-portable-bitmap"	//! Portable Bitmap
-#define REPO_MEDIA_TYPE_PGM     "image/x-portable-graymap"	//! Portable Graymap
-#define REPO_MEDIA_TYPE_PPM     "image/x-portable-pixmap"	//! Portable Pixmap
-#define REPO_MEDIA_TYPE_XBM     "image/x-xbitmap"           //! X11 Bitmap
-#define REPO_MEDIA_TYPE_XPM     "image/x-xpixmap"           //! X11 Pixmap
-#define REPO_MEDIA_TYPE_SVG      "image/svg+xml"            //! Scalable Vector Graphics
+#define REPO_MEDIA_TYPE_BMP     "image/bmp"                 //!< Windows Bitmap
+#define REPO_MEDIA_TYPE_GIF     "image/gif"                 //!< Graphic Interchange Format
+#define REPO_MEDIA_TYPE_JPG     "image/jpeg"                //!< Joint Photographic Experts Group
+#define REPO_MEDIA_TYPE_PNG     "image/png"                 //!< Portable Network Graphics
+#define REPO_MEDIA_TYPE_PBM     "image/x-portable-bitmap"	//!< Portable Bitmap
+#define REPO_MEDIA_TYPE_PGM     "image/x-portable-graymap"	//!< Portable Graymap
+#define REPO_MEDIA_TYPE_PPM     "image/x-portable-pixmap"	//!< Portable Pixmap
+#define REPO_MEDIA_TYPE_XBM     "image/x-xbitmap"           //!< X11 Bitmap
+#define REPO_MEDIA_TYPE_XPM     "image/x-xpixmap"           //!< X11 Pixmap
+#define REPO_MEDIA_TYPE_SVG     "image/svg+xml"             //!< Scalable Vector Graphics
 
 //------------------------------------------------------------------------------
 

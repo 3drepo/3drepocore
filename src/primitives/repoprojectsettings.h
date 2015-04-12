@@ -42,22 +42,27 @@ public:
     inline RepoProjectSettings copy() const { return RepoProjectSettings(RepoBSON::copy()); }
 
     //! Returns the project name.
-    std::string getProject() const;
+    std::string getProject() const
+    { return hasField(REPO_LABEL_ID) ? getField(REPO_LABEL_ID).String() : std::string(); }
 
     //! Returns description of the project.
     std::string getDescription() const
-    { return getField(REPO_LABEL_DESCRIPTION).String(); }
+    { return hasField(REPO_LABEL_DESCRIPTION) ? getField(REPO_LABEL_DESCRIPTION).String() : std::string(); }
 
     //! Returns owner of the project.
     std::string getOwner() const
-    { return getField(REPO_LABEL_OWNER).String(); }
+    { return hasField(REPO_LABEL_OWNER) ? getField(REPO_LABEL_OWNER).String() : std::string(); }
 
-    //! Returns unix-style permissions of the project, eg "777".
+    //! Returns group of the project.
+    std::string getGroup() const
+    { return hasField(REPO_LABEL_GROUP) ? getField(REPO_LABEL_GROUP).String() : std::string(); }
+
+    //! Returns unix-style permissions of the project, eg "0777".
     std::string getPermissionsString() const;
 
     //! Returns type of the project.
     std::string getType() const
-    { return getField(REPO_LABEL_TYPE).String(); }
+    { return hasField(REPO_LABEL_TYPE) ? getField(REPO_LABEL_TYPE).String() : std::string(); }
 
     //! Returns users of the project.
     std::vector<std::string> getUsers() const;
