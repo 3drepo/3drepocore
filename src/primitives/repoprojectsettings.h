@@ -75,10 +75,13 @@ public:
     std::string getGroup() const
     { return hasField(REPO_LABEL_GROUP) ? getField(REPO_LABEL_GROUP).String() : std::string(); }
 
-    //! Returns unix-style permissions of the project, eg "0777".
+    //! Returns unix-style rwxrwxrwx permissions of the project.
     std::string getPermissionsString() const;
 
-    //! Returns unix-style permissions of the project, qg "0777".
+    //! Returns unix-style permissions of the project, eg "0x0777".
+    std::string getPermissionsOctalString() const;
+
+    //! Returns unix-style permissions of the project, qg "0x0777".
     unsigned short getPermissionsOctal() const;
 
     //! Returns type of the project.
@@ -87,6 +90,14 @@ public:
 
     //! Returns users of the project.
     std::vector<std::string> getUsers() const;
+
+    //! Turns string in form of "0x7777" to unsigned short.
+    static unsigned short stringToOctal(const std::string &);
+
+    static std::string getRWX(unsigned short octal,
+                              unsigned short rMask,
+                              unsigned short wMask,
+                              unsigned short xMask);
 
 }; // end class
 

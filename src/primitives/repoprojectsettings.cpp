@@ -21,13 +21,29 @@ repo::core::RepoProjectSettings::~RepoProjectSettings() {}
 
 std::string repo::core::RepoProjectSettings::getPermissionsString() const
 {
+    unsigned short octal = getPermissionsOctal();
+    std::stringstream ss;
+    ss << getRWX(octal,
+                 core::RepoPermissionsBitMask::OWNER_READ,
+                 core::RepoPermissionsBitMask::OWNER_WRITE,
+                 core::RepoPermissionsBitMask::OWNER_EXECUTE);
+    ss << getRWX(octal,
+                 core::RepoPermissionsBitMask::GROUP_READ,
+                 core::RepoPermissionsBitMask::GROUP_WRITE,
+                 core::RepoPermissionsBitMask::GROUP_EXECUTE);
+    ss << getRWX(octal,
+                 core::RepoPermissionsBitMask::PUBLIC_READ,
+                 core::RepoPermissionsBitMask::PUBLIC_WRITE,
+                 core::RepoPermissionsBitMask::PUBLIC_EXECUTE);
+    return ss.str();
+}
+
+std::string repo::core::RepoProjectSettings::getPermissionsOctalString() const
+{
     std::stringstream ss;
     if (hasField(REPO_LABEL_PERMISSIONS))
     {
         std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
-        if (arr.size() < 4)
-            ss << "0";
-
         for (unsigned int i = 0; i < arr.size(); ++i)
             ss << arr[i].Int();
     }
@@ -36,8 +52,7 @@ std::string repo::core::RepoProjectSettings::getPermissionsString() const
 
 unsigned short repo::core::RepoProjectSettings::getPermissionsOctal() const
 {
-    std::string octal = "0x" + getPermissionsString();
-    return (unsigned short) std::strtoul(octal.c_str(), NULL, 0);
+    return stringToOctal(getPermissionsOctalString());
 }
 
 std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const
@@ -51,4 +66,26 @@ std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const
             users[i] = arr[i].String();
     }
     return users;
+}
+
+unsigned short repo::core::RepoProjectSettings::stringToOctal(const string &value)
+{
+    std::string octal = "0x";
+    for (int i = 0; i < 4 - value.size(); ++i)
+        octal += "0";
+    octal += value;
+    return (unsigned short) std::strtoul(octal.c_str(), NULL, 0);
+}
+
+std::string repo::core::RepoProjectSettings::getRWX(
+        unsigned short octal,
+        unsigned short rMask,
+        unsigned short wMask,
+        unsigned short xMask)
+{
+    std::stringstream ss;
+    ss << (((octal & rMask) == rMask) ? "r" : "-");
+    ss << (((octal & wMask) == wMask) ? "w" : "-");
+    ss << (((octal & xMask) == xMask) ? "x" : "-");
+    return ss.str();
 }
