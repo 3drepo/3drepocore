@@ -25,10 +25,19 @@ std::string repo::core::RepoProjectSettings::getPermissionsString() const
     if (hasField(REPO_LABEL_PERMISSIONS))
     {
         std::vector<mongo::BSONElement> arr = getField(REPO_LABEL_PERMISSIONS).Array();
+        if (arr.size() < 4)
+            ss << "0";
+
         for (unsigned int i = 0; i < arr.size(); ++i)
             ss << arr[i].Int();
     }
     return ss.str();
+}
+
+unsigned short repo::core::RepoProjectSettings::getPermissionsOctal() const
+{
+    std::string octal = "0x" + getPermissionsString();
+    return (unsigned short) std::strtoul(octal.c_str(), NULL, 0);
 }
 
 std::vector<std::string> repo::core::RepoProjectSettings::getUsers() const

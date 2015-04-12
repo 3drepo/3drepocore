@@ -25,6 +25,24 @@
 namespace repo {
 namespace core {
 
+enum RepoPermissionsBitMask : unsigned short
+{
+    UID_BIT = 0x4000,
+    GID_BIT = 0x2000,
+    STICKY_BIT = 0x1000,
+    OWNER_READ = 0x0400,
+    OWNER_WRITE = 0x0200,
+    OWNER_EXECUTE = 0x0100,
+    GROUP_READ = 0x0040,
+    GROUP_WRITE = 0x0020,
+    GROUP_EXECUTE = 0x0010,
+    PUBLIC_READ = 0x0004,
+    PUBLIC_WRITE = 0x0002,
+    PUBLIC_EXECUTE = 0x0001
+};
+
+enum RepoRWXPermissionsBitMask { READ = 4, WRITE = 2, EXECUTE = 1 };
+
 class REPO_CORE_EXPORT RepoProjectSettings : public RepoBSON
 {
 
@@ -59,6 +77,9 @@ public:
 
     //! Returns unix-style permissions of the project, eg "0777".
     std::string getPermissionsString() const;
+
+    //! Returns unix-style permissions of the project, qg "0777".
+    unsigned short getPermissionsOctal() const;
 
     //! Returns type of the project.
     std::string getType() const
