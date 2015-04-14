@@ -942,6 +942,17 @@ void repo::core::MongoClientWrapper::insertRecords(
 			insertRecord(database, collection, objs[i]);		
 }
 
+void repo::core::MongoClientWrapper::updateRecord(
+        const std::string &database,
+        const std::string &collection,
+        const mongo::BSONObj &obj,
+        bool upsert)
+{
+    clientConnection.update(getNamespace(database, collection),
+                            QUERY(REPO_LABEL_ID << obj.getField(REPO_LABEL_ID)),
+                            obj, upsert);
+}
+
 //------------------------------------------------------------------------------
 
 mongo::BSONObj repo::core::MongoClientWrapper::fieldsToReturn(

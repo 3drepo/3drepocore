@@ -379,6 +379,17 @@ public:
 		const std::vector<mongo::BSONObj> &objs, 
 		bool inReverse = false);
 
+    void upsertRecord(const std::string &database,
+                      const std::string &collection,
+                      const mongo::BSONObj &obj)
+    { updateRecord(database, collection, obj, true); }
+
+    void updateRecord(
+            const std::string &database,
+            const std::string &collection,
+            const mongo::BSONObj &obj,
+            bool upsert = false);
+
     //--------------------------------------------------------------------------
 	//
 	// Getters

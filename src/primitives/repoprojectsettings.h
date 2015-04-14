@@ -52,12 +52,34 @@ public:
 
     RepoProjectSettings(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
+    RepoProjectSettings(const std::string &uniqueProjectName,
+            const std::string &description,
+            const std::string &type,
+            const std::string &owner,
+            const std::string &group,
+            unsigned short ownerPermissionsOctal,
+            unsigned short groupPermissionsOctal,
+            unsigned short publicPermissionsOctal);
+
+
     ~RepoProjectSettings();
 
     //--------------------------------------------------------------------------
 
     //! Returns a new full (and owned) copy of the object.
     inline RepoProjectSettings copy() const { return RepoProjectSettings(RepoBSON::copy()); }
+
+    //! Updates or inserts this document in "db.settings" collection based on matching "_id" value.
+    RepoBSON upsert() const;
+
+    //! See http://docs.mongodb.org/manual/reference/command/delete/#dbcmd.delete
+    RepoBSON drop() const;
+
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
 
     //! Returns the project name.
     std::string getProject() const

@@ -66,6 +66,15 @@
 #define REPO_LABEL_PERMISSIONS      "permissions"
 #define REPO_LABEL_USERS            "users"
 
+#define REPO_COMMAND_UPDATE         "update"
+#define REPO_COMMAND_UPDATES        "updates"
+#define REPO_COMMAND_DELETE         "delete"
+#define REPO_COMMAND_DELETES        "deletes"
+#define REPO_COMMAND_UPSERT         "upsert"
+#define REPO_COMMAND_LIMIT          "limit"
+#define REPO_COMMAND_Q              "q"
+#define REPO_COMMAND_U              "u"
+
 #define REPO_COLLECTION_HISTORY     "history"
 #define REPO_COLLECTION_SCENE       "scene"
 #define REPO_COLLECTION_SETTINGS    "settings"

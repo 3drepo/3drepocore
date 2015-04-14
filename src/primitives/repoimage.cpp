@@ -61,7 +61,6 @@ repo::core::RepoImage::RepoImage(const unsigned char *bytes,
     // Add to the parent object
 	mongo::BSONObj builtObj = builder.obj();
 	RepoBSON::addFields(builtObj);
-
 }
 
 

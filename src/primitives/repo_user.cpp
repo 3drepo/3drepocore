@@ -130,12 +130,13 @@ std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getRolesLi
 //
 //------------------------------------------------------------------------------
 
-repo::core::RepoBSON repo::core::RepoUser::command(const Commands &command) const
+repo::core::RepoBSON repo::core::RepoUser::command(const RepoBSONCommands &command) const
 {
     mongo::BSONObjBuilder builder;
 
     //--------------------------------------------------------------------------
     // Command : Username
+    // See http://docs.mongodb.org/manual/reference/command/
     switch(command)
     {
     case CREATE:
@@ -149,7 +150,7 @@ repo::core::RepoBSON repo::core::RepoUser::command(const Commands &command) cons
         break;
     }
 
-    if (DROP != command)
+    if (DELETE != command)
     {
         //----------------------------------------------------------------------
         // Password

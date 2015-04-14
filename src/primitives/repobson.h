@@ -30,6 +30,9 @@
 namespace repo {
 namespace core {
 
+//! Available commands.
+enum REPO_CORE_EXPORT RepoBSONCommands { CREATE, DROP, UPDATE };
+
 class REPO_CORE_EXPORT RepoBSON : public mongo::BSONObj
 {
 

@@ -62,9 +62,6 @@ namespace core {
 class REPO_CORE_EXPORT RepoUser : public RepoBSON
 {
 
-    //! Available user commands.
-    enum Commands { CREATE, DROP, UPDATE };
-
 public :
 
     //! Default empty constructor.
@@ -98,14 +95,14 @@ public :
      * be cleartext.
      * See http://docs.mongodb.org/manual/reference/command/createUser/#dbcmd.createUser
      */
-    RepoBSON createUser() const
+    RepoBSON create() const
     { return this->command(CREATE); }
 
     /*!
      * Returns a db.runCommand BSON to drop a user from a database.
      * See http://docs.mongodb.org/manual/reference/command/dropUser/#dbcmd.dropUser
      */
-    RepoBSON dropUser() const
+    RepoBSON drop() const
     { return this->command(DROP); }
 
     /*!
@@ -114,7 +111,7 @@ public :
      * \brief updateUser
      * \return
      */
-    RepoBSON updateUser() const
+    RepoBSON update() const
     { return this->command(UPDATE); }
 
     //--------------------------------------------------------------------------
@@ -176,7 +173,7 @@ private :
      * Returns a db.runCommand BSON representation of this object with specific
      * command label for the user.
      */
-    RepoBSON command(const Commands &command) const;
+    RepoBSON command(const RepoBSONCommands &command) const;
 
 
 }; // end class

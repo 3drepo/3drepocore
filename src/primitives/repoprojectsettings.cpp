@@ -17,7 +17,98 @@
 
 #include "repoprojectsettings.h"
 
+
+repo::core::RepoProjectSettings::RepoProjectSettings(
+        const std::string &uniqueProjectName,
+        const std::string &description,
+        const std::string &type,
+        const std::string &owner,
+        const std::string &group,
+        unsigned short ownerPermissionsOctal,
+        unsigned short groupPermissionsOctal,
+        unsigned short publicPermissionsOctal)
+{
+    mongo::BSONObjBuilder builder;
+
+    //--------------------------------------------------------------------------
+    // Project name
+    if (!uniqueProjectName.empty())
+        builder << REPO_LABEL_ID << uniqueProjectName;
+
+    //--------------------------------------------------------------------------
+    // Description
+    if (!description.empty())
+        builder << REPO_LABEL_DESCRIPTION << description;
+
+    //--------------------------------------------------------------------------
+    // Type
+    if (!type.empty())
+        builder << REPO_LABEL_TYPE << type;
+
+    //--------------------------------------------------------------------------
+    // Owner
+    if (!owner.empty())
+        builder << REPO_LABEL_OWNER << owner;
+
+    //--------------------------------------------------------------------------
+    // Group
+    if (!group.empty())
+        builder << REPO_LABEL_GROUP << group;
+
+    //--------------------------------------------------------------------------
+    // Permissions
+    mongo::BSONArrayBuilder arrayBuilder;
+    arrayBuilder << ownerPermissionsOctal;
+    arrayBuilder << groupPermissionsOctal;
+    arrayBuilder << publicPermissionsOctal;
+    builder << REPO_LABEL_PERMISSIONS << arrayBuilder.arr();
+
+    //--------------------------------------------------------------------------
+    // Add to the parent object
+    mongo::BSONObj builtObj = builder.obj();
+    RepoBSON::addFields(builtObj);
+}
+
 repo::core::RepoProjectSettings::~RepoProjectSettings() {}
+
+repo::core::RepoBSON repo::core::RepoProjectSettings::upsert() const
+{
+    // See http://docs.mongodb.org/manual/reference/command/update/#update-specific-fields-of-one-document
+    mongo::BSONObjBuilder builder;
+
+    //--------------------------------------------------------------------------
+    // Update
+    builder << REPO_COMMAND_UPDATE << REPO_COLLECTION_SETTINGS;
+
+    //--------------------------------------------------------------------------
+    // Updates
+    mongo::BSONObjBuilder updatesBuilder;
+    updatesBuilder << REPO_COMMAND_Q << BSON(REPO_LABEL_ID << this->getProject());
+    updatesBuilder << REPO_COMMAND_U << BSON("$set" << RepoBSON::copy());
+    updatesBuilder << REPO_COMMAND_UPSERT << true;
+    builder << REPO_COMMAND_UPDATES << BSON_ARRAY(updatesBuilder.obj());
+
+    return builder.obj();
+}
+
+repo::core::RepoBSON repo::core::RepoProjectSettings::drop() const
+{
+    // See http://docs.mongodb.org/manual/reference/command/delete/#dbcmd.delete
+    mongo::BSONObjBuilder builder;
+
+    //--------------------------------------------------------------------------
+    // Delete
+    builder << REPO_COMMAND_DELETE << REPO_COLLECTION_SETTINGS;
+
+    //--------------------------------------------------------------------------
+    // Deletes
+    mongo::BSONObjBuilder deletesBuilder;
+    deletesBuilder << REPO_COMMAND_Q << BSON(REPO_LABEL_ID << this->getProject());
+    deletesBuilder << REPO_COMMAND_LIMIT << 1;
+    builder << REPO_COMMAND_DELETES << BSON_ARRAY(deletesBuilder.obj());
+
+    return builder.obj();
+}
 
 std::string repo::core::RepoProjectSettings::getPermissionsString() const
 {
