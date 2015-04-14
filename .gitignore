@@ -11,3 +11,4 @@ repo_cli_debug
 *.obj
 *.mtl
 
+/lib
