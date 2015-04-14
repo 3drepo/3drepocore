@@ -126,7 +126,7 @@ std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getRolesLi
 
 //------------------------------------------------------------------------------
 //
-// Private
+// Protected
 //
 //------------------------------------------------------------------------------
 
@@ -150,7 +150,7 @@ repo::core::RepoBSON repo::core::RepoUser::command(const RepoBSONCommands &comma
         break;
     }
 
-    if (DELETE != command)
+    if (DROP != command)
     {
         //----------------------------------------------------------------------
         // Password

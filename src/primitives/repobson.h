@@ -58,6 +58,20 @@ public:
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }
 
+    /*!
+     * Returns a drop db.runCommand bson object by _id field. If _id is not set,
+     * returns empty object.
+     *
+     * See http://docs.mongodb.org/manual/reference/command/delete/#dbcmd.delete
+     */
+    virtual RepoBSON drop(const std::string &collection) const;
+
+    //--------------------------------------------------------------------------
+    //
+    // Getters
+    //
+    //--------------------------------------------------------------------------
+
     //! Given an array, returns a list of pairs stored as given labels if any.
     static std::list<std::pair<std::string, std::string> > getArrayStringPairs(
             const mongo::BSONElement &arrayElement,

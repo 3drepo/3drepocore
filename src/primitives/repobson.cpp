@@ -27,6 +27,26 @@ void repo::core::RepoBSON::addFields(mongo::BSONObj &obj)
     mongo::BSONObj::addFields(obj, fields);
 }
 
+repo::core::RepoBSON repo::core::RepoBSON::drop(const std::string &collection) const
+{
+    mongo::BSONObjBuilder builder;
+
+    if (hasField(REPO_LABEL_ID))
+    {
+        //----------------------------------------------------------------------
+        // Delete
+        builder << REPO_COMMAND_DELETE << collection;
+
+        //----------------------------------------------------------------------
+        // Deletes
+        mongo::BSONObjBuilder deletesBuilder;
+        deletesBuilder << REPO_COMMAND_Q << BSON(REPO_LABEL_ID << this->getField(REPO_LABEL_ID));
+        deletesBuilder << REPO_COMMAND_LIMIT << 1;
+        builder << REPO_COMMAND_DELETES << BSON_ARRAY(deletesBuilder.obj());
+    }
+    return builder.obj();
+}
+
 std::list<std::pair<std::string, std::string> > repo::core::RepoBSON::getArrayStringPairs(
         const mongo::BSONElement &arrayElement,
         const std::string &fstLabel,

@@ -93,21 +93,7 @@ repo::core::RepoBSON repo::core::RepoProjectSettings::upsert() const
 
 repo::core::RepoBSON repo::core::RepoProjectSettings::drop() const
 {
-    // See http://docs.mongodb.org/manual/reference/command/delete/#dbcmd.delete
-    mongo::BSONObjBuilder builder;
-
-    //--------------------------------------------------------------------------
-    // Delete
-    builder << REPO_COMMAND_DELETE << REPO_COLLECTION_SETTINGS;
-
-    //--------------------------------------------------------------------------
-    // Deletes
-    mongo::BSONObjBuilder deletesBuilder;
-    deletesBuilder << REPO_COMMAND_Q << BSON(REPO_LABEL_ID << this->getProject());
-    deletesBuilder << REPO_COMMAND_LIMIT << 1;
-    builder << REPO_COMMAND_DELETES << BSON_ARRAY(deletesBuilder.obj());
-
-    return builder.obj();
+    return RepoBSON::drop(REPO_COLLECTION_SETTINGS);
 }
 
 std::string repo::core::RepoProjectSettings::getPermissionsString() const

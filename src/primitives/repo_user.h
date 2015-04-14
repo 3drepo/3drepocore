@@ -167,7 +167,7 @@ public :
     inline std::string getUsername() const
     { return getField(REPO_LABEL_USER).str(); }
 
-private :
+protected :
 
     /*!
      * Returns a db.runCommand BSON representation of this object with specific
