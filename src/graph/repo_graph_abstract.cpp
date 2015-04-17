@@ -62,10 +62,10 @@ std::set<const repo::core::RepoNodeAbstract*>
 }
 
 //------------------------------------------------------------------------------
-std::set<repo::core::RepoNodeAbstract*>
+repo::core::RepoNodeAbstractSet
     repo::core::RepoGraphAbstract::getNodes() const
 {
-	std::set<RepoNodeAbstract*> values;
+    RepoNodeAbstractSet values;
     boost::copy(nodesByUniqueID | boost::adaptors::map_values,
                 std::inserter(values, values.begin()));
 	return values;

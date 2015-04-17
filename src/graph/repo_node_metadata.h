@@ -31,7 +31,6 @@ namespace core {
 // Fields specific to metadata only
 //
 //------------------------------------------------------------------------------
-#define REPO_NODE_TYPE_METADATA     			"meta"
 #define REPO_NODE_LABEL_METADATA     			"metadata"
 #define REPO_NODE_UUID_SUFFIX_METADATA			"14" //!< uuid suffix
 //------------------------------------------------------------------------------

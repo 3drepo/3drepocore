@@ -232,12 +232,10 @@ repo::core::RepoGraphScene::RepoGraphScene(
 
 repo::core::RepoGraphScene::~RepoGraphScene()
 {
-    std::set<RepoNodeAbstract*> nodes = getNodes();
-    std::set<RepoNodeAbstract*>::iterator it;
+    RepoNodeAbstractSet nodes = getNodes();
+    RepoNodeAbstractSet::iterator it;
     for (it = nodes.begin(); it != nodes.end(); ++it)
-    {
         delete *it;
-	}
 }
 
 void repo::core::RepoGraphScene::append(RepoNodeAbstract *thisNode, RepoGraphAbstract *thatGraph)

@@ -79,7 +79,7 @@ public :
 	virtual std::set<const RepoNodeAbstract *> getNodesRecursively() const;
 
 	//! Returns a set of nodes as values from nodesByUniqueID stl map.
-	virtual std::set<RepoNodeAbstract*> getNodes() const;
+    virtual RepoNodeAbstractSet getNodes() const;
 		
 	//! Returns a set of all unique IDs.
 	virtual std::set<boost::uuids::uuid> getUniqueIDs() const;
