@@ -51,7 +51,7 @@ public :
     //--------------------------------------------------------------------------
 
 	//! Empty default constructor so that it can be registered as a qmetatype.
-    RepoGraphScene() : RepoGraphAbstract() {}
+    RepoGraphScene() : RepoGraphAbstract(new RepoNodeTransformation()) {}
 
 	//! Copy constructor
 	//RepoGraphScene(const RepoGraphScene &) : RepoGraphAbstract() {};

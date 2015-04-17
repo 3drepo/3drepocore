@@ -81,7 +81,7 @@ std::set<boost::uuids::uuid> repo::core::RepoGraphAbstract::getUniqueIDs() const
 }
 
 //------------------------------------------------------------------------------
-repo::core::RepoNodeAbstract*  repo::core::RepoGraphAbstract::getNodeByUniqueID(
+repo::core::RepoNodeAbstract* repo::core::RepoGraphAbstract::getNodeByUniqueID(
 	const boost::uuids::uuid& uid) const
 {
 	RepoNodeAbstract* node = NULL;
@@ -90,6 +90,13 @@ repo::core::RepoNodeAbstract*  repo::core::RepoGraphAbstract::getNodeByUniqueID(
 	if (nodesByUniqueID.end() != it)		
 		node = it->second;
 	return node;
+}
+
+void repo::core::RepoGraphAbstract::setRootNode(RepoNodeAbstract *root)
+{
+    if (this->rootNode)
+        delete this->rootNode;
+    this->rootNode = root;
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +124,7 @@ repo::core::RepoNodeAbstract* repo::core::RepoGraphAbstract::addNodeByUniqueID(
 
 void repo::core::RepoGraphAbstract::printDAG(
         const RepoNodeAbstract *node,
-        std::string delimiter) const
+        std::string delimiter)
 {
     if (node)
     {

@@ -23,8 +23,22 @@
 //
 //------------------------------------------------------------------------------
 repo::core::RepoNodeReference::RepoNodeReference(
+        const std::string &database,
+        const std::string &project)
+    : RepoNodeAbstract (
+            REPO_NODE_TYPE_REFERENCE,
+            REPO_NODE_API_LEVEL_1,
+            boost::uuids::random_generator()(),
+            database + "." + project)
+    , database(database)
+    , project(project)
+    , revisionID(boost::uuids::uuid())
+    , isUniqueID(false)
+{}
+
+repo::core::RepoNodeReference::RepoNodeReference(
+        const std::string &database,
         const std::string &project,
-        const std::string &owner,
         const boost::uuids::uuid &revisionID,
         bool isUniqueID,
         const std::string &name)
@@ -34,7 +48,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
             boost::uuids::random_generator()(),
             name)
     , project(project)
-    , owner(owner)
+    , database(database)
     , revisionID(revisionID)
     , isUniqueID(isUniqueID)
 {}
@@ -48,7 +62,7 @@ repo::core::RepoNodeReference::RepoNodeReference(
     //--------------------------------------------------------------------------
     // Owner
     if (obj.hasField(REPO_NODE_LABEL_OWNER))
-        owner = obj.getField(REPO_NODE_LABEL_OWNER).String();
+        database = obj.getField(REPO_NODE_LABEL_OWNER).String();
 
     //--------------------------------------------------------------------------
     // Project
@@ -99,8 +113,8 @@ mongo::BSONObj repo::core::RepoNodeReference::toBSONObj() const
 
     //--------------------------------------------------------------------------
     // Project owner (company or individual)
-    if (!owner.empty())
-        builder << REPO_NODE_LABEL_OWNER << owner;
+    if (!database.empty())
+        builder << REPO_NODE_LABEL_OWNER << database;
 
     //--------------------------------------------------------------------------
     // Project name

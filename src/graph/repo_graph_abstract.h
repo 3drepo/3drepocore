@@ -46,7 +46,7 @@ public :
     //--------------------------------------------------------------------------
 
 	//! Default empty constructor.
-    inline RepoGraphAbstract() {}
+    inline RepoGraphAbstract(RepoNodeAbstract *root = 0) : rootNode(root) {}
 	
     //--------------------------------------------------------------------------
 	//
@@ -88,6 +88,15 @@ public :
     virtual RepoNodeAbstract* getNodeByUniqueID(const boost::uuids::uuid &uid) const;
 
     //--------------------------------------------------------------------------
+    //
+    // Setters
+    //
+    //--------------------------------------------------------------------------
+
+    //! Sets the root node of the graph and deletes any previously stored root.
+    virtual void setRootNode(RepoNodeAbstract *root);
+
+    //--------------------------------------------------------------------------
 	//
 	// Adders
 	//
@@ -106,9 +115,9 @@ public :
     //--------------------------------------------------------------------------
 
     //! Recursively prints out a representation of the entire DAG hierarchy.
-    virtual void printDAG(
+    static void printDAG(
             const RepoNodeAbstract *node,
-            std::string delimiter = "") const;
+            std::string delimiter = std::string());
 
     virtual void printDAG() const;
 

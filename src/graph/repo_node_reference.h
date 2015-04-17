@@ -58,13 +58,15 @@ public :
     inline RepoNodeReference() :
         RepoNodeAbstract(REPO_NODE_TYPE_REFERENCE, REPO_NODE_API_LEVEL_1) {}
 
+
+    RepoNodeReference(const std::string &database, const std::string &project);
+
     //! Constructs a reference node.
     /*!
      * \sa RepoNodeReference()
      */
-    RepoNodeReference(
+    RepoNodeReference(const string &database,
             const std::string &project,
-            const std::string &owner,
             const boost::uuids::uuid &revisionID,
             bool isUniqueID,
             const std::string &name = "");
@@ -123,7 +125,7 @@ public :
     std::string getProject() const { return project; }
 
     //! Returns the owner of the project (DB name).
-    std::string getOwner() const { return owner; }
+    std::string getOwner() const { return database; }
 
     //! Returns optional revision ID.
     boost::uuids::uuid getRevisionID() const { return revisionID; }
@@ -144,7 +146,7 @@ protected :
     std::string project;
 
     //! Compulsory organisation or individual name that the project belongs to.
-    std::string owner;
+    std::string database;
 
     //! Optional unique or shared revision ID of the project.
     /*!

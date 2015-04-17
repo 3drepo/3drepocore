@@ -236,8 +236,6 @@ void repo::core::RepoNodeTransformation::toAssimp(
     for (childrenIt = children.begin(); childrenIt != children.end(); ++childrenIt)
     {
         const RepoNodeAbstract *child = *childrenIt;
-//	for each (const RepoNodeAbstract * child in children)
-//	{
 		it = meshesMapping.find(child);
 		if (meshesMapping.end() != it)
 			meshArrayIndices.push_back(it->second);
