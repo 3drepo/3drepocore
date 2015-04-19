@@ -110,7 +110,7 @@ std::vector<std::vector<boost::uuids::uuid>>
 	repo::core::RepoNodeAbstract::getPaths(const RepoNodeAbstract * node)
 {
 	std::vector<std::vector<boost::uuids::uuid>> ret;
-		
+
 	if (node->isRoot())
 	{	
         //----------------------------------------------------------------------
@@ -127,21 +127,16 @@ std::vector<std::vector<boost::uuids::uuid>>
         for (it = node->parents.begin(); it != node->parents.end(); ++it)
         {
             const RepoNodeAbstract *parent = *it;
-//		for each (const RepoNodeAbstract * parent in node->parents)
-//		{
-			std::vector<std::vector<boost::uuids::uuid> > paths = 
+            std::vector<std::vector<boost::uuids::uuid> > paths =
 				getPaths(parent);			
 			
             //------------------------------------------------------------------
 			// Store the current node in all the so far accumulated paths
-
             std::vector<std::vector<boost::uuids::uuid> >::iterator itt;
             for (itt = paths.begin(); itt != paths.end(); ++itt)
             {
                 std::vector<boost::uuids::uuid> vec = *itt;
-//			for each (std::vector<const boost::uuids::uuid> vec in paths)
-//			{
-				vec.push_back(node->sharedID);
+                vec.push_back(node->sharedID);
 				ret.push_back(vec);
 			}
 		}		
@@ -150,7 +145,7 @@ std::vector<std::vector<boost::uuids::uuid>>
 }
 
 void repo::core::RepoNodeAbstract::getSubNodes(
-		std::set<const RepoNodeAbstract *> &components) const
+        std::set<const RepoNodeAbstract *> &components) const
 {
 	components.insert(this);
 
@@ -158,7 +153,6 @@ void repo::core::RepoNodeAbstract::getSubNodes(
     for (it = children.begin(); it != children.end(); ++it)
     {
         const RepoNodeAbstract *child = *it;
-//	for each (const RepoNodeAbstract * child in children)
 		child->getSubNodes(components);
     }
 }

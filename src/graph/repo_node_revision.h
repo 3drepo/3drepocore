@@ -192,6 +192,9 @@ public :
 	void setCurrentUniqueIDs(std::set<boost::uuids::uuid> currentUniqueIDs) 
         { this->currentUniqueIDs = currentUniqueIDs; }
 
+    //! Sets the current unique IDs set and clears any previously stored IDs.
+    void setCurrentUniqueIDs(const RepoNodeAbstractSet &nodes);
+
 	//! Sets the added shared IDs set.
 	void setAddedSharedIDs(std::set<boost::uuids::uuid> addedSharedIDs) 
         { this->addedSharedIDs = addedSharedIDs; }

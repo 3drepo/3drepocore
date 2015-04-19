@@ -197,3 +197,10 @@ mongo::BSONObj repo::core::RepoNodeRevision::toBSONObj() const
     //--------------------------------------------------------------------------
 	return builder.obj();
 }
+
+void repo::core::RepoNodeRevision::setCurrentUniqueIDs(const RepoNodeAbstractSet &nodes)
+{
+    currentUniqueIDs.clear();
+    for (RepoNodeAbstract *node : nodes)
+        currentUniqueIDs.insert(node->getUniqueID());
+}

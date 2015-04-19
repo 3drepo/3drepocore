@@ -262,14 +262,14 @@ public :
 		getPaths(const RepoNodeAbstract * node);
 
 	//! Recursively retrieve components of a subgraph of this node.
-	void getSubNodes(std::set<const RepoNodeAbstract *> &components) const;
+    void getSubNodes(std::set<const RepoNodeAbstract *> &components) const;
 
 	//! Returns shared IDs of parents of this node if any.
 	/*!
 	 * Performs caching. If the size of the cached set is not the same as the
 	 * size of the current parents, this set is recalculated.
 	 */
-	std::set<boost::uuids::uuid> getParentSharedIDs();
+    std::set<boost::uuids::uuid> getParentSharedIDs();
 
     //--------------------------------------------------------------------------
 	//
