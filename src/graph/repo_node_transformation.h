@@ -60,6 +60,12 @@ public :
 			REPO_NODE_TYPE_TRANSFORMATION,
             REPO_NODE_API_LEVEL_1) {}
 
+    inline RepoNodeTransformation(const std::string &name)
+        : RepoNodeAbstract(REPO_NODE_TYPE_TRANSFORMATION,
+                           REPO_NODE_API_LEVEL_1,
+                           boost::uuids::random_generator()(),
+                           name) {}
+
 	//! Constructs transformation scene graph node from Assimp's aiNode.
 	/*!
 	 * If node has a name, it is hashed into a uuid, otherwise a random uuid is
