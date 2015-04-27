@@ -201,6 +201,21 @@ public :
     void setName(const std::string& name)
     { this->name = name; }
 
+    void setUniqueID(const boost::uuids::uuid &uuid)
+    { this->uniqueID = uuid; }
+
+    void setSharedID(const boost::uuids::uuid &uuid)
+    { this->sharedID = uuid; }
+
+    void setRandomUniqueID()
+    { setUniqueID(boost::uuids::random_generator()()); }
+
+    void setRandomSharedID()
+    { setSharedID(boost::uuids::random_generator()()); }
+
+    void setRandomIDs()
+    { setRandomUniqueID(); setRandomSharedID(); }
+
     bool isTransformation() const
     { return REPO_NODE_TYPE_TRANSFORMATION == getType(); }
 
