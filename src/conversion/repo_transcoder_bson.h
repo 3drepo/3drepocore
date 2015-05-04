@@ -47,7 +47,8 @@ class REPO_CORE_EXPORT RepoTranscoderBSON
 
 public :
 
-    static mongo::BSONObj getBSONObj(const boost::uuids::uuid &uuid);
+    static mongo::BSONObj uuidBSON(const std::string &label = "_id",
+                                   const boost::uuids::uuid &uuid = boost::uuids::random_generator()());
 
     //--------------------------------------------------------------------------
 	//

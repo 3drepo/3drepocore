@@ -959,22 +959,37 @@ mongo::BSONObj repo::core::MongoClientWrapper::insertFile(
         const std::string &project,
         const std::string &filePath)
 {
+    //--------------------------------------------------------------------------
     // See http://docs.mongodb.org/manual/core/gridfs/
     mongo::GridFS gfs = mongo::GridFS(clientConnection, database, project);
     mongo::BSONObj obj = gfs.storeFile(filePath);
 
 
-    // Cannot update ID field,
-    // see http://stackoverflow.com/questions/4012855/how-update-the-id-of-one-mongodb-document
-    mongo::BSONObj updater = RepoTranscoderBSON::getBSONObj(boost::uuids::random_generator()());
-    clientConnection.update("" + database + "." + project + ".files",
-                            QUERY("_id" << obj.getField("_id")),
-                            BSON("$set" << updater), true);
+    //--------------------------------------------------------------------------
+    // Cannot update ID field, so remove and reinsert
+    // See http://stackoverflow.com/questions/4012855/how-update-the-id-of-one-mongodb-document
+    mongo::OID oldID = obj["_id"].OID();
+    boost::uuids::uuid newID = boost::uuids::random_generator()();
 
-    std::cerr << updater.toString() << std::endl;
-    std::cerr << obj.toString() << std::endl;
+    //--------------------------------------------------------------------------
+    mongo::BSONObjBuilder b;
+    RepoTranscoderBSON::append("_id", newID, b);
+    b.appendElementsUnique(obj);
+    mongo::BSONObj fileOBJ = b.obj();
+    clientConnection.insert("" + database + "." + project + ".files",
+                            fileOBJ);
+    clientConnection.remove("" + database + "." + project + ".files",
+                            QUERY("_id" << oldID));
 
-    return obj;
+    //--------------------------------------------------------------------------
+    // Multi update chunks to represent new ID field
+    clientConnection.update("" + database + "." + project + ".chunks",
+                            QUERY("files_id" << oldID),
+                            BSON("$set" << RepoTranscoderBSON::uuidBSON("files_id", newID)),
+                            false, // upsert
+                            true); // multi
+
+    return fileOBJ;
 }
 
 

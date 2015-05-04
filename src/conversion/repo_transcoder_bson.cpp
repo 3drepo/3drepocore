@@ -17,11 +17,12 @@
 
 #include "repo_transcoder_bson.h"
 
-mongo::BSONObj repo::core::RepoTranscoderBSON::getBSONObj(
+mongo::BSONObj repo::core::RepoTranscoderBSON::uuidBSON(
+        const string &label,
         const boost::uuids::uuid &uuid)
 {
     mongo::BSONObjBuilder b;
-    append("_id", uuid, b);
+    append(label, uuid, b);
     return b.obj();
 }
 
