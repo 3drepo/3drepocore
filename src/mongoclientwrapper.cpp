@@ -953,6 +953,31 @@ void repo::core::MongoClientWrapper::updateRecord(
                             obj, upsert);
 }
 
+
+mongo::BSONObj repo::core::MongoClientWrapper::insertFile(
+        const std::string &database,
+        const std::string &project,
+        const std::string &filePath)
+{
+    // See http://docs.mongodb.org/manual/core/gridfs/
+    mongo::GridFS gfs = mongo::GridFS(clientConnection, database, project);
+    mongo::BSONObj obj = gfs.storeFile(filePath);
+
+
+    // Cannot update ID field,
+    // see http://stackoverflow.com/questions/4012855/how-update-the-id-of-one-mongodb-document
+    mongo::BSONObj updater = RepoTranscoderBSON::getBSONObj(boost::uuids::random_generator()());
+    clientConnection.update("" + database + "." + project + ".files",
+                            QUERY("_id" << obj.getField("_id")),
+                            BSON("$set" << updater), true);
+
+    std::cerr << updater.toString() << std::endl;
+    std::cerr << obj.toString() << std::endl;
+
+    return obj;
+}
+
+
 //------------------------------------------------------------------------------
 
 mongo::BSONObj repo::core::MongoClientWrapper::fieldsToReturn(

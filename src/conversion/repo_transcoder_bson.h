@@ -47,20 +47,22 @@ class REPO_CORE_EXPORT RepoTranscoderBSON
 
 public :
 
-	//-------------------------------------------------------------------------
+    static mongo::BSONObj getBSONObj(const boost::uuids::uuid &uuid);
+
+    //--------------------------------------------------------------------------
 	//
 	// Appending
 	//
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a generic value to BSON builder.
 	template <class T>
     static void append(const std::string &label, const T value,
                        mongo::BSONObjBuilder &builder)
 	{	builder << label << value;	}
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a vector as an array to BSON builder.
 	template <class T>
 	static void append
@@ -76,7 +78,7 @@ public :
 		builder.appendArray(label, array.obj());
 	}
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a set as an array to BSON builder.
 	template <class T>
 	static void append
@@ -95,7 +97,7 @@ public :
 	}
 
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a 2D vertex to BSON builder as an array of [x,y,z].
 	template <class T>
 	static void append
@@ -111,7 +113,7 @@ public :
 		append(label, vec, builder);
 	}
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a 3D vertex to BSON builder as an array of [x,y,z].
 	template <class T>
 	static void append
@@ -128,7 +130,7 @@ public :
 		append(label, vec, builder);
 	}
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a vector as binary mongo::BinDataGeneral type array.
 	/*!
 	 * Appends given vector as a binary data blob into a given builder. Also
@@ -163,32 +165,32 @@ public :
 		}
     }
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a uuid to BSON builder as BSON BinData type 3.
 	static void append(
 		const std::string &label,
 		const boost::uuids::uuid &uuid,
 		mongo::BSONObjBuilder &builder);
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a 3D RGB colour to BSON builder as array of 3 doubles.
 	static void append(
 		const std::string &label, 
 		const aiColor3D &rgb,
 		mongo::BSONObjBuilder &builder);
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//! Appends a 4D RGBA colour to BSON builder as array of 4 doubles.
 	static void append(
 		const std::string &label,
 		const aiColor4D &color,
 		mongo::BSONObjBuilder &builder);
 
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 	//
 	// Retrieval 
 	//
-	//-------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
 	/*!
 	 * Retrieves a uuid from bson element. Returns random uuid if not of 

@@ -390,6 +390,10 @@ public:
             const mongo::BSONObj &obj,
             bool upsert = false);
 
+    mongo::BSONObj insertFile(const std::string &database,
+                    const std::string &project,
+                    const std::string &filePath);
+
     //--------------------------------------------------------------------------
 	//
 	// Getters

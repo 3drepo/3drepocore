@@ -17,6 +17,14 @@
 
 #include "repo_transcoder_bson.h"
 
+mongo::BSONObj repo::core::RepoTranscoderBSON::getBSONObj(
+        const boost::uuids::uuid &uuid)
+{
+    mongo::BSONObjBuilder b;
+    append("_id", uuid, b);
+    return b.obj();
+}
+
 void repo::core::RepoTranscoderBSON::append(
 		const std::string &label,
 		const boost::uuids::uuid &uuid,
