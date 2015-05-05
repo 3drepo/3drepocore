@@ -959,37 +959,8 @@ mongo::BSONObj repo::core::MongoClientWrapper::insertFile(
         const std::string &project,
         const std::string &filePath)
 {
-    //--------------------------------------------------------------------------
-    // See http://docs.mongodb.org/manual/core/gridfs/
-    mongo::GridFS gfs = mongo::GridFS(clientConnection, database, project);
-    mongo::BSONObj obj = gfs.storeFile(filePath);
-
-
-    //--------------------------------------------------------------------------
-    // Cannot update ID field, so remove and reinsert
-    // See http://stackoverflow.com/questions/4012855/how-update-the-id-of-one-mongodb-document
-    mongo::OID oldID = obj["_id"].OID();
-    boost::uuids::uuid newID = boost::uuids::random_generator()();
-
-    //--------------------------------------------------------------------------
-    mongo::BSONObjBuilder b;
-    RepoTranscoderBSON::append("_id", newID, b);
-    b.appendElementsUnique(obj);
-    mongo::BSONObj fileOBJ = b.obj();
-    clientConnection.insert("" + database + "." + project + ".files",
-                            fileOBJ);
-    clientConnection.remove("" + database + "." + project + ".files",
-                            QUERY("_id" << oldID));
-
-    //--------------------------------------------------------------------------
-    // Multi update chunks to represent new ID field
-    clientConnection.update("" + database + "." + project + ".chunks",
-                            QUERY("files_id" << oldID),
-                            BSON("$set" << RepoTranscoderBSON::uuidBSON("files_id", newID)),
-                            false, // upsert
-                            true); // multi
-
-    return fileOBJ;
+    RepoGridFS gfs = RepoGridFS(clientConnection, database, project);
+    return gfs.storeFile(filePath);
 }
 
 

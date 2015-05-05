@@ -23,14 +23,15 @@
 #include <string>
 #include <cstdint>
 //------------------------------------------------------------------------------
-#include <mongo/client/dbclient.h> // mongo c++ driver
-#include <mongo/bson/bson.h>
+//#include <mongo/client/dbclient.h> // mongo c++ driver
+//#include <mongo/bson/bson.h>
 //------------------------------------------------------------------------------
-#include <boost/uuid/uuid.hpp>            // uuid class
-#include <boost/uuid/uuid_generators.hpp> // generators
-#include <boost/uuid/uuid_io.hpp>         // streaming operators etc
+//#include <boost/uuid/uuid.hpp>            // uuid class
+//#include <boost/uuid/uuid_generators.hpp> // generators
+//#include <boost/uuid/uuid_io.hpp>         // streaming operators etc
 //------------------------------------------------------------------------------
 #include "primitives/repocollstats.h"
+#include "mongo/repogridfs.h"
 
 #include "repocoreglobal.h"
 
