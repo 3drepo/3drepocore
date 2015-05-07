@@ -27,11 +27,11 @@ repo::core::Repo3DDiff::Repo3DDiff(
 
 repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff() const
 {
-    RepoNodeAbstractSet oldMeshes = A->getMeshes();
-    RepoNodeAbstractSet newMeshes = B->getMeshes();
+    RepoNodeAbstractSet meshesA = A->getMeshes();
+    RepoNodeAbstractSet meshesB = B->getMeshes();
 
 
-    RepoNodeAbstractSet meshIntersection = setIntersection(oldMeshes, newMeshes);
+    RepoNodeAbstractSet meshIntersection = setIntersection(meshesA, meshesB);
 //    printSet(meshIntersection, "Matching Meshes");
 
 
@@ -70,9 +70,6 @@ repo::core::RepoNodeRevision repo::core::Repo3DDiff::diff() const
 
 //    // A intersection B
 //    RepoNodeAbstractSet matchingTransformations = this->setDifference(oldTransformations, deletedTransformations);
-
-
-
 
 
     return RepoNodeRevision();
@@ -114,4 +111,15 @@ void repo::core::Repo3DDiff::printSet(const RepoNodeAbstractSet &x,
     RepoNodeAbstractSet::iterator it;
     for (it = x.begin(); it != x.end(); ++it)
         std::cerr << (*it)->getName() << "\t\t\t" << (*it)->getSharedIDString() << std::endl;
+}
+
+repo::core::RepoSelfSimilarSet repo::core::Repo3DDiff::toSelfSimilarSet(const RepoNodeAbstractSet &x)
+{
+    RepoSelfSimilarSet rsss;
+    for (auto n = x.begin(); n != x.end(); ++n)
+    {
+        RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*n);
+        rsss.insert(std::make_pair(mesh->getVertexHash(), *n));
+    }
+    return rsss;
 }

@@ -120,6 +120,8 @@ public :
     //! Returns transformation matrix suitable for GLC Lib.
     std::vector<double> getTransformationMatrix() const;
 
+    aiMatrix4x4 getTranslationMatrix() const;
+
 private :
 
     aiVector3D min; //!< min bounding box vertex

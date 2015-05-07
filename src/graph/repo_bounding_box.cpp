@@ -116,3 +116,9 @@ std::vector<double> repo::core::RepoBoundingBox::getTransformationMatrix() const
 
     return transformation;
 }
+
+aiMatrix4x4 repo::core::RepoBoundingBox::getTranslationMatrix() const
+{
+    RepoVertex centroid = RepoVertex(max+min);
+    return aiMatrix4x4::Translation(aiVector3D(centroid.x/2, centroid.y/2, centroid.z/2), aiMatrix4x4());
+}

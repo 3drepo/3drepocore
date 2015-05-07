@@ -215,6 +215,12 @@ public :
     const RepoBoundingBox &getBoundingBox() const
     { return boundingBox; }
 
+    aiMatrix4x4 getBoundingBoxTransformation() const;
+
+    aiMatrix4x4 getTransformation() const;
+
+    static aiMatrix4x4 getTransformation(const RepoNodeAbstract *node);
+
     std::string getVertexHash();
 
 	//! Returns the area of a face identified by its index.

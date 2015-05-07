@@ -70,18 +70,7 @@ public :
     static void printSet(const RepoNodeAbstractSet &x,
                   const std::string& label = std::string());
 
-    static RepoSelfSimilarSet toSelfSimilarSet(const RepoNodeAbstractSet &x)
-    {
-		RepoSelfSimilarSet rsss;
-
-		for (auto n = x.begin(); n != x.end(); ++n)
-        {
-            RepoNodeMesh *mesh = dynamic_cast<RepoNodeMesh *>(*n);
-            rsss.insert(std::make_pair(mesh->getVertexHash(), *n));
-		}
-
-		return rsss;
-	}
+    static RepoSelfSimilarSet toSelfSimilarSet(const RepoNodeAbstractSet &x);
 
 private :
 

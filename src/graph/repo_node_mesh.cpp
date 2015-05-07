@@ -17,6 +17,7 @@
 
 
 #include "repo_node_mesh.h"
+#include "repo_node_transformation.h"
 
 #include <algorithm>
 #include <functional>
@@ -732,6 +733,32 @@ repo::core::RepoVertex
 		centroid += vertices->at(face.mIndices[i]);
 	centroid /= face.mNumIndices;
 	return centroid;
+}
+
+aiMatrix4x4 repo::core::RepoNodeMesh::getTransformation() const
+{
+    return getTransformation(this);
+}
+
+aiMatrix4x4 repo::core::RepoNodeMesh::getTransformation(
+        const RepoNodeAbstract *node)
+{
+    aiMatrix4x4 transformation;
+    for (const RepoNodeAbstract *parent : node->getParents())
+    {
+        const RepoNodeTransformation *transformationParent = dynamic_cast<const RepoNodeTransformation*>(parent);
+        if (transformationParent)
+        {
+            transformation = getTransformation(transformationParent) * transformationParent->getMatrix();
+            break;
+        }
+    }
+    return transformation;
+}
+
+aiMatrix4x4 repo::core::RepoNodeMesh::getBoundingBoxTransformation() const
+{
+    return getTransformation() * boundingBox.getTranslationMatrix();
 }
 
 std::string repo::core::RepoNodeMesh::getVertexHash()

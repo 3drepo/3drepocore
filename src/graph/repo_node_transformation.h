@@ -173,6 +173,8 @@ public :
     bool isIdentity() const
     { return matrix.IsIdentity(); }
 
+    static std::vector<double> matrixToVector(const aiMatrix4x4 &matrix);
+
 protected :
 
 	aiMatrix4x4 matrix; //!< transformation matrix

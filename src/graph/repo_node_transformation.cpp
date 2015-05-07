@@ -332,3 +332,30 @@ std::string repo::core::RepoNodeTransformation::toString() const
     ret += RepoTranscoderString::toString(matrix.d4);
     return ret;
 }
+
+std::vector<double> repo::core::RepoNodeTransformation::matrixToVector(const aiMatrix4x4 &matrix)
+{
+    std::vector<double> vec(16);
+
+    vec[0] = matrix.a1;
+    vec[1] = matrix.b1;
+    vec[2] = matrix.c1;
+    vec[3] = matrix.d1;
+
+    vec[4] = matrix.a2;
+    vec[5] = matrix.b2;
+    vec[6] = matrix.c2;
+    vec[7] = matrix.d2;
+
+    vec[8] = matrix.a3;
+    vec[9] = matrix.b3;
+    vec[10] = matrix.c3;
+    vec[11] = matrix.d3;
+
+    vec[12] = matrix.a4;
+    vec[13] = matrix.b4;
+    vec[14] = matrix.c4;
+    vec[15] = matrix.d4;
+
+    return vec;
+}
