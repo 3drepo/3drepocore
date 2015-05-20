@@ -3,6 +3,9 @@
 
 C++ library providing 3D Repo Scene Graph definition and repository management logic.
 
+## License
+This project is copyright of [3D Repo Ltd](http://3drepo.org) and is released under the open source [GNU Affero General Public License v3](http://www.gnu.org/licenses/agpl-3.0.en.html). Should you require a commercial license, please contact [support@3drepo.org](mailto:support@3drepo.org)
+
 ## Dependencies
 
 - [Boost 1.56.0](https://github.com/boostorg/boost/tree/boost-1.56.0)
@@ -54,6 +57,10 @@ See also [http://assimp.sourceforge.net/lib_html/cmake_build.html](http://assimp
 
 To be able to compile Assimp Tools, you also need to install [DirectX SDK](http://www.microsoft.com/en-gb/download/details.aspx?id=6812). If you have Microsoft Visual C++ 2010 Redistributable, make sure to uninstall it from Programs and Features first.
 
+### 3drepocore
+
+Finally to compile the library itself, open the build.pro project from qtcreator and build.
+
 ## Compiling on Mac
 
 The following instructions explain how to compile the 3drepocore library on Yosemite.
@@ -101,3 +108,6 @@ make -j8
 Finally to compile the library itself, open the build.pro project from qtcreator and build.
 
 ## Compiling on Linux
+
+## Contributing
+We encourage continuous development of 3D Repo by the community and welcome any fixes and improvements. By sending a pull request, you agree that the modifications are solely your work and assign the copyright to 3D Repo Ltd
