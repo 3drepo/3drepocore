@@ -78,7 +78,8 @@ HEADERS +=  src/repocore.h\
             src/graph/repo_node_types.h \
     src/primitives/repocollstats.h \
     src/primitives/repoprojectsettings.h \
-    src/mongo/repogridfs.h
+    src/mongo/repogridfs.h \
+    src/api/repo_apikey.h
 
 SOURCES +=  src/repocore.cpp \
             src/repologger.cpp \
@@ -117,7 +118,8 @@ SOURCES +=  src/repocore.cpp \
     src/compute/repographoptimizer.cpp \
     src/primitives/repocollstats.cpp \
     src/primitives/repoprojectsettings.cpp \
-    src/mongo/repogridfs.cpp
+    src/mongo/repogridfs.cpp \
+    src/api/repo_apikey.cpp
 
 
 

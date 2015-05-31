@@ -44,6 +44,8 @@ namespace core {
 #define REPO_LABEL_MONGODB_CR           "MONGODB-CR"
 #define REPO_LABEL_CLEARTEXT            "cleartext"
 #define REPO_LABEL_OWNER                "account"
+#define REPO_LABEL                      "label"
+#define REPO_LABEL_KEY                  "key"
 #define REPO_LABEL_PWD           		"pwd"
 #define REPO_LABEL_PROJECT              "project"
 #define REPO_LABEL_PROJECTS             "projects"
@@ -51,6 +53,7 @@ namespace core {
 #define REPO_LABEL_DB                   "db"
 #define REPO_LABEL_GROUP                "group"
 #define REPO_LABEL_GROUPS               "groups"
+#define REPO_LABEL_API_KEYS             "apiKeys"
 
 //------------------------------------------------------------------------------
 // Commands
@@ -80,6 +83,7 @@ public :
             const std::list<std::pair<string, string> > &projects = std::list<std::pair<string, string> >(),          
             const std::list<std::pair<string, string> > &roles = std::list<std::pair<string, string> >(),
             const std::list<std::pair<string, string> > &groups = std::list<std::pair<string, string> >(),
+            const std::list<std::pair<string, string> > &apiKeys = std::list<std::pair<string, string> >(),
             const RepoImage &avatar = RepoImage());
 
     //! Default empty destructor.
@@ -119,6 +123,9 @@ public :
     // Getters
     //
     //--------------------------------------------------------------------------
+
+    //! Returns all api keys associated with this user as [label, key] pairs.
+    std::list<std::pair<std::string, std::string> > getAPIKeysList() const;
 
     //! Returns the avatar stored in the customData field, empty image otherwise.
     RepoImage getAvatar() const;

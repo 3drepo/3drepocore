@@ -26,6 +26,7 @@ repo::core::RepoUser::RepoUser(const std::string &username,
                                const std::list<std::pair<std::string, std::string> > &projects,
                                const std::list<std::pair<std::string, std::string> > &roles,
                                const std::list<std::pair<string, string> > &groups,
+                               const std::list<std::pair<string, string> > &apiKeys,
                                const RepoImage &avatar)
     : RepoBSON()
 {
@@ -74,6 +75,9 @@ repo::core::RepoUser::RepoUser(const std::string &username,
     if (!groups.empty())
         customDataBuilder << REPO_LABEL_GROUPS << toArray(groups, REPO_LABEL_OWNER, REPO_LABEL_GROUP);
 
+    if (!apiKeys.empty())
+        customDataBuilder << REPO_LABEL_API_KEYS << toArray(apiKeys, REPO_LABEL, REPO_LABEL_KEY);
+
     //--------------------------------------------------------------------------
     // Avatar
     if (avatar.isOk())
@@ -94,6 +98,12 @@ repo::core::RepoUser::RepoUser(const std::string &username,
 
 }
 
+std::list<std::pair<std::string, std::string> > repo::core::RepoUser::getAPIKeysList() const
+{
+    mongo::BSONElement arrayElement = getEmbeddedElement(REPO_LABEL_CUSTOM_DATA,
+                                                         REPO_LABEL_API_KEYS);
+    return RepoBSON::getArrayStringPairs(arrayElement, REPO_LABEL, REPO_LABEL_KEY);
+}
 
 repo::core::RepoImage repo::core::RepoUser::getAvatar() const
 {
