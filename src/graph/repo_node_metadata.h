@@ -80,7 +80,8 @@ public :
 
     RepoNodeMetadata(
         const mongo::BSONObj &metadata,
-        const string &name);
+        const string &name,
+        const std::string &mime = REPO_MEDIA_TYPE_JSON);
 
     //--------------------------------------------------------------------------
     //
@@ -124,8 +125,6 @@ public :
     //! Returns string representation of the metadata object.
     std::string toString(std::string separator) const;
 
-
-
 protected :
 
     //--------------------------------------------------------------------------
@@ -135,6 +134,8 @@ protected :
     //--------------------------------------------------------------------------
 
     mongo::BSONObj metadata; //!< Metadata subobject
+
+    std::string mime; //! Media type (mime type) of the metadata
 
 }; // end class
 

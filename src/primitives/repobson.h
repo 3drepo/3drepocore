@@ -52,8 +52,11 @@ public:
 
     //--------------------------------------------------------------------------
 
-    //! Adds all fields from the given object to this object.
-    void addFields(mongo::BSONObj &obj);
+    /*!
+     * Adds all fields from the given object to this bson if empty. Returns
+     * true if successful, and false otherwise (eg when non-empty or not owned).
+     */
+    int addFields(mongo::BSONObj &obj);
 
     //! Returns a new full (and owned) copy of the object.
     inline RepoBSON copy() const { return RepoBSON(mongo::BSONObj::copy()); }

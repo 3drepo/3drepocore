@@ -23,24 +23,10 @@ repo::core::RepoImage::RepoImage(const unsigned char *bytes,
                                  unsigned int width,
                                  unsigned int height,
                                  const string &mediaType)
-    : RepoBSON()
+    : RepoBinary(bytes, bytesLength, mediaType)
 {
     mongo::BSONObjBuilder builder;
-    //--------------------------------------------------------------------------
-    // ID
-    RepoTranscoderBSON::append(
-                REPO_LABEL_ID,
-                boost::uuids::random_generator()(),
-                builder);
-
-    //--------------------------------------------------------------------------
-    // Binary data
-    if (bytes && bytesLength)
-        builder.appendBinData(
-            REPO_LABEL_DATA,
-            bytesLength,
-            mongo::BinDataGeneral,
-            bytes);
+    builder.appendElements(*this);
 
     //--------------------------------------------------------------------------
     // Width
@@ -53,33 +39,6 @@ repo::core::RepoImage::RepoImage(const unsigned char *bytes,
         builder << REPO_LABEL_HEIGHT << height;
 
     //--------------------------------------------------------------------------
-    // Media Type
-    if (!mediaType.empty())
-        builder << REPO_LABEL_MEDIA_TYPE << mediaType;
-
-    //--------------------------------------------------------------------------
     // Add to the parent object
-	mongo::BSONObj builtObj = builder.obj();
-	RepoBSON::addFields(builtObj);
-}
-
-
-std::vector<char> repo::core::RepoImage::getData() const
-{
-    std::vector<char> ret;
-    int length = 0;
-    const char* data = getData(length);
-    if (data)
-        ret = std::vector<char>(data, data + length);
-    return ret;
-}
-
-const char *repo::core::RepoImage::getData(int &length) const
-{
-    mongo::BSONElement bse;
-    const char* data;
-    if (hasField(REPO_LABEL_DATA) &&
-        mongo::BSONType::BinData == (bse = getField(REPO_LABEL_DATA)).type())
-         data = bse.binData(length);
-    return data;
+    *this = builder.obj();
 }

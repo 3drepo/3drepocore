@@ -16,14 +16,17 @@
  */
 
 
-#ifndef REPO_IMAGE_H
-#define REPO_IMAGE_H
+#ifndef REPO_BINARY_H
+#define REPO_BINARY_H
 
 
 //------------------------------------------------------------------------------
 #include "../repocoreglobal.h"
-#include "repo_binary.h"
+#include "repobson.h"
 //------------------------------------------------------------------------------
+
+#include <iostream>
+#include <fstream>
 
 namespace repo {
 namespace core {
@@ -31,40 +34,54 @@ namespace core {
 /*!
  * See http://www.iana.org/assignments/media-types/media-types.xhtml#image
  */
-class REPO_CORE_EXPORT RepoImage : public RepoBinary
+class REPO_CORE_EXPORT RepoBinary : public RepoBSON
 {
 
 public:
 
-    RepoImage() : RepoBinary() {}
+    RepoBinary() : RepoBSON() {}
 
-    RepoImage(const mongo::BSONObj &obj) : RepoBinary(obj) {}
+    RepoBinary(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
-    RepoImage(const unsigned char* bytes,
+    RepoBinary(const unsigned char* bytes,
               unsigned int bytesLength,
-              unsigned int width,
-              unsigned int height,
               const string &mediaType);
 
-    ~RepoImage() {}
+    RepoBinary(const std::string &fullFilePath, const std::string &mediaType);
+
+    ~RepoBinary() {}
 
     //--------------------------------------------------------------------------
 
     //! Returns a new full (and owned) copy of the object.
-    inline RepoImage copy() const { return RepoImage(RepoBinary::copy()); }
+    inline RepoBinary copy() const { return RepoBinary(RepoBSON::copy()); }
 
-    //! Returns the height of the image if set.
-    int getHeight() const
-    { return getField(REPO_LABEL_HEIGHT).Int(); }
+    //--------------------------------------------------------------------------
 
-    //! Returns the width of the image if set.
-    int getWidth() const
-    { return getField(REPO_LABEL_WIDTH).Int(); }
+    //! Returns image data as a vector of bytes.
+    std::vector<char> getData() const;
 
+    //! Returns the raw byte array pointer as well as the size of the array.
+    const char* getData(int &length) const;
+
+    //! Returns the media type of the image if set.
+    std::string getMediaType() const
+    { return getField(REPO_LABEL_MEDIA_TYPE).String(); }
+
+    //! Returns a raw array pointer from a given vector.
+    template <class T>
+    static const T* toArray(const std::vector<T> &vector)
+    {   return (const T*) &(vector.at(0)); }
+
+protected :
+
+    bool populate(const unsigned char* bytes,
+                  unsigned int bytesLength,
+                  const string &mediaType);
 
 }; // end class
 
 } // end namespace core
 } // end namespace repo
 
-#endif // REPO_IMAGE_H
+#endif // REPO_BINARY_H

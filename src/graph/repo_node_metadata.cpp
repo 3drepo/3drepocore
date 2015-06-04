@@ -114,18 +114,26 @@ repo::core::RepoNodeMetadata::RepoNodeMetadata(
 
 repo::core::RepoNodeMetadata::RepoNodeMetadata(
         const mongo::BSONObj &metadata,
-        const string &name)
+        const string &name,
+        const string &mime)
     : RepoNodeAbstract(
           REPO_NODE_TYPE_METADATA,
           REPO_NODE_API_LEVEL_1,
           boost::uuids::random_generator()(),
           name)
     , metadata(metadata)
+    , mime(mime)
 {}
 
-repo::core::RepoNodeMetadata::RepoNodeMetadata(const mongo::BSONObj &obj)
+repo::core::RepoNodeMetadata::RepoNodeMetadata(
+        const mongo::BSONObj &obj)
     : RepoNodeAbstract(obj)
 {
+    //--------------------------------------------------------------------------
+    // Media type
+    if (obj.hasField(REPO_LABEL_MEDIA_TYPE))
+        mime = obj.getField(REPO_LABEL_MEDIA_TYPE).String();
+
     //--------------------------------------------------------------------------
     // Metadata
     if (obj.hasField(REPO_NODE_LABEL_METADATA))
@@ -155,6 +163,11 @@ mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
     // Compulsory fields such as _id, type, api as well as path
     // and optional name
     appendDefaultFields(builder);
+
+    //--------------------------------------------------------------------------
+    // Media type
+    if (!mime.empty())
+        builder << REPO_LABEL_MEDIA_TYPE << mime;
 
 	//--------------------------------------------------------------------------
     // Add metadata subobject

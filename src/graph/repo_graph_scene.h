@@ -88,6 +88,9 @@ public :
     RepoNodeAbstractSet addMetadata(const RepoNodeAbstractSet& metadata,
                      bool exactMatch = true);
 
+    void addMetadata(RepoNodeMetadata *meta)
+    { metadata.push_back(meta); }
+
     //--------------------------------------------------------------------------
 	//
 	// Export

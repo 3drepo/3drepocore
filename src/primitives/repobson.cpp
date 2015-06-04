@@ -20,11 +20,16 @@
 
 //------------------------------------------------------------------------------
 
-void repo::core::RepoBSON::addFields(mongo::BSONObj &obj)
+int repo::core::RepoBSON::addFields(mongo::BSONObj &obj)
 {
-    std::set<std::string> fields;
-    obj.getFieldNames(fields);
-    mongo::BSONObj::addFields(obj, fields);
+    int success = 0;
+    if (isEmpty() && !isOwned())
+    {
+        std::set<std::string> fields;
+        obj.getFieldNames(fields);
+        success = mongo::BSONObj::addFields(obj, fields);
+    }
+    return success;
 }
 
 repo::core::RepoBSON repo::core::RepoBSON::drop(const std::string &collection) const
@@ -97,7 +102,7 @@ mongo::BSONArray repo::core::RepoBSON::toArray(
     for (i = list.begin(); i != list.end(); ++i)
     {
         mongo::BSONObjBuilder innerBuilder;
-        innerBuilder << fstLabel <<  i->first;
+        innerBuilder << fstLabel << i->first;
         innerBuilder << sndLabel << i->second;
         builder.append(innerBuilder.obj());
     }

@@ -53,7 +53,7 @@
 #define REPO_LABEL_AVATAR           "avatar"
 #define REPO_LABEL_DATA             "data"
 #define REPO_LABEL_HEIGHT           "height"
-#define REPO_LABEL_MEDIA_TYPE       "media_type"
+#define REPO_LABEL_MEDIA_TYPE       "mime"              //!< Media Type (mime type)
 #define REPO_LABEL_ROLE             "role"
 #define REPO_LABEL_ROLES            "roles"
 #define REPO_LABEL_USER             "user"
@@ -94,6 +94,9 @@
 #define REPO_MEDIA_TYPE_XBM     "image/x-xbitmap"           //!< X11 Bitmap
 #define REPO_MEDIA_TYPE_XPM     "image/x-xpixmap"           //!< X11 Pixmap
 #define REPO_MEDIA_TYPE_SVG     "image/svg+xml"             //!< Scalable Vector Graphics
+
+#define REPO_MEDIA_TYPE_PDF     "application/pdf"           //!< Portable Document Format
+#define REPO_MEDIA_TYPE_JSON    "application/json"          //!< JavaScript Object Notation
 
 //------------------------------------------------------------------------------
 
