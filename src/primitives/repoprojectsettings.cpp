@@ -20,10 +20,10 @@
 
 repo::core::RepoProjectSettings::RepoProjectSettings(
         const std::string &uniqueProjectName,
-        const std::string &description,
-        const std::string &type,
         const std::string &owner,
         const std::string &group,
+        const std::string &type,
+        const std::string &description,
         unsigned short ownerPermissionsOctal,
         unsigned short groupPermissionsOctal,
         unsigned short publicPermissionsOctal)
@@ -36,6 +36,11 @@ repo::core::RepoProjectSettings::RepoProjectSettings(
         builder << REPO_LABEL_ID << uniqueProjectName;
 
     //--------------------------------------------------------------------------
+    // Owner
+    if (!owner.empty())
+        builder << REPO_LABEL_OWNER << owner;
+
+    //--------------------------------------------------------------------------
     // Description
     if (!description.empty())
         builder << REPO_LABEL_DESCRIPTION << description;
@@ -44,11 +49,6 @@ repo::core::RepoProjectSettings::RepoProjectSettings(
     // Type
     if (!type.empty())
         builder << REPO_LABEL_TYPE << type;
-
-    //--------------------------------------------------------------------------
-    // Owner
-    if (!owner.empty())
-        builder << REPO_LABEL_OWNER << owner;
 
     //--------------------------------------------------------------------------
     // Group

@@ -79,6 +79,8 @@
 #define REPO_COLLECTION_SCENE       "scene"
 #define REPO_COLLECTION_SETTINGS    "settings"
 
+#define REPO_PROJECT_TYPE_ARCHITECTURAL "architectural"
+
 //------------------------------------------------------------------------------
 // Media Types a.k.a. as Multipurpose Internet Mail Extensions (MIME) Types
 // http://www.iana.org/assignments/media-types/media-types.xhtml#image

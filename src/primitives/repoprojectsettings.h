@@ -52,14 +52,15 @@ public:
 
     RepoProjectSettings(const mongo::BSONObj &obj) : RepoBSON(obj) {}
 
-    RepoProjectSettings(const std::string &uniqueProjectName,
-            const std::string &description,
-            const std::string &type,
+    RepoProjectSettings(
+            const std::string &uniqueProjectName,
             const std::string &owner,
-            const std::string &group,
-            unsigned short ownerPermissionsOctal,
-            unsigned short groupPermissionsOctal,
-            unsigned short publicPermissionsOctal);
+            const std::string &group = std::string(),
+            const std::string &type = REPO_PROJECT_TYPE_ARCHITECTURAL,
+            const std::string &description = std::string(),
+            unsigned short ownerPermissionsOctal = 7,
+            unsigned short groupPermissionsOctal = 0,
+            unsigned short publicPermissionsOctal = 0);
 
 
     ~RepoProjectSettings();
