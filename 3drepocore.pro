@@ -81,7 +81,7 @@ HEADERS +=  src/repocore.h\
     src/mongo/repogridfs.h \
     src/api/repo_apikey.h \
     src/primitives/repo_binary.h \
-    src/primitives/repo_map.h
+    src/graph/repo_node_map.h
 
 SOURCES +=  src/repocore.cpp \
             src/repologger.cpp \
@@ -123,7 +123,7 @@ SOURCES +=  src/repocore.cpp \
     src/mongo/repogridfs.cpp \
     src/api/repo_apikey.cpp \
     src/primitives/repo_binary.cpp \
-    src/primitives/repo_map.cpp
+    src/graph/repo_node_map.cpp
 
 
 

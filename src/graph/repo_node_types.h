@@ -31,6 +31,7 @@
 #define REPO_NODE_TYPE_COMMENT			"comment"
 #define REPO_NODE_TYPE_LIGHT			"light"
 #define REPO_NODE_TYPE_LOCK				"lock"
+#define REPO_NODE_TYPE_MAP          	"map"
 #define REPO_NODE_TYPE_METADATA     	"meta"
 #define REPO_NODE_TYPE_REVISION			"revision"
 #define REPO_NODE_TYPE_SHADER			"shader"
