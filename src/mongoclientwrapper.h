@@ -136,6 +136,10 @@ public:
     static std::string getSceneCollectionName(const std::string& project)
     { return project + "." + REPO_COLLECTION_SCENE; }
 
+    //! Returns project.scene
+    static std::string getRepoStashCollectionName(const std::string& project)
+    { return project + "." + REPO_COLLECTION_STASH + "." + REPO_COLLECTION_3DREPO; }
+
     //--------------------------------------------------------------------------
 	//
 	// Connection and authentication

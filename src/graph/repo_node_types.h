@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 #define REPO_NODE_LABEL_ID				"_id"		//!< required 
 #define REPO_NODE_LABEL_SHARED_ID		"shared_id"	//!< required
+#define REPO_NODE_LABEL_REVISION_ID		"rev_id"	//!< required
 #define REPO_NODE_LABEL_TYPE			"type"		//!< required
 #define REPO_NODE_LABEL_API				"api"		//!< required
 #define REPO_NODE_LABEL_PATHS			"paths"		//!< required

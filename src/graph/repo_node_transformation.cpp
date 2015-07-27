@@ -38,7 +38,9 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
     const std::vector<RepoNodeAbstract *> &meshes,
     const std::map<std::string, RepoNodeAbstract *> &cameras,
     std::vector<RepoNodeAbstract *> &transformations,
-	std::vector<RepoNodeAbstract *> &metadata) :
+	std::vector<RepoNodeAbstract *> &metadata,
+	assimp_map &assimpMap) :
+
 		RepoNodeAbstract (
 			REPO_NODE_TYPE_TRANSFORMATION,
 			REPO_NODE_API_LEVEL_1,
@@ -97,9 +99,12 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 				meshes,
 				cameras,
 				transformations,
-				metadata);
+				metadata,
+				assimpMap);
 		this->addChild(child);
 		child->addParent(this);
+
+		assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(node->mChildren[i]), reinterpret_cast<RepoNodeAbstract *>(child)));
 	}
 }
 

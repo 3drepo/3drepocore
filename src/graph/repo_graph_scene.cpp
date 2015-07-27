@@ -28,7 +28,8 @@
 
 repo::core::RepoGraphScene::RepoGraphScene(
 	const aiScene* scene,
-	const std::map<std::string, RepoNodeAbstract*>& textures)
+	const std::map<std::string, RepoNodeAbstract*>& textures,
+	assimp_map &assimpMap)
 	: RepoGraphAbstract()
 {
     //--------------------------------------------------------------------------
@@ -121,20 +122,23 @@ repo::core::RepoGraphScene::RepoGraphScene(
                                           meshesVector,
                                           camerasMap,
                                           transformations,
-										  metadata);
+										  metadata,
+										  assimpMap);
 
     std::vector<RepoNodeAbstract *>::iterator it;
     for (it = transformations.begin(); it != transformations.end(); ++it)
     {
         nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(), (*it)));
         this->transformations.insert(*it);
+
     }
+
+	assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(scene->mRootNode), rootNode));
 
     for (it = metadata.begin(); it != metadata.end(); ++it)
     {
         nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(), (*it)));
     }
-
 }
 
 
@@ -216,13 +220,98 @@ repo::core::RepoGraphScene::RepoGraphScene(
 			std::cerr << "Unrecognized node type" << std::endl;
 			//RepoILogger::getInstance().log(repo::REPO_WARNING, "Node of unrecognized type.");
 		}
-	}
 
-    //--------------------------------------------------------------------------
-	// Build the parental graph.
-	buildGraph(nodesBySharedID);
+	    //--------------------------------------------------------------------------
+		// Build the parental graph.
+		buildGraph(nodesBySharedID);
+	}
 }
 
+void repo::core::RepoGraphScene::populateOptimMaps(const repo::core::assimp_map &assimpMap, const repo::core::assimp_map &assimpMapOptim)
+{
+	assimp_map assimpCombined;
+	assimpCombined.insert(assimpMap.begin(), assimpMap.end());
+	assimpCombined.insert(assimpMapOptim.begin(), assimpMapOptim.end());
+
+	populateOptimMaps(rootNode, assimpCombined, assimpMapOptim);
+}
+
+void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract *current, const repo::core::assimp_map &assimpMap, const repo::core::assimp_map &assimpMapOptim)
+{
+	// First find the assimp node that relates to the abstract node
+	assimp_map::right_const_iterator ait = assimpMapOptim.right.find(current);
+
+	if (ait == assimpMapOptim.right.end()) // Orphan part of the graph
+	{	
+		// TODO: Throw error here.
+		return;
+	}
+
+	aiNode *node = reinterpret_cast<aiNode *>(ait->second); // All nodes in the optimized graph should exist
+
+	std::cout << to_string(current->getUniqueID()) << std::endl;
+
+	if (node && node->mOptimMap)
+	{
+		aiOptimMap *ai_map = node->mOptimMap;
+		std::set<uintptr_t> &mergeMap = ai_map->mergeMap;
+
+		for(std::set<uintptr_t>::iterator it = mergeMap.begin(); it!=mergeMap.end(); ++it)
+		{
+			uintptr_t mergedNode = *it;
+
+			// Find the corresponding abstract node for an assimp 
+			assimp_map::left_const_iterator nit = assimpMap.left.find(mergedNode);
+
+			if (nit != assimpMap.left.end())
+			{
+				RepoNodeAbstract *node = nit->second;
+				boost::uuids::uuid mergedUUID = node->getUniqueID();
+
+				current->mergeInto(mergedUUID);
+			}
+		}
+
+		// Now populate the vertex maps
+		for(const aiVMap &vMap: ai_map->vertexMaps)
+		{
+			assimp_map::left_const_iterator childIT = assimpMap.left.find(vMap.childPointer);
+
+			if (childIT != assimpMap.left.end())
+			{
+				boost::uuids::uuid childUUID = childIT->second->getUniqueID();
+				current->addVertexMergeMap(childUUID, vMap.startVertexIDX, vMap.endVertexIDX);
+			} else {
+				// TODO: throw error here
+			}
+		}
+
+		// Now populate the triangle maps
+		for(const aiTMap &tMap: ai_map->triangleMaps)
+		{
+			assimp_map::left_const_iterator childIT = assimpMap.left.find(tMap.childPointer);
+
+			if (childIT != assimpMap.left.end())
+			{
+				boost::uuids::uuid childUUID = childIT->second->getUniqueID();
+				current->addTriangleMergeMap(childUUID, tMap.startTriangleIDX, tMap.endTriangleIDX, tMap.offset);
+			} else {
+				// TODO: throw error here
+			}
+		}	
+	} else {
+		// TODO: throw error here
+	}
+
+	auto children = current->getChildren();
+
+    //--------------------------------------------------------------------------
+	// Register child transformations as children if any
+	for (auto node_it = children.begin(); node_it != children.end(); ++node_it)
+	{
+		populateOptimMaps(*node_it, assimpMap, assimpMapOptim);
+	}
+}
 
 //------------------------------------------------------------------------------
 //

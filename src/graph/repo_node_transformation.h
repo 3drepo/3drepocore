@@ -20,9 +20,12 @@
 
 //------------------------------------------------------------------------------
 #include "repo_node_abstract.h"
+#include "repo_graph_abstract.h"
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 //------------------------------------------------------------------------------
+
+#include <map>
 
 namespace repo {
 namespace core {
@@ -93,7 +96,8 @@ public :
         const std::vector<RepoNodeAbstract *> &meshes,
         const std::map<std::string, RepoNodeAbstract *> &cameras,
         std::vector<RepoNodeAbstract *> &transformations,
-		std::vector<RepoNodeAbstract *> &metadata);
+		std::vector<RepoNodeAbstract *> &metadata,
+		repo::core::assimp_map &assimpMap);
 
 	//! Constructs transformation scene graph component from BSON object.
 	/*!

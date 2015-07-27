@@ -20,6 +20,7 @@
 
 //------------------------------------------------------------------------------
 #include <mongo/client/dbclient.h> // the MongoDB driver
+#include <boost/bimap.hpp>
 //------------------------------------------------------------------------------
 #include "assimp/scene.h"
 #include "repo_node_abstract.h"
@@ -29,6 +30,8 @@
 
 namespace repo {
 namespace core {
+
+typedef boost::bimap<uintptr_t, RepoNodeAbstract *> assimp_map;
 
 //! Abstract directed acyclic graph (DAG).
 /*!

@@ -16,7 +16,8 @@
  */
 
 #include "repo_transcoder_bson.h"
-
+#include "../graph/repo_node_abstract.h"
+ 
 mongo::BSONObj repo::core::RepoTranscoderBSON::uuidBSON(
         const string &label,
         const boost::uuids::uuid &uuid)
@@ -173,3 +174,54 @@ std::pair<aiVector3D, aiVector3D> repo::core::RepoTranscoderBSON::
 
     return std::make_pair(min, max);
 }
+
+// Template specializations
+template <>
+void repo::core::RepoTranscoderBSON::append
+(
+	const std::string &label,
+	const std::vector<repo::core::RepoVertexMap> &vertMergeMap,
+	mongo::BSONObjBuilder &builder
+) 
+{
+	int idx = 0;
+	mongo::BSONObjBuilder array;
+
+	for (const repo::core::RepoVertexMap& vm : vertMergeMap)
+	{
+		mongo::BSONObjBuilder elem;
+		append(REPO_LABEL_MAP_ID, vm.map_id, elem);
+		append(REPO_LABEL_FROM, vm.from, elem);
+		append(REPO_LABEL_TO, vm.to, elem);
+
+		append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+	}
+
+	builder.appendArray(label, array.obj());
+}
+
+template <>
+void repo::core::RepoTranscoderBSON::append
+(
+	const std::string &label,
+	const std::vector<repo::core::RepoTriangleMap> &triMergeMap,
+	mongo::BSONObjBuilder &builder
+) 
+{
+	int idx = 0;
+	mongo::BSONObjBuilder array;
+
+	for (const repo::core::RepoTriangleMap& tm : triMergeMap)
+	{
+		mongo::BSONObjBuilder elem;
+		append(REPO_LABEL_MAP_ID, tm.map_id, elem);
+		append(REPO_LABEL_FROM, tm.from, elem);
+		append(REPO_LABEL_TO, tm.to, elem);
+		append(REPO_LABEL_OFFSET, tm.offset, elem);
+
+		append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+	}
+
+	builder.appendArray(label, array.obj());
+}
+

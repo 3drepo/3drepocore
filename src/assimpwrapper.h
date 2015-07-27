@@ -47,9 +47,10 @@ public :
     AssimpWrapper();
     ~AssimpWrapper() {}
 
+	void ApplyPostProcessing(unsigned int pFlags);
+
     bool importModel(const std::string &fileName,
-                     const std::string &fullFilePath,
-                     unsigned int pFlags = 0);
+                     const std::string &fullFilePath);
 
     //! Exports the scene as a 3D file and returns true if successful, false otherwise.
     bool exportModel(const aiScene *scene,
@@ -213,7 +214,7 @@ private :
     std::string fullFolderPath;
 
     Assimp::Importer importer;
-		
+
 }; // end class
 
 } // end namespace core

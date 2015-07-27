@@ -58,8 +58,7 @@ void repo::core::AssimpWrapper::resetScene()
 }
 //------------------------------------------------------------------------------
 bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
-                                            const std::string &fullFilePath,
-                                            unsigned int pFlags)
+                                            const std::string &fullFilePath)
 {
 	resetScene();
 
@@ -68,7 +67,7 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
 
     std::cerr << "File path " <<  fullFilePath << std::endl;
 	//-------------------------------------------------------------------------
-	scene = importer.ReadFile(fullFilePath, pFlags);
+	scene = importer.ReadFile(fullFilePath, 0);
 
     bool isSuccessful = (NULL != scene);
 	if(isSuccessful)
@@ -91,6 +90,11 @@ bool repo::core::AssimpWrapper::importModel(const std::string &fileName,
             std::cerr << "Assimp: " << importErrors << std::endl;
 
 	return isSuccessful;
+}
+
+void repo::core::AssimpWrapper::ApplyPostProcessing(unsigned int pFlags)
+{
+	importer.ApplyPostProcessing(pFlags);
 }
 
 bool repo::core::AssimpWrapper::exportModel(

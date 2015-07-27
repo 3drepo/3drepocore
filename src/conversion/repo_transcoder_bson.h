@@ -30,13 +30,19 @@
 //-----------------------------------------------------------------------------
 #include <assimp/scene.h> // Assimp
 //-----------------------------------------------------------------------------
-
+#include "../graph/repo_node_abstract.h"
 #include "../repocoreglobal.h"
 
 using namespace std;
 
 namespace repo {
 namespace core {
+
+struct _RepoVertexMap;
+struct _RepoTriangleMap;
+
+typedef _RepoVertexMap RepoVertexMap;
+typedef _RepoTriangleMap RepoTriangleMap;
 
 /*!
  * Static class that appends various data types to BSON builders in order
@@ -78,6 +84,7 @@ public :
 			append(boost::lexical_cast<string>(i), vec[i], array);
 		builder.appendArray(label, array.obj());
 	}
+
 
     //--------------------------------------------------------------------------
 	//! Appends a set as an array to BSON builder.
@@ -245,5 +252,23 @@ public :
 
 } // end namespace core
 } // end namespace repo
+
+
+// Template specializations
+template <>
+void repo::core::RepoTranscoderBSON::append
+(
+	const std::string &label,
+	const std::vector<repo::core::RepoVertexMap> &vertMergeMap,
+	mongo::BSONObjBuilder &builder
+); 
+
+template <>
+void repo::core::RepoTranscoderBSON::append
+(
+	const std::string &label,
+	const std::vector<repo::core::RepoTriangleMap> &triMergeMap,
+	mongo::BSONObjBuilder &builder
+); 
 
 #endif // end REPO_TRANSCODER_BSON_H

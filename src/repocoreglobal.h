@@ -66,6 +66,16 @@
 #define REPO_LABEL_PERMISSIONS      "permissions"
 #define REPO_LABEL_USERS            "users"
 
+// Vertex/triangle map propeties
+#define REPO_LABEL_MERGED_NODES 	"merged_nodes"
+#define REPO_LABEL_MAP_ID			"map_id"
+#define REPO_LABEL_FROM 			"from"
+#define REPO_LABEL_TO 				"to"
+#define REPO_LABEL_OFFSET			"offset"
+
+#define REPO_LABEL_VERTEX_MAP		"v_map"
+#define REPO_LABEL_TRIANGLE_MAP		"t_map"
+
 #define REPO_COMMAND_UPDATE         "update"
 #define REPO_COMMAND_UPDATES        "updates"
 #define REPO_COMMAND_DELETE         "delete"
@@ -78,6 +88,8 @@
 #define REPO_COLLECTION_HISTORY     "history"
 #define REPO_COLLECTION_SCENE       "scene"
 #define REPO_COLLECTION_SETTINGS    "settings"
+#define REPO_COLLECTION_STASH		"stash"
+#define REPO_COLLECTION_3DREPO		"3drepo"
 
 #define REPO_PROJECT_TYPE_ARCHITECTURAL "architectural"
 

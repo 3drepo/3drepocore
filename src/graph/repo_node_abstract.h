@@ -21,25 +21,39 @@
 //------------------------------------------------------------------------------
 #include <mongo/client/dbclient.h> // the MongoDB driver
 //------------------------------------------------------------------------------
-#include <boost/uuid/uuid.hpp> 
+#include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/tuple/tuple.hpp>
 //------------------------------------------------------------------------------
-#include "../conversion/repo_transcoder_bson.h"
 #include "../conversion/repo_transcoder_string.h"
 //------------------------------------------------------------------------------
-
+#include "../conversion/repo_transcoder_bson.h"
 #include "repo_node_types.h"
 #include "../repocoreglobal.h"
 
 namespace repo {
 namespace core {
 
+//! Types that represent the vertex and triangle maps
+typedef struct _RepoVertexMap {
+	boost::uuids::uuid map_id;
+	int from;
+	int to;
+} RepoVertexMap;
+
+typedef struct _RepoTriangleMap {
+	boost::uuids::uuid map_id;
+	int from;
+	int to;
+	int offset;
+} RepoTriangleMap;
+
 //! Base abstract class for all entries stored in 3D Repo.
 /*!
  * Each document preserved in 3D Repo being it a scene graph node or a revision
- * is expected to carry '_id', 'shared_id', 'paths', 'type' and 'api' 
- * information to uniquely identify the document, its type and the level of API 
+ * is expected to carry '_id', 'shared_id', 'paths', 'type' and 'api'
+ * information to uniquely identify the document, its type and the level of API
  * required to decode it. Name of this object is optional information which
  * might or might not be present. It is assumed a graph may have only one root.
  */
@@ -57,10 +71,10 @@ public :
 	//! Default repository document constructor.
 	/*!
 	 * Each object stored in the database is expected to specify '_id',
-	 * 'shared_id', 'type' and 'api' properties. 
-	 * 
+	 * 'shared_id', 'type' and 'api' properties.
+	 *
 	 * \param type repository object type such as 'material', 'mesh', etc.
-	 * \param api API level of this object, information used to decode it in 
+	 * \param api API level of this object, information used to decode it in
      *        clients
      * \param uuid unique identifier, randomly generated if not given
 	 * \param name optional name of this object, empty string if not specified,
@@ -72,19 +86,21 @@ public :
 		const std::string &type,
 		const unsigned int api = REPO_NODE_API_LEVEL_0,
 		const boost::uuids::uuid &sharedId = boost::uuids::random_generator()(),
-		const std::string &name = std::string()) : 
-			type(type), 
-			api(api), 
+		const std::string &name = std::string(),
+		const boost::uuids::uuid &revID = boost::uuids::nil_uuid()) :
+			type(type),
+			api(api),
             sharedID(sharedId),
-			uniqueID(boost::uuids::random_generator()()), 
+			uniqueID(boost::uuids::random_generator()()),
+			revisionID(revID),
             name(name) {}
 
 	//! BSON to repository node conversion constructor.
 	/*!
-	 * Takes a BSONObj representation loaded from the database and creates 
+	 * Takes a BSONObj representation loaded from the database and creates
 	 * node object with specified uuid. If type is not present, it is set to
 	 * "unknown". If API level is not present, it is set to 0.
-	 * 
+	 *
 	 * \param obj BSON representation of a scene graph or revision graph node.
 	 * \sa RepoNodeAbstract() and ~RepoNodeAbstract()
 	 */
@@ -122,10 +138,10 @@ public :
 
 	//! BSONObj representation.
 	/*!
-	 * Returns a BSONObj representation of this repository object suitable for 
+	 * Returns a BSONObj representation of this repository object suitable for
 	 * a direct MongoDB storage.
 	 *
-	 * \return BSONObj representation 
+	 * \return BSONObj representation
 	 * \sa appendDefaultFields()
 	 */
 	virtual mongo::BSONObj toBSONObj() const = 0;
@@ -172,6 +188,9 @@ public :
 	//! Returns the shared ID of the node.
     inline boost::uuids::uuid getSharedID() const { return sharedID; }
 
+	//! Returns the shared ID of the node.
+    inline boost::uuids::uuid getRevisionID() const { return revisionID; }
+
     std::string getSharedIDString() const
     { return RepoTranscoderString::toString(getSharedID()); }
 
@@ -207,6 +226,9 @@ public :
     void setSharedID(const boost::uuids::uuid &uuid)
     { this->sharedID = uuid; }
 
+    void setRevisionID(const boost::uuids::uuid &uuid)
+    { this->revisionID = uuid; }
+
     void setRandomUniqueID()
     { setUniqueID(boost::uuids::random_generator()()); }
 
@@ -232,7 +254,7 @@ public :
 	 * \sa addParent(), addChild(), setChildren()
 	 */
 	inline void setParents(
-		const std::set<const RepoNodeAbstract *> & parents) 
+		const std::set<const RepoNodeAbstract *> & parents)
             { this->parents = std::set<const RepoNodeAbstract *>(parents); }
 
 	//! Adds parent to this node.
@@ -256,9 +278,9 @@ public :
 	 * \sa addChild(), addParent(), setParents()
 	 */
 	inline void setChildren(
-		const std::set<const RepoNodeAbstract *> & children) 
+		const std::set<const RepoNodeAbstract *> & children)
         { this->children = std::set<const RepoNodeAbstract *>(children); }
-		
+
 	//! Adds child to this node.
 	/*!
 	 * Adds a child to the set of children of this node. This function does
@@ -273,7 +295,7 @@ public :
     { return 1 == children.erase(child); }
 
 	//! Recursively retrieves all possible paths from this node to the root
-	static std::vector<std::vector<boost::uuids::uuid> > 
+	static std::vector<std::vector<boost::uuids::uuid> >
 		getPaths(const RepoNodeAbstract * node);
 
 	//! Recursively retrieve components of a subgraph of this node.
@@ -286,12 +308,17 @@ public :
 	 */
     std::set<boost::uuids::uuid> getParentSharedIDs();
 
+	//! Optimization mapping for vertices and triangles
+    void mergeInto(const boost::uuids::uuid &mergedNode);
+    void addVertexMergeMap(const boost::uuids::uuid &mergedNode, int from, int to);
+    void addTriangleMergeMap(const boost::uuids::uuid &mergedNode, int from, int to, int offset);
+
     //--------------------------------------------------------------------------
 	//
 	// Static helpers
 	//
     //--------------------------------------------------------------------------
-	
+
 	//! Returns the current time in milliseconds.
 	static mongo::Date_t currentTimestamp();
 
@@ -311,7 +338,7 @@ public :
     }
 
 protected :
-	
+
     //--------------------------------------------------------------------------
 	//
 	// Export
@@ -320,9 +347,9 @@ protected :
 
 	//! Sets the default expected fields of every 3D Repo object.
 	/*!
-	 * Adds '_id', 'shared_id' 'type' and 'api' fields required for 
+	 * Adds '_id', 'shared_id' 'type' and 'api' fields required for
 	 * every 3D Repo object.
-	 * Uuids are appended as mongo::bdtUUID binary type. See 
+	 * Uuids are appended as mongo::bdtUUID binary type. See
 	 * http://api.mongodb.org/cplusplus/1.9.0/bsontypes_8h_source.html
 	 *
 	 * \sa toBSONObj();
@@ -336,7 +363,7 @@ protected :
 	// Var
 	//
     //--------------------------------------------------------------------------
-	
+
 	std::string type; //!< Compulsory type of this document.
 
 	unsigned int api; //!< Compulsory API level of this document (used to decode).
@@ -345,24 +372,30 @@ protected :
 
 	boost::uuids::uuid uniqueID; //!< Compulsory unique database document identifier.
 
+	boost::uuids::uuid revisionID; //!< Revision ID
+
+	std::vector<boost::uuids::uuid> mergeMap; // Node merged into this one
+	std::vector<RepoVertexMap > vertMergeMap; // Map to vertices of merged nodes
+	std::vector<RepoTriangleMap > triMergeMap; // Map to triangles of merged nodes
+
 	std::string name; //!< Optional name of this document.
 
 	//! Parents of this node.
-	/*! 
-	 * Parents are a std:set to make sure all entries are unique.		  
+	/*!
+	 * Parents are a std:set to make sure all entries are unique.
 	 */
     std::set<const RepoNodeAbstract *> parents;
 
 	/*!
 	 * Shared IDs of the parents. Needs to be in sync with
-	 * parents set. This is only useful when retrieving data from the 
+	 * parents set. This is only useful when retrieving data from the
 	 * repository as this set can otherwise be calculated on the fly.
 	 */
-	std::set<boost::uuids::uuid> parentSharedIDs; 
+	std::set<boost::uuids::uuid> parentSharedIDs;
 
 	//! Children of this node.
-	/*! 
-	 * Children are a std:set to make sure all entries are unique.		  
+	/*!
+	 * Children are a std:set to make sure all entries are unique.
 	 */
     // TODO: remove const
     std::set<const RepoNodeAbstract *> children;

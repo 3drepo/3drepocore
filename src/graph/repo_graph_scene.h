@@ -64,8 +64,10 @@ public :
 	 */
 	RepoGraphScene(
 		const aiScene *scene,
-		const std::map<std::string, RepoNodeAbstract *> &textures);
-
+		const std::map<std::string, RepoNodeAbstract *> &textures,
+		assimp_map &nodeMap
+		);
+    
 	/*!
 	 * Constructs a graph from a collection of BSON objects.
 	 *
@@ -144,14 +146,19 @@ public :
     //! Clears contents but does not deallocate memory!
     void clear();
 
-
     /*!
      * Recursively removes node and any of its orphaned children.
      * Warning: Deletes memory and sets nodes to NULL.
      */
     virtual void removeNodeRecursively(RepoNodeAbstract* node);
 
+    //! Populate the optimized maps for each node
+    void populateOptimMaps(const assimp_map& assimpMap, const assimp_map& assimpMapOptim);
 protected :
+
+    //! Populate the optimized maps for each node
+    void populateOptimMaps(RepoNodeAbstract *current, const assimp_map &assimpMap, const assimp_map &assimpMapOptim);
+
 
     // TODO: The vectors should be lists or sets to prevent excessive copying!
 

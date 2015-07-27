@@ -323,7 +323,7 @@ struct RepoNodeMeshHasher {
         RepoNodeMesh* mesh = ((RepoNodeMesh*)node);
         if (mesh->getVertexHash().empty())
             mesh->setVertexHash();
-        return hash<std::string>()(mesh->getVertexHash()); }
+        return std::hash<std::string>()(mesh->getVertexHash()); }
 };
 
 } // end namespace core

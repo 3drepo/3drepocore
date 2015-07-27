@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "repo_node_abstract.h"
+#include "../conversion/repo_transcoder_bson.h"
 
 //------------------------------------------------------------------------------
 //
@@ -35,6 +35,12 @@ repo::core::RepoNodeAbstract::RepoNodeAbstract(const mongo::BSONObj &obj)
 		sharedID = RepoTranscoderBSON::retrieve(
 			obj.getField(REPO_NODE_LABEL_SHARED_ID));
 
+    //--------------------------------------------------------------------------
+	// Revision ID
+	if (obj.hasField(REPO_NODE_LABEL_REVISION_ID))
+		revisionID = RepoTranscoderBSON::retrieve(
+			obj.getField(REPO_NODE_LABEL_REVISION_ID));
+	
     //--------------------------------------------------------------------------
 	// Type
 	if (obj.hasField(REPO_NODE_LABEL_TYPE))
@@ -112,15 +118,15 @@ std::vector<std::vector<boost::uuids::uuid>>
 	std::vector<std::vector<boost::uuids::uuid>> ret;
 
 	if (node->isRoot())
-	{	
+	{
         //----------------------------------------------------------------------
 		// Base case
 		std::vector<boost::uuids::uuid> vec;
 		vec.push_back(node->sharedID);
 		ret.push_back(vec);
 	}
-	else 
-	{	
+	else
+	{
         //----------------------------------------------------------------------
 		// Recursion
         std::set<const RepoNodeAbstract *>::iterator it;
@@ -128,8 +134,8 @@ std::vector<std::vector<boost::uuids::uuid>>
         {
             const RepoNodeAbstract *parent = *it;
             std::vector<std::vector<boost::uuids::uuid> > paths =
-				getPaths(parent);			
-			
+				getPaths(parent);
+
             //------------------------------------------------------------------
 			// Store the current node in all the so far accumulated paths
             std::vector<std::vector<boost::uuids::uuid> >::iterator itt;
@@ -139,7 +145,7 @@ std::vector<std::vector<boost::uuids::uuid>>
                 vec.push_back(node->sharedID);
 				ret.push_back(vec);
 			}
-		}		
+		}
 	}
 	return ret;
 }
@@ -158,7 +164,7 @@ void repo::core::RepoNodeAbstract::getSubNodes(
 }
 
 std::set<boost::uuids::uuid> repo::core::RepoNodeAbstract::
-	getParentSharedIDs() 
+	getParentSharedIDs()
 {
 	if (parents.size() > parentSharedIDs.size())
 	{
@@ -173,6 +179,34 @@ std::set<boost::uuids::uuid> repo::core::RepoNodeAbstract::
 	return parentSharedIDs;
 }
 
+
+void repo::core::RepoNodeAbstract::mergeInto(const boost::uuids::uuid &mergedNode)
+{
+	mergeMap.push_back(mergedNode);	
+}
+
+void repo::core::RepoNodeAbstract::addVertexMergeMap(const boost::uuids::uuid &mergedNode, int from, int to)
+{
+	RepoVertexMap newMap;
+	newMap.map_id 	= mergedNode;
+	newMap.from 	= from;
+	newMap.to 		= to;	
+
+	vertMergeMap.push_back(newMap);
+}
+
+void repo::core::RepoNodeAbstract::addTriangleMergeMap(const boost::uuids::uuid &mergedNode, int from, int to, int offset)
+{
+	RepoTriangleMap newMap;
+	newMap.map_id 	= mergedNode;
+	newMap.from 	= from;
+	newMap.to 		= to;	
+	newMap.offset	= offset;
+
+	triMergeMap.push_back(newMap);
+}
+
+
 //------------------------------------------------------------------------------
 //
 // Export
@@ -181,7 +215,7 @@ std::set<boost::uuids::uuid> repo::core::RepoNodeAbstract::
 
 void repo::core::RepoNodeAbstract::appendDefaultFields(
 	mongo::BSONObjBuilder &builder) const
-{	
+{
     //--------------------------------------------------------------------------
 	// ID field (UUID)
 	RepoTranscoderBSON::append(REPO_NODE_LABEL_ID, uniqueID, builder);
@@ -189,16 +223,20 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
     //--------------------------------------------------------------------------
 	// Shared ID (UUID)
 	RepoTranscoderBSON::append(REPO_NODE_LABEL_SHARED_ID, sharedID, builder);
-		
+
+    //--------------------------------------------------------------------------
+	// Revision ID (UUID)
+	RepoTranscoderBSON::append(REPO_NODE_LABEL_REVISION_ID, revisionID, builder);
+
     //--------------------------------------------------------------------------
 	// Paths
-	// 
+	//
 	// Paths are stored as array of arrays of shared_id (uuids)
-	const std::vector<std::vector<boost::uuids::uuid>> paths = 
+	const std::vector<std::vector<boost::uuids::uuid>> paths =
 		getPaths(this);
 	if (paths.size() > 0)
 		RepoTranscoderBSON::append(REPO_NODE_LABEL_PATHS, paths, builder);
-			
+
     //--------------------------------------------------------------------------
 	// Type
 	if (!type.empty())
@@ -210,7 +248,7 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
 
     //--------------------------------------------------------------------------
 	// Parents
-	if (!isRoot()) 
+	if (!isRoot())
 	{
 		std::vector<boost::uuids::uuid> parentalUUIDs;
         std::set<const RepoNodeAbstract *>::iterator it;
@@ -229,6 +267,22 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
 	// Name
 	if (!name.empty())
 		builder <<  REPO_NODE_LABEL_NAME << name;
+
+    //--------------------------------------------------------------------------
+	// Merged nodes
+	if (mergeMap.size())
+		RepoTranscoderBSON::append(REPO_LABEL_MERGED_NODES, mergeMap, builder);
+
+    //--------------------------------------------------------------------------
+	// Vertex map
+	if (vertMergeMap.size())
+		RepoTranscoderBSON::append(REPO_LABEL_VERTEX_MAP, vertMergeMap, builder);
+
+    //--------------------------------------------------------------------------
+	// Triangle map
+	if (triMergeMap.size())
+		RepoTranscoderBSON::append(REPO_LABEL_TRIANGLE_MAP, triMergeMap, builder);
+
 }
 
 //------------------------------------------------------------------------------
