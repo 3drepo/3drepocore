@@ -285,6 +285,13 @@ public:
 		const mongo::BSONArray& array,
 		int skip);
 
+    //! Retrieves all objects with a specific rev_id
+    std::auto_ptr<mongo::DBClientCursor> findAllByRevID(
+        const std::string& database, 
+        const std::string& collection, 
+        const std::string& uuid,
+        int skip);
+
 	// TODO: move logic to repo_core.
 	//! Retrieves fields matching given Unique ID (UID).
 	mongo::BSONObj findOneByUniqueID(
@@ -302,6 +309,16 @@ public:
 		const std::string& uuid,
 		const std::string& sortField,
 		const std::list<std::string>& fields);
+
+    /*! Retrieves fields matching given Rev_ID (RID), sorting is descending
+     * (newest first).
+     */
+    mongo::BSONObj findOneByRevID(
+        const std::string& database,
+        const std::string& collection,
+        const std::string& uuid,
+        const std::string& sortField,
+        const std::list<std::string>& fields);
 
     //! Run db.eval command on the specified database.
     mongo::BSONElement eval(const std::string &database,

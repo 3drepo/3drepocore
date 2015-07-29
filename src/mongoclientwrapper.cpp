@@ -629,6 +629,32 @@ std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::findAllByUn
 	return cursor;
 }
 
+std::auto_ptr<mongo::DBClientCursor> repo::core::MongoClientWrapper::findAllByRevID(
+    const std::string& database, 
+    const std::string& collection, 
+    const std::string& uuid,
+    int skip)
+{
+    // http://stackoverflow.com/questions/18023949/how-to-build-a-mongo-in-query-in-c
+    std::auto_ptr<mongo::DBClientCursor> cursor;
+    try 
+    {
+        mongo::BSONObjBuilder queryBuilder;
+        appendUUID(REPO_NODE_LABEL_REVISION_ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
+
+        cursor = clientConnection.query(
+            getNamespace(database, collection), 
+            queryBuilder.obj(), 
+            0, 
+            skip);
+        checkForError();                    
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }   
+    return cursor;
+}
 
 mongo::BSONObj repo::core::MongoClientWrapper::findOneByUniqueID(
 	const std::string& database,
@@ -641,7 +667,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneByUniqueID(
 	{	
 		mongo::BSONObjBuilder queryBuilder;
         mongo::BSONObj obj = fieldsToReturn(fields);
-		appendUUID(ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
+		appendUUID(REPO_NODE_LABEL_ID, repo::core::RepoTranscoderString::stringToUUID(uuid), queryBuilder);
 		bson = clientConnection.findOne(getNamespace(database, collection),
             mongo::Query(queryBuilder.obj()), &obj);
 	}
@@ -664,7 +690,7 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	{	
 		mongo::BSONObjBuilder queryBuilder;
         mongo::BSONObj obj = fieldsToReturn(fields);
-        appendUUID("shared_id", RepoTranscoderString::stringToUUID(uuid), queryBuilder);
+        appendUUID(REPO_NODE_LABEL_SHARED_ID, RepoTranscoderString::stringToUUID(uuid), queryBuilder);
         //----------------------------------------------------------------------
 		bson = clientConnection.findOne(
 			getNamespace(database, collection),
@@ -678,6 +704,31 @@ mongo::BSONObj repo::core::MongoClientWrapper::findOneBySharedID(
 	return bson;
 }
 
+mongo::BSONObj repo::core::MongoClientWrapper::findOneByRevID(
+        const std::string& database,
+        const std::string& collection,
+        const std::string& uuid,
+        const std::string& sortField,
+        const std::list<std::string>& fields)
+{
+    mongo::BSONObj bson;
+    try
+    {   
+        mongo::BSONObjBuilder queryBuilder;
+        mongo::BSONObj obj = fieldsToReturn(fields);
+        appendUUID(REPO_NODE_LABEL_REVISION_ID, RepoTranscoderString::stringToUUID(uuid), queryBuilder);
+        //----------------------------------------------------------------------
+        bson = clientConnection.findOne(
+            getNamespace(database, collection),
+            mongo::Query(queryBuilder.obj()).sort(sortField, -1), 
+            &obj);
+    }
+    catch (mongo::DBException& e)
+    {
+        log(std::string(e.what()));
+    }       
+    return bson;
+}
 
 mongo::BSONElement repo::core::MongoClientWrapper::eval(
         const std::string &database,
