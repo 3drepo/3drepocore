@@ -38,12 +38,6 @@ using namespace std;
 namespace repo {
 namespace core {
 
-struct _RepoVertexMap;
-struct _RepoTriangleMap;
-
-typedef _RepoVertexMap RepoVertexMap;
-typedef _RepoTriangleMap RepoTriangleMap;
-
 /*!
  * Static class that appends various data types to BSON builders in order
  * to store data in MongoDB.
@@ -247,28 +241,24 @@ public :
             memcpy(&(vec->at(0)), binData, length);
 		}
     }
+	
+	static void appendMap
+	(
+		const std::string &label,
+		const meshMultiVertexMap &triMergeMap,
+		mongo::BSONObjBuilder &builder
+	);
+
+	static void appendMap
+	(
+		const std::string &label,
+		const meshMultiTriangleMap &vertMergeMap,
+		mongo::BSONObjBuilder &builder
+	);
 
 }; // end class
 
 } // end namespace core
 } // end namespace repo
-
-
-// Template specializations
-template <>
-void repo::core::RepoTranscoderBSON::append
-(
-	const std::string &label,
-	const std::vector<repo::core::RepoVertexMap> &vertMergeMap,
-	mongo::BSONObjBuilder &builder
-); 
-
-template <>
-void repo::core::RepoTranscoderBSON::append
-(
-	const std::string &label,
-	const std::vector<repo::core::RepoTriangleMap> &triMergeMap,
-	mongo::BSONObjBuilder &builder
-); 
 
 #endif // end REPO_TRANSCODER_BSON_H

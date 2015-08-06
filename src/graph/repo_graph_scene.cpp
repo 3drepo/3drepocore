@@ -77,6 +77,8 @@ repo::core::RepoGraphScene::RepoGraphScene(
             meshes.insert(mesh);
             meshesVector.push_back(mesh);
 			nodesByUniqueID.insert(std::make_pair(mesh->getUniqueID(), mesh));
+
+			assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(scene->mMeshes[i]), mesh));
 		}
 	}
 
@@ -238,78 +240,131 @@ void repo::core::RepoGraphScene::populateOptimMaps(const repo::core::assimp_map 
 
 void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract *current, const repo::core::assimp_map &assimpMap, const repo::core::assimp_map &assimpMapOptim)
 {
-	// First find the assimp node that relates to the abstract node
-	assimp_map::right_const_iterator ait = assimpMapOptim.right.find(current);
-
-	if (ait == assimpMapOptim.right.end()) // Orphan part of the graph
-	{	
-		// TODO: Throw error here.
-		return;
-	}
-
-	aiNode *node = reinterpret_cast<aiNode *>(ait->second); // All nodes in the optimized graph should exist
-
-	std::cout << to_string(current->getUniqueID()) << std::endl;
-
-	if (node && node->mOptimMap)
+	if (current->getType() != "mesh")
 	{
-		aiOptimMap *ai_map = node->mOptimMap;
-		std::set<uintptr_t> &mergeMap = ai_map->mergeMap;
+		// First find the assimp node that relates to the abstract node
+		assimp_map::right_const_iterator ait = assimpMapOptim.right.find(current);
 
-		for(std::set<uintptr_t>::iterator it = mergeMap.begin(); it!=mergeMap.end(); ++it)
-		{
-			uintptr_t mergedNode = *it;
-
-			// Find the corresponding abstract node for an assimp 
-			assimp_map::left_const_iterator nit = assimpMap.left.find(mergedNode);
-
-			if (nit != assimpMap.left.end())
-			{
-				RepoNodeAbstract *node = nit->second;
-				boost::uuids::uuid mergedUUID = node->getUniqueID();
-
-				current->mergeInto(mergedUUID);
-			}
+		if (ait == assimpMapOptim.right.end()) // Orphan part of the graph
+		{	
+			// TODO: Throw error here.
+			return;
 		}
 
-		// Now populate the vertex maps
-		for(const aiVMap &vMap: ai_map->vertexMaps)
-		{
-			assimp_map::left_const_iterator childIT = assimpMap.left.find(vMap.childPointer);
+		aiNode *node = reinterpret_cast<aiNode *>(ait->second); // All nodes in the optimized graph should exist
 
-			if (childIT != assimpMap.left.end())
+		std::cout << to_string(current->getUniqueID()) << std::endl;
+
+		if (node && node->mOptimMap)
+		{
+			aiOptimMap *ai_map = node->mOptimMap;
+
+			for(uintptr_t mergedNode : ai_map->mergeMap)
 			{
-				boost::uuids::uuid childUUID = childIT->second->getUniqueID();
-				current->addVertexMergeMap(childUUID, vMap.startVertexIDX, vMap.endVertexIDX);
-			} else {
-				// TODO: throw error here
+				// Find the corresponding abstract node for an assimp 
+				assimp_map::left_const_iterator nit = assimpMap.left.find(mergedNode);
+
+				if (nit != assimpMap.left.end())
+				{
+					RepoNodeAbstract *node = nit->second;
+					boost::uuids::uuid mergedUUID = node->getUniqueID();
+
+					current->mergeInto(mergedUUID);
+				}
 			}
+
+			// Now populate the vertex maps
+			for(std::map<uintptr_t, std::vector<aiVMap> >::value_type vertexMap : ai_map->vertexMaps)
+			{
+				// First find the mesh that all the meshes were merged into
+				assimp_map::left_const_iterator mergedMeshIT = assimpMap.left.find(vertexMap.first);
+
+				//std::cout << "CPZ: " << vertexMap.second[0].childMesh << std::endl;
+
+				if (mergedMeshIT == assimpMap.left.end())
+				{
+					// TODO: throw error here
+				} else {
+					boost::uuids::uuid parentUUID = mergedMeshIT->second->getUniqueID();
+
+					for(const aiVMap& vMap : vertexMap.second)
+					{
+						std::cout << "MESH# : " << vMap.childMesh << " [" << vMap.startVertexIDX << ", " << vMap.endVertexIDX << "]" << std::endl;
+
+						// Search for the Unique ID for this child
+						assimp_map::left_const_iterator childIT = assimpMap.left.find(vMap.childMesh);
+
+						if (childIT != assimpMap.left.end())
+						{
+							boost::uuids::uuid childUUID = childIT->second->getUniqueID();
+							current->addVertexMergeMap(parentUUID, childUUID, vMap.startVertexIDX, vMap.endVertexIDX);
+						} else {
+							// TODO: throw error here
+						}
+					}
+				}
+			}
+
+			// Now populate the triangle maps
+			for(std::map<uintptr_t, std::vector<aiTMap> >::value_type triangleMap : ai_map->triangleMaps)
+			{
+				// First find the mesh that all the meshes were merged into
+				assimp_map::left_const_iterator mergedMeshIT = assimpMap.left.find(triangleMap.first);
+
+				if (mergedMeshIT == assimpMap.left.end())
+				{
+					// TODO: throw error here
+				} else {
+					boost::uuids::uuid parentUUID = mergedMeshIT->second->getUniqueID();
+				
+					for(const aiTMap& tMap : triangleMap.second)
+					{
+						std::cout << "MESH# : " << tMap.childMesh << " [" << tMap.startTriangleIDX << ", " << tMap.endTriangleIDX << ", " << tMap.offset << "]" << std::endl;
+
+						// Search for the Unique ID for this child
+						assimp_map::left_const_iterator childIT = assimpMap.left.find(tMap.childMesh);
+
+						if (childIT != assimpMap.left.end())
+						{
+							boost::uuids::uuid childUUID = childIT->second->getUniqueID();
+							current->addTriangleMergeMap(parentUUID, childUUID, tMap.startTriangleIDX, tMap.endTriangleIDX, tMap.offset);
+						} else {
+							// TODO: throw error here
+						}
+					}		
+				}
+			}	
+		} else {
+			// TODO: throw error here
 		}
-
-		// Now populate the triangle maps
-		for(const aiTMap &tMap: ai_map->triangleMaps)
-		{
-			assimp_map::left_const_iterator childIT = assimpMap.left.find(tMap.childPointer);
-
-			if (childIT != assimpMap.left.end())
-			{
-				boost::uuids::uuid childUUID = childIT->second->getUniqueID();
-				current->addTriangleMergeMap(childUUID, tMap.startTriangleIDX, tMap.endTriangleIDX, tMap.offset);
-			} else {
-				// TODO: throw error here
-			}
-		}	
-	} else {
-		// TODO: throw error here
 	}
 
-	auto children = current->getChildren();
+	const std::set<const repo::core::RepoNodeAbstract *> &children = current->getChildren();
 
     //--------------------------------------------------------------------------
 	// Register child transformations as children if any
-	for (auto node_it = children.begin(); node_it != children.end(); ++node_it)
+	for (const RepoNodeAbstract *child : children)
 	{
-		populateOptimMaps(*node_it, assimpMap, assimpMapOptim);
+		populateOptimMaps(child, assimpMap, assimpMapOptim);
+
+		if (child->getType() == "mesh")
+		{
+			uintptr_t childPointer = reinterpret_cast<uintptr_t>(child);
+
+			// First find the mesh that all the meshes were merged into
+			assimp_map::left_const_iterator childIT = assimpMapOptim.left.find(childPointer);
+
+			if (childIT == assimpMap.left.end())
+			{
+				// TODO: throw error here
+			} else {
+
+				std::cout << "Transferring vertex and triangle maps" << std::endl;
+
+				child->transferVertexMap(current);
+				child->transferTriangleMap(current);
+			}
+		}
 	}
 }
 

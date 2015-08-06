@@ -175,53 +175,64 @@ std::pair<aiVector3D, aiVector3D> repo::core::RepoTranscoderBSON::
     return std::make_pair(min, max);
 }
 
-// Template specializations
-template <>
-void repo::core::RepoTranscoderBSON::append
+void repo::core::RepoTranscoderBSON::appendMap
 (
 	const std::string &label,
-	const std::vector<repo::core::RepoVertexMap> &vertMergeMap,
+	const meshMultiVertexMap &vertMergeMap,
 	mongo::BSONObjBuilder &builder
 ) 
 {
-	int idx = 0;
-	mongo::BSONObjBuilder array;
+	mongo::BSONObjBuilder mapBuilder;
 
-	for (const repo::core::RepoVertexMap& vm : vertMergeMap)
+	for (const meshMultiVertexMap::value_type &meshVertMaps : vertMergeMap)
 	{
-		mongo::BSONObjBuilder elem;
-		append(REPO_LABEL_MAP_ID, vm.map_id, elem);
-		append(REPO_LABEL_FROM, vm.from, elem);
-		append(REPO_LABEL_TO, vm.to, elem);
+		int idx = 0;
+		mongo::BSONObjBuilder array;
 
-		append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+		for (const repo::core::RepoVertexMap &vertMap : meshVertMaps.second)
+		{
+			mongo::BSONObjBuilder elem;
+			append(REPO_LABEL_MAP_ID, vertMap.getMeshID(), elem);
+			append(REPO_LABEL_FROM, vertMap.getFrom(), elem);
+			append(REPO_LABEL_TO, vertMap.getTo(), elem);
+
+			append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+		}
+
+		mapBuilder.append(to_string(meshVertMaps.first), array.obj());
 	}
 
-	builder.appendArray(label, array.obj());
+	builder.appendArray(label, mapBuilder.obj());
 }
 
-template <>
-void repo::core::RepoTranscoderBSON::append
+void repo::core::RepoTranscoderBSON::appendMap
 (
 	const std::string &label,
-	const std::vector<repo::core::RepoTriangleMap> &triMergeMap,
+	const meshMultiTriangleMap &triMergeMap,
 	mongo::BSONObjBuilder &builder
 ) 
 {
-	int idx = 0;
-	mongo::BSONObjBuilder array;
+	mongo::BSONObjBuilder mapBuilder;
 
-	for (const repo::core::RepoTriangleMap& tm : triMergeMap)
+	for (const meshMultiTriangleMap::value_type &meshTriangleMaps : triMergeMap)
 	{
-		mongo::BSONObjBuilder elem;
-		append(REPO_LABEL_MAP_ID, tm.map_id, elem);
-		append(REPO_LABEL_FROM, tm.from, elem);
-		append(REPO_LABEL_TO, tm.to, elem);
-		append(REPO_LABEL_OFFSET, tm.offset, elem);
+		int idx = 0;
+		mongo::BSONObjBuilder array;
 
-		append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+		for (const repo::core::RepoTriangleMap &triMap : meshTriangleMaps.second)
+		{
+			mongo::BSONObjBuilder elem;
+			append(REPO_LABEL_MAP_ID, triMap.getMeshID(), elem);
+			append(REPO_LABEL_FROM, triMap.getFrom(), elem);
+			append(REPO_LABEL_TO, triMap.getTo(), elem);
+			append(REPO_LABEL_OFFSET, triMap.getOffset(), elem);
+
+			append(boost::lexical_cast<string>(idx++), elem.obj(), array);
+		}
+
+		mapBuilder.append(to_string(meshTriangleMaps.first), array.obj());
 	}
 
-	builder.appendArray(label, array.obj());
+	builder.appendArray(label, mapBuilder.obj());
 }
 

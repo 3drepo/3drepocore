@@ -26,6 +26,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/tuple/tuple.hpp>
 //------------------------------------------------------------------------------
+#include "repo_merge_map.h"
 #include "../conversion/repo_transcoder_string.h"
 //------------------------------------------------------------------------------
 #include "../conversion/repo_transcoder_bson.h"
@@ -34,20 +35,6 @@
 
 namespace repo {
 namespace core {
-
-//! Types that represent the vertex and triangle maps
-typedef struct _RepoVertexMap {
-	boost::uuids::uuid map_id;
-	int from;
-	int to;
-} RepoVertexMap;
-
-typedef struct _RepoTriangleMap {
-	boost::uuids::uuid map_id;
-	int from;
-	int to;
-	int offset;
-} RepoTriangleMap;
 
 //! Base abstract class for all entries stored in 3D Repo.
 /*!
@@ -310,8 +297,11 @@ public :
 
 	//! Optimization mapping for vertices and triangles
     void mergeInto(const boost::uuids::uuid &mergedNode);
-    void addVertexMergeMap(const boost::uuids::uuid &mergedNode, int from, int to);
-    void addTriangleMergeMap(const boost::uuids::uuid &mergedNode, int from, int to, int offset);
+    void addVertexMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to);
+    void addTriangleMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to, int offset);
+
+    void transferVertexMap(repo::core::RepoNodeAbstract *source);
+    void transferTriangleMap(repo::core::RepoNodeAbstract *source);
 
     //--------------------------------------------------------------------------
 	//
@@ -375,8 +365,8 @@ protected :
 	boost::uuids::uuid revisionID; //!< Revision ID
 
 	std::vector<boost::uuids::uuid> mergeMap; // Node merged into this one
-	std::vector<RepoVertexMap > vertMergeMap; // Map to vertices of merged nodes
-	std::vector<RepoTriangleMap > triMergeMap; // Map to triangles of merged nodes
+	repo::core::meshMultiVertexMap vertMergeMap; // Map to vertices of merged nodes
+	repo::core::meshMultiTriangleMap triMergeMap; // Map to triangles of merged nodes
 
 	std::string name; //!< Optional name of this document.
 
