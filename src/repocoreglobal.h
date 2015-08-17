@@ -20,12 +20,14 @@
 #ifndef REPO_CORE_GLOBAL_H
 #define REPO_CORE_GLOBAL_H
 
-#pragma warning( disable : 4996 )
-#pragma warning( disable : 4267 )
-#pragma warning( disable : 4251 )
-#pragma warning( disable : 4244 )
-#pragma warning( disable : 4100 )
-#pragma warning( disable : 4005 )
+#if defined(_WIN32) || defined(_WIN64)
+	#pragma warning( disable : 4996 )
+	#pragma warning( disable : 4267 )
+	#pragma warning( disable : 4251 )
+	#pragma warning( disable : 4244 )
+	#pragma warning( disable : 4100 )
+	#pragma warning( disable : 4005 )
+ #endif
 
 //------------------------------------------------------------------------------
 #if defined(_WIN32) || defined(_WIN64)
@@ -69,12 +71,13 @@
 // Vertex/triangle map propeties
 #define REPO_LABEL_MERGED_NODES 	"merged_nodes"
 #define REPO_LABEL_MAP_ID			"map_id"
-#define REPO_LABEL_FROM 			"from"
-#define REPO_LABEL_TO 				"to"
-#define REPO_LABEL_OFFSET			"offset"
+#define REPO_LABEL_VERTEX_FROM 		"v_from"
+#define REPO_LABEL_VERTEX_TO 		"v_to"
+#define REPO_LABEL_TRIANGLE_FROM	"t_from"
+#define REPO_LABEL_TRIANGLE_TO		"t_to"
+#define REPO_LABEL_MATERIAL_ID		"mat_id"
 
-#define REPO_LABEL_VERTEX_MAP		"v_map"
-#define REPO_LABEL_TRIANGLE_MAP		"t_map"
+#define REPO_LABEL_MERGE_MAP		"m_map"
 
 #define REPO_COMMAND_UPDATE         "update"
 #define REPO_COMMAND_UPDATES        "updates"

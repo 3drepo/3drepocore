@@ -139,7 +139,7 @@ bool repo::core::RepoNodeTexture::operator==(const RepoNodeAbstract& other) cons
 // Export
 //
 //------------------------------------------------------------------------------
-mongo::BSONObj repo::core::RepoNodeTexture::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeTexture::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
 	mongo::BSONObjBuilder builder;
 

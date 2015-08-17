@@ -132,7 +132,7 @@ bool repo::core::RepoNodeCamera::operator==(const RepoNodeAbstract& other) const
 // Export
 //
 //------------------------------------------------------------------------------
-mongo::BSONObj repo::core::RepoNodeCamera::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeCamera::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
 	mongo::BSONObjBuilder builder;
 	

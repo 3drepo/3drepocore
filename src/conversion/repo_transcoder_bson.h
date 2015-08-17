@@ -245,17 +245,9 @@ public :
 	static void appendMap
 	(
 		const std::string &label,
-		const meshMultiVertexMap &triMergeMap,
+		const meshMultiMap &mergeMap,
 		mongo::BSONObjBuilder &builder
 	);
-
-	static void appendMap
-	(
-		const std::string &label,
-		const meshMultiTriangleMap &vertMergeMap,
-		mongo::BSONObjBuilder &builder
-	);
-
 }; // end class
 
 } // end namespace core

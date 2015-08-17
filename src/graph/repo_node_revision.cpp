@@ -136,7 +136,7 @@ bool repo::core::RepoNodeRevision::operator==(const RepoNodeAbstract& other) con
 //
 //------------------------------------------------------------------------------
 
-mongo::BSONObj repo::core::RepoNodeRevision::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeRevision::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
 	mongo::BSONObjBuilder builder;
 

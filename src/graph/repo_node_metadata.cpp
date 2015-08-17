@@ -156,7 +156,7 @@ bool repo::core::RepoNodeMetadata::operator==(const RepoNodeAbstract& other) con
 
 }
 
-mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeMetadata::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
     mongo::BSONObjBuilder builder;
 

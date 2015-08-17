@@ -85,7 +85,7 @@ repo::core::RepoNodeAbstract* repo::core::RepoGraphAbstract::getNodeByUniqueID(
 	const boost::uuids::uuid& uid) const
 {
 	RepoNodeAbstract* node = NULL;
-	std::map<boost::uuids::uuid, RepoNodeAbstract*>::const_iterator it =
+	std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >::const_iterator it =
 		nodesByUniqueID.find(uid);
 	if (nodesByUniqueID.end() != it)		
 		node = it->second;
@@ -107,7 +107,7 @@ repo::core::RepoNodeAbstract* repo::core::RepoGraphAbstract::addNodeByUniqueID(
 	if (node)
 	{
 		boost::uuids::uuid uid = node->getUniqueID();
-        std::pair<std::map<boost::uuids::uuid,RepoNodeAbstract*>::iterator,bool>
+        std::pair<std::unordered_map<boost::uuids::uuid,RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >::iterator,bool>
                 ret = nodesByUniqueID.insert(std::make_pair(uid, node));
 
 		// If there was a previous entry with the same UID (insertion failed), 
@@ -147,10 +147,10 @@ void repo::core::RepoGraphAbstract::printDAG() const
 
 //------------------------------------------------------------------------------
 void repo::core::RepoGraphAbstract::buildGraph(
-	const std::map<boost::uuids::uuid, RepoNodeAbstract*>& nodesBySharedID) const
+	const std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >& nodesBySharedID) const
 {
-	std::map<boost::uuids::uuid, RepoNodeAbstract*>::const_iterator it;		
-	std::map<boost::uuids::uuid, RepoNodeAbstract*>::const_iterator finder;	
+	std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >::const_iterator it;		
+	std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >::const_iterator finder;	
 
 	for (it = nodesBySharedID.begin(); it!= nodesBySharedID.end(); ++it)
 	{
@@ -176,7 +176,7 @@ void repo::core::RepoGraphAbstract::buildGraph(
 void repo::core::RepoGraphAbstract::clear()
 {
     rootNode = NULL;
-    std::map<boost::uuids::uuid, RepoNodeAbstract*>::iterator it;
+    std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> >::iterator it;
     for (it = nodesByUniqueID.begin(); it != nodesByUniqueID.end(); ++it)
     {
         //nodesByUniqueID;

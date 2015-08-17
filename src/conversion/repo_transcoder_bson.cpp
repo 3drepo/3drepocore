@@ -178,61 +178,32 @@ std::pair<aiVector3D, aiVector3D> repo::core::RepoTranscoderBSON::
 void repo::core::RepoTranscoderBSON::appendMap
 (
 	const std::string &label,
-	const meshMultiVertexMap &vertMergeMap,
+	const meshMultiMap &mergeMaps,
 	mongo::BSONObjBuilder &builder
 ) 
 {
 	mongo::BSONObjBuilder mapBuilder;
 
-	for (const meshMultiVertexMap::value_type &meshVertMaps : vertMergeMap)
+	for (const meshMultiMap::value_type &mergeMap : mergeMaps)
 	{
 		int idx = 0;
 		mongo::BSONObjBuilder array;
 
-		for (const repo::core::RepoVertexMap &vertMap : meshVertMaps.second)
+		for (const repo::core::RepoMap &map : mergeMap.second)
 		{
 			mongo::BSONObjBuilder elem;
-			append(REPO_LABEL_MAP_ID, vertMap.getMeshID(), elem);
-			append(REPO_LABEL_FROM, vertMap.getFrom(), elem);
-			append(REPO_LABEL_TO, vertMap.getTo(), elem);
+			append(REPO_LABEL_MAP_ID, map.getMeshID(), elem);
+			append(REPO_LABEL_MATERIAL_ID, map.getMaterialID(), elem);
+			append(REPO_LABEL_VERTEX_FROM, map.getVertexFrom(), elem);
+			append(REPO_LABEL_VERTEX_TO, map.getVertexTo(), elem);
+			append(REPO_LABEL_TRIANGLE_FROM, map.getVertexFrom(), elem);
+			append(REPO_LABEL_TRIANGLE_TO, map.getVertexTo(), elem);
 
 			append(boost::lexical_cast<string>(idx++), elem.obj(), array);
 		}
 
-		mapBuilder.append(to_string(meshVertMaps.first), array.obj());
+		mapBuilder.append(to_string(mergeMap.first), array.obj());
 	}
 
 	builder.appendArray(label, mapBuilder.obj());
 }
-
-void repo::core::RepoTranscoderBSON::appendMap
-(
-	const std::string &label,
-	const meshMultiTriangleMap &triMergeMap,
-	mongo::BSONObjBuilder &builder
-) 
-{
-	mongo::BSONObjBuilder mapBuilder;
-
-	for (const meshMultiTriangleMap::value_type &meshTriangleMaps : triMergeMap)
-	{
-		int idx = 0;
-		mongo::BSONObjBuilder array;
-
-		for (const repo::core::RepoTriangleMap &triMap : meshTriangleMaps.second)
-		{
-			mongo::BSONObjBuilder elem;
-			append(REPO_LABEL_MAP_ID, triMap.getMeshID(), elem);
-			append(REPO_LABEL_FROM, triMap.getFrom(), elem);
-			append(REPO_LABEL_TO, triMap.getTo(), elem);
-			append(REPO_LABEL_OFFSET, triMap.getOffset(), elem);
-
-			append(boost::lexical_cast<string>(idx++), elem.obj(), array);
-		}
-
-		mapBuilder.append(to_string(meshTriangleMaps.first), array.obj());
-	}
-
-	builder.appendArray(label, mapBuilder.obj());
-}
-

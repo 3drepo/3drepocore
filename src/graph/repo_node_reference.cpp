@@ -102,7 +102,7 @@ bool repo::core::RepoNodeReference::operator==(const RepoNodeAbstract& other) co
             this->getIsUniqueID() == otherReference->getIsUniqueID();
 }
 
-mongo::BSONObj repo::core::RepoNodeReference::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeReference::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
     mongo::BSONObjBuilder builder;
 

@@ -977,6 +977,35 @@ void repo::core::MongoClientWrapper::insertRecord(
 	clientConnection.insert(getNamespace(database, collection), obj);
 }
 
+void repo::core::MongoClientWrapper::insertLargeFile(
+    const std::string &database,
+    const std::string &collection,
+    const repo::core::RepoLargeFile &file)
+{
+   mongo::GridFS gfs(clientConnection, database, collection);
+    
+   gfs.storeFile(file.getData(), file.getLength(), file.getFileName());
+}
+
+repo::core::RepoLargeFile &repo::core::MongoClientWrapper::getLargeFile(
+    const std::string &database,
+    const std::string &collection,
+    const std::string &fileName)
+{
+    mongo::GridFS gfs(clientConnection, database, collection);
+    mongo::GridFile tmpFile = gfs.findFile(fileName);
+
+    std::ostringstream oss;
+    tmpFile.write(oss);
+
+    repo::core::RepoLargeFile file;
+
+    file.setData(oss.str().c_str(), oss.str().size());
+    file.setFileName(fileName);
+  
+    return file;
+}
+
 //------------------------------------------------------------------------------
 
 void repo::core::MongoClientWrapper::insertRecords(

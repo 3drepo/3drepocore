@@ -29,91 +29,60 @@ namespace repo {
 namespace core {
 
 
-	class REPO_CORE_EXPORT RepoVertexMap {
+	class REPO_CORE_EXPORT RepoMap {
 
 	public:
-		RepoVertexMap(const boost::uuids::uuid &mesh_id,
-		int from,
-		int to) : mesh_id(mesh_id), from(from), to(to)
-		{};
+		RepoMap(const boost::uuids::uuid &mesh_id,
+		int vertFrom, int vertTo,
+		int triFrom, int triTo,
+		const boost::uuids::uuid &material_id) : mesh_id(mesh_id), 
+		material_id(material_id), vertFrom(vertFrom), vertTo(vertTo),
+		triFrom(triFrom), triTo(triTo) {};
 
 		const boost::uuids::uuid &getMeshID() const { return mesh_id; }
-		int getTo() const { return to; }
-		int getFrom() const { return from; }
+		int getVertexTo() const { return vertTo; }
+		int getVertexFrom() const { return vertFrom; }
+		int getTriangleTo() const { return triTo; }
+		int getTriangleFrom() const { return triFrom; }
+		const boost::uuids::uuid &getMaterialID() const { return material_id; }
 
 	private:
 		boost::uuids::uuid mesh_id;
-		int from;
-		int to;
+		boost::uuids::uuid material_id;
+		int vertFrom;
+		int vertTo;
+		int triFrom;
+		int triTo;
 	};
 
-	class REPO_CORE_EXPORT RepoTriangleMap {
-
-	public:
-		RepoTriangleMap(const boost::uuids::uuid &mesh_id,
-			int from,
-			int to,
-			int offset) : mesh_id(mesh_id), from(from), to(to), offset(offset)
-		{};
-
-		const boost::uuids::uuid &getMeshID() const { return mesh_id; }
-		int getTo() const { return to; }
-		int getFrom() const { return from; }
-		int getOffset() const { return offset; }
-
-	private:
-		boost::uuids::uuid mesh_id;
-		int from;
-		int to;
-		int offset;
-	};
-
-	// Hash function for unordered_set
-	struct RepoVertexMapHash
+	struct RepoMapHash
 	{
-		std::size_t operator() (const RepoVertexMap &r) const
+		std::size_t operator() (const RepoMap &m) const
 		{
 			std::size_t seed = 0;
-			boost::hash_combine(seed, r.getMeshID());
-			boost::hash_combine(seed, r.getFrom());
-			boost::hash_combine(seed, r.getTo());
+			boost::hash_combine(seed, m.getMeshID());
+			boost::hash_combine(seed, m.getVertexFrom());
+			boost::hash_combine(seed, m.getVertexTo());
+			boost::hash_combine(seed, m.getTriangleTo());
+			boost::hash_combine(seed, m.getTriangleFrom());
+			boost::hash_combine(seed, m.getMaterialID());
 
 			return seed;
 		}
 	};
 
-	struct RepoTriangleMapHash
-	{
-		std::size_t operator() (const RepoTriangleMap &t) const
-		{
-			std::size_t seed = 0;
-			boost::hash_combine(seed, t.getMeshID());
-			boost::hash_combine(seed, t.getFrom());
-			boost::hash_combine(seed, t.getTo());
-			boost::hash_combine(seed, t.getOffset());
-
-			return seed;
-		}
-	};
-
-	inline bool operator==(const RepoVertexMap& left, const RepoVertexMap &right)
+	inline bool operator==(const RepoMap &left, const RepoMap &right)
 	{
 		return (left.getMeshID() == right.getMeshID()) 
-			&& (left.getFrom() == right.getFrom())
-			&& (left.getTo() == right.getTo());
-	}
-
-	inline bool operator==(const RepoTriangleMap &left, const RepoTriangleMap &right)
-	{
-		return (left.getMeshID() == right.getMeshID()) 
-			&& (left.getFrom() == right.getFrom())
-			&& (left.getTo() == right.getTo())
-			&& (left.getOffset() == right.getOffset());
+			&& (left.getVertexFrom() == right.getVertexFrom())
+			&& (left.getVertexTo() == right.getVertexTo())
+			&& (left.getTriangleFrom() == right.getTriangleTo())
+			&& (left.getTriangleTo() == right.getTriangleTo())
+			&& (left.getMaterialID() == right.getMaterialID());
 	}
 
 	//! These maps contain multiple map for a single mesh
-	typedef std::map<boost::uuids::uuid, std::unordered_set<RepoVertexMap, RepoVertexMapHash> > meshMultiVertexMap; 
-	typedef std::map<boost::uuids::uuid, std::unordered_set<RepoTriangleMap, RepoTriangleMapHash> > meshMultiTriangleMap;
+	typedef std::map<boost::uuids::uuid, std::unordered_set<RepoMap, RepoMapHash> > meshMultiMap; 
 }
 }
 

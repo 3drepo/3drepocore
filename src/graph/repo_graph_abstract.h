@@ -26,6 +26,7 @@
 #include "repo_node_abstract.h"
 
 #include "../repocoreglobal.h"
+#include <unordered_map>
 
 
 namespace repo {
@@ -136,7 +137,7 @@ protected :
 	 * Efficiency is (n log n).
 	 */
 	virtual void buildGraph(
-        const std::map<boost::uuids::uuid, RepoNodeAbstract*> &idMapping) const;
+        const std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> > &idMapping) const;
 
 protected :
 
@@ -150,7 +151,7 @@ protected :
     RepoNodeAbstract *rootNode;
 
 	//! A lookup map for the all nodes the graph contains.
-    std::map<boost::uuids::uuid, RepoNodeAbstract*> nodesByUniqueID;
+    std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> > nodesByUniqueID;
 
 }; // end class
 

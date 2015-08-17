@@ -26,7 +26,7 @@
 repo::core::RepoGraphHistory::RepoGraphHistory(
 	const std::vector<mongo::BSONObj>& collection) : RepoGraphAbstract()
 {
-	std::map<boost::uuids::uuid, RepoNodeAbstract*> nodesBySharedID;
+	std::unordered_map<boost::uuids::uuid, RepoNodeAbstract*, boost::hash<boost::uuids::uuid> > nodesBySharedID;
     std::vector<mongo::BSONObj>::const_iterator it;
 
     for (it = collection.begin(); it != collection.end(); ++it)

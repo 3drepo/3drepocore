@@ -41,6 +41,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
         nodesByUniqueID.insert(std::make_pair(texture->getUniqueID(), texture));
     }
 
+    std::cout << "Materials ... [" << scene->mNumMaterials << "]" << std::endl;
     //--------------------------------------------------------------------------
 	// Materials
 	//
@@ -60,9 +61,12 @@ repo::core::RepoGraphScene::RepoGraphScene(
 				name.data);
 			materials.push_back(material);
 			nodesByUniqueID.insert(std::make_pair(material->getUniqueID(), material));
+
+			assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(scene->mMaterials[i]), material));
 		}
 	}
 
+    std::cout << "Meshes ... [" << scene->mNumMeshes << "]" << std::endl;
     //--------------------------------------------------------------------------
 	// Meshes
     std::vector<RepoNodeAbstract*> meshesVector;
@@ -82,6 +86,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 		}
 	}
 
+	std::cout << "Cameras ... " << std::endl;
     //--------------------------------------------------------------------------
 	// Cameras
 	std::map<std::string, RepoNodeAbstract *> camerasMap;
@@ -118,7 +123,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// Recursively converts aiNode and all of its children to a hierarchy
 	// of RepoNodeTransformations. Call with root node of aiScene.
 	// RootNode will be the first entry in transformations vector.
-
+	std::cout << "Transformations ... " << std::endl;
     std::vector<RepoNodeAbstract*> transformations;
     rootNode = new RepoNodeTransformation(scene->mRootNode,
                                           meshesVector,
@@ -135,12 +140,15 @@ repo::core::RepoGraphScene::RepoGraphScene(
 
     }
 
+	std::cout << "Map ... " << std::endl;
 	assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(scene->mRootNode), rootNode));
 
     for (it = metadata.begin(); it != metadata.end(); ++it)
     {
         nodesByUniqueID.insert(std::make_pair((*it)->getUniqueID(), (*it)));
     }
+
+    std::cout << "done." << std::endl;
 }
 
 
@@ -158,7 +166,7 @@ repo::core::RepoGraphScene::RepoGraphScene(
 	// collection of objects and is referenced the most times by the nodes.
 	// set_intersection on paths can deliver the most occurrences.
 
-    std::map<boost::uuids::uuid, RepoNodeAbstract *> nodesBySharedID;
+    std::unordered_map<boost::uuids::uuid, RepoNodeAbstract *, boost::hash<boost::uuids::uuid> > nodesBySharedID;
     for (std::vector<mongo::BSONObj>::const_iterator it = collection.begin();
          it != collection.end();
          ++it)
@@ -240,7 +248,9 @@ void repo::core::RepoGraphScene::populateOptimMaps(const repo::core::assimp_map 
 
 void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract *current, const repo::core::assimp_map &assimpMap, const repo::core::assimp_map &assimpMapOptim)
 {
-	if (current->getType() != "mesh")
+	// If this is a mesh then we the optimization map is transferred for 
+	// it's parent.
+	if (current->getType() == "transformation")
 	{
 		// First find the assimp node that relates to the abstract node
 		assimp_map::right_const_iterator ait = assimpMapOptim.right.find(current);
@@ -251,15 +261,17 @@ void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract 
 			return;
 		}
 
+		std::cout << (uintptr_t)(&*ait) << " = " << (uintptr_t)(&*assimpMapOptim.right.end()) << std::endl;
+
 		aiNode *node = reinterpret_cast<aiNode *>(ait->second); // All nodes in the optimized graph should exist
 
-		std::cout << to_string(current->getUniqueID()) << std::endl;
+		std::cout << to_string(current->getUniqueID()) << " " << (current->getType()) << std::endl;
 
 		if (node && node->mOptimMap)
 		{
 			aiOptimMap *ai_map = node->mOptimMap;
 
-			for(uintptr_t mergedNode : ai_map->mergeMap)
+			for(uintptr_t mergedNode : ai_map->getMergeMap())
 			{
 				// Find the corresponding abstract node for an assimp 
 				assimp_map::left_const_iterator nit = assimpMap.left.find(mergedNode);
@@ -274,66 +286,45 @@ void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract 
 			}
 
 			// Now populate the vertex maps
-			for(std::map<uintptr_t, std::vector<aiVMap> >::value_type vertexMap : ai_map->vertexMaps)
+			for(std::map<uintptr_t, std::vector<aiMap> >::value_type map : ai_map->getMeshMaps())
 			{
 				// First find the mesh that all the meshes were merged into
-				assimp_map::left_const_iterator mergedMeshIT = assimpMap.left.find(vertexMap.first);
+				assimp_map::left_const_iterator mergedMeshIT = assimpMap.left.find(map.first);
 
-				//std::cout << "CPZ: " << vertexMap.second[0].childMesh << std::endl;
-
-				if (mergedMeshIT == assimpMap.left.end())
+				if (mergedMeshIT != assimpMap.left.end())
 				{
-					// TODO: throw error here
-				} else {
 					boost::uuids::uuid parentUUID = mergedMeshIT->second->getUniqueID();
 
-					for(const aiVMap& vMap : vertexMap.second)
+					for(const aiMap& mMap : map.second)
 					{
-						std::cout << "MESH# : " << vMap.childMesh << " [" << vMap.startVertexIDX << ", " << vMap.endVertexIDX << "]" << std::endl;
-
+						std::cout << "MESH# : " << mMap.childMesh << " [" << mMap.startVertexIDX << ", " << mMap.endVertexIDX << "]" << std::endl;
+						std::cout << "MESH# : " << mMap.childMesh << " [" << mMap.startTriangleIDX << ", " << mMap.endTriangleIDX << "]" << std::endl;
 						// Search for the Unique ID for this child
-						assimp_map::left_const_iterator childIT = assimpMap.left.find(vMap.childMesh);
+
+						assimp_map::left_const_iterator childIT = assimpMap.left.find(mMap.childMesh);
 
 						if (childIT != assimpMap.left.end())
 						{
 							boost::uuids::uuid childUUID = childIT->second->getUniqueID();
-							current->addVertexMergeMap(parentUUID, childUUID, vMap.startVertexIDX, vMap.endVertexIDX);
+
+							// Now find the UUID of the material
+							assimp_map::left_const_iterator materialIT = assimpMap.left.find(mMap.material);
+
+							if (materialIT != assimpMap.left.end())
+							{
+								boost::uuids::uuid materialUUID = materialIT->second->getUniqueID();
+								current->addMergeMap(parentUUID, childUUID, mMap.startVertexIDX, mMap.endVertexIDX, mMap.startTriangleIDX, mMap.endTriangleIDX, materialUUID);
+							} else {
+								// TODO: throw error here
+							}
 						} else {
 							// TODO: throw error here
 						}
 					}
+				} else {
+					// TODO: throw error here
 				}
 			}
-
-			// Now populate the triangle maps
-			for(std::map<uintptr_t, std::vector<aiTMap> >::value_type triangleMap : ai_map->triangleMaps)
-			{
-				// First find the mesh that all the meshes were merged into
-				assimp_map::left_const_iterator mergedMeshIT = assimpMap.left.find(triangleMap.first);
-
-				if (mergedMeshIT == assimpMap.left.end())
-				{
-					// TODO: throw error here
-				} else {
-					boost::uuids::uuid parentUUID = mergedMeshIT->second->getUniqueID();
-				
-					for(const aiTMap& tMap : triangleMap.second)
-					{
-						std::cout << "MESH# : " << tMap.childMesh << " [" << tMap.startTriangleIDX << ", " << tMap.endTriangleIDX << ", " << tMap.offset << "]" << std::endl;
-
-						// Search for the Unique ID for this child
-						assimp_map::left_const_iterator childIT = assimpMap.left.find(tMap.childMesh);
-
-						if (childIT != assimpMap.left.end())
-						{
-							boost::uuids::uuid childUUID = childIT->second->getUniqueID();
-							current->addTriangleMergeMap(parentUUID, childUUID, tMap.startTriangleIDX, tMap.endTriangleIDX, tMap.offset);
-						} else {
-							// TODO: throw error here
-						}
-					}		
-				}
-			}	
 		} else {
 			// TODO: throw error here
 		}
@@ -358,11 +349,7 @@ void repo::core::RepoGraphScene::populateOptimMaps(repo::core::RepoNodeAbstract 
 			{
 				// TODO: throw error here
 			} else {
-
-				std::cout << "Transferring vertex and triangle maps" << std::endl;
-
-				child->transferVertexMap(current);
-				child->transferTriangleMap(current);
+				child->transferMergeMap(current);
 			}
 		}
 	}

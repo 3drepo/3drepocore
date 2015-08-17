@@ -225,7 +225,7 @@ bool repo::core::RepoNodeMaterial::operator==(const RepoNodeAbstract& other) con
 //
 //------------------------------------------------------------------------------
 
-mongo::BSONObj repo::core::RepoNodeMaterial::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeMaterial::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
 	mongo::BSONObjBuilder builder;
 

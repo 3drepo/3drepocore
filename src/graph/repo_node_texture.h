@@ -100,7 +100,7 @@ public :
 	 *
 	 * \return BSON representation 
 	 */
-	mongo::BSONObj toBSONObj() const;
+	mongo::BSONObj toBSONObj(std::vector<repo::core::RepoLargeFile> *) const;
 
     const std::vector<char>* getData() const { return data; }
 

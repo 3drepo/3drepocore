@@ -185,79 +185,40 @@ void repo::core::RepoNodeAbstract::mergeInto(const boost::uuids::uuid &mergedNod
 	mergeMap.push_back(mergedNode);	
 }
 
-void repo::core::RepoNodeAbstract::addVertexMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to)
+void repo::core::RepoNodeAbstract::addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom, int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id)
 {
-	repo::core::meshMultiVertexMap::iterator vertMapIT = vertMergeMap.find(mergedNode);
-	RepoVertexMap newMap(mergingNode, from, to);
+	repo::core::meshMultiMap::iterator mapIT = meshMergeMap.find(mergedNode);
 
-	if (vertMapIT == vertMergeMap.end())
+	RepoMap newMap(mergingNode, vertFrom, vertTo, triFrom, triTo, material_id);
+
+	if (mapIT == meshMergeMap.end())
 	{
-		std::unordered_set<RepoVertexMap, RepoVertexMapHash> vMap;
-		vMap.insert(newMap);
-		vertMergeMap.insert(std::make_pair(mergedNode, vMap));
+		std::unordered_set<RepoMap, RepoMapHash> mMap;
+		mMap.insert(newMap);
+		meshMergeMap.insert(std::make_pair(mergedNode, mMap));
 	} else {
-		vertMapIT->second.insert(newMap);
+		mapIT->second.insert(newMap);
 	}
-
-	std::cout << "INSERTING: " << to_string(mergingNode) << " [" << from << ", " << to << "]" << std::endl;
 }
 
-void repo::core::RepoNodeAbstract::addTriangleMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to, int offset)
-{
-	repo::core::meshMultiTriangleMap::iterator triMapIT = triMergeMap.find(mergedNode);
-	RepoTriangleMap newMap(mergingNode, from, to, offset); // Map to insert
-
-	if (triMapIT == triMergeMap.end())
-	{
-		std::unordered_set<RepoTriangleMap, RepoTriangleMapHash> tMap;
-		tMap.insert(newMap);
-		triMergeMap.insert(std::make_pair(mergedNode, tMap));
-	} else {
-		triMapIT->second.insert(newMap);
-	}
-
-	std::cout << "INSERTING: " << to_string(mergingNode) << " [" << from << ", " << to << ", " << offset << "]" << std::endl;
-}
-
-void repo::core::RepoNodeAbstract::transferVertexMap(RepoNodeAbstract *source)
+void repo::core::RepoNodeAbstract::transferMergeMap(RepoNodeAbstract *source)
 {
 	boost::uuids::uuid myUUID = this->getUniqueID();
-	repo::core::meshMultiVertexMap::iterator vertMapIT = source->vertMergeMap.find(myUUID);
+	repo::core::meshMultiMap::iterator mapIT = source->meshMergeMap.find(myUUID);
 
-	if (vertMapIT != source->vertMergeMap.end())
+	if (mapIT != source->meshMergeMap.end())
 	{
 		// Check that we don't already our own map
-		repo::core::meshMultiVertexMap::iterator myVertMapIT = vertMergeMap.find(myUUID);
+		repo::core::meshMultiMap::iterator myMapIT = meshMergeMap.find(myUUID);
 
-		if (myVertMapIT == vertMergeMap.end())
-			vertMergeMap.insert(*vertMapIT);
+		if (myMapIT == meshMergeMap.end())
+			meshMergeMap.insert(*mapIT);
 		else
-			myVertMapIT->second.insert(vertMapIT->second.begin(), vertMapIT->second.end());
+			myMapIT->second.insert(mapIT->second.begin(), mapIT->second.end());
 
-		source->vertMergeMap.erase(vertMapIT);
+		source->meshMergeMap.erase(mapIT);
 	}
 }
-
-void repo::core::RepoNodeAbstract::transferTriangleMap(RepoNodeAbstract *source)
-{
-	boost::uuids::uuid myUUID = this->getUniqueID();
-	repo::core::meshMultiTriangleMap::iterator triMapIT = source->triMergeMap.find(myUUID);
-
-	if (triMapIT != source->triMergeMap.end())
-	{
-		// Check that we don't already our own map
-		repo::core::meshMultiTriangleMap::iterator myTriMapIT = triMergeMap.find(myUUID);
-
-		if (myTriMapIT == triMergeMap.end())
-			triMergeMap.insert(*triMapIT);
-		else
-			myTriMapIT->second.insert(triMapIT->second.begin(), triMapIT->second.end());
-
-		source->triMergeMap.erase(triMapIT);
-	}
-}
-
-
 
 //------------------------------------------------------------------------------
 //
@@ -326,15 +287,9 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
 		RepoTranscoderBSON::append(REPO_LABEL_MERGED_NODES, mergeMap, builder);
 
     //--------------------------------------------------------------------------
-	// Vertex map
-	if (vertMergeMap.size())
-		RepoTranscoderBSON::appendMap(REPO_LABEL_VERTEX_MAP, vertMergeMap, builder);
-
-    //--------------------------------------------------------------------------
-	// Triangle map
-	if (triMergeMap.size())
-		RepoTranscoderBSON::appendMap(REPO_LABEL_TRIANGLE_MAP, triMergeMap, builder);
-
+	// Merge Map
+	if (meshMergeMap.size())
+		RepoTranscoderBSON::appendMap(REPO_LABEL_MERGE_MAP, meshMergeMap, builder);
 }
 
 //------------------------------------------------------------------------------

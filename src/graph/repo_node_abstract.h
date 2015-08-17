@@ -36,6 +36,68 @@
 namespace repo {
 namespace core {
 
+class RepoLargeFile
+{
+	public:
+
+
+		template <typename T>
+		RepoLargeFile (const boost::uuids::uuid &uid, const std::string &dataType, const std::vector<T> &in_data)
+			: fileName(""), bytes(0), data(nullptr)
+		{
+			std::string fileName = to_string(uid) + "." + dataType;
+			size_t numBytes = sizeof(T) * in_data.size();
+
+			setData(in_data.data(), numBytes);
+			this->fileName 	= fileName;
+		}		
+
+		RepoLargeFile(const RepoLargeFile& other)
+			: fileName(""), bytes(0), data(nullptr)
+		{
+			this->setData(other.getData(), other.getLength());
+			this->fileName = other.fileName;
+		}	
+
+		RepoLargeFile () : fileName(""), bytes(0), data(nullptr) {}
+
+		~RepoLargeFile () {
+			delete[] this->data;
+		}
+
+		RepoLargeFile &operator= (const RepoLargeFile &other) {
+			if(this != &other)
+			{
+				this->setData(other.getData(), other.getLength());
+				this->fileName = other.fileName;
+			}
+
+			return *this;
+		}
+
+		void setFileName(const std::string &fileName) { this->fileName = fileName; }
+
+		template <typename T>
+		void setData(const T *data, size_t bytes)
+		{
+			delete[] this->data;
+
+			this->data  = new char[bytes];
+			this->bytes = bytes;
+
+			std::memcpy(this->data, (void *)data, bytes);
+		}
+		
+		const std::string &getFileName() const { return fileName; }
+		const void* const getData() const { return data; }
+		size_t getLength() const { return bytes; }
+
+	private:
+		std::string fileName; 
+		size_t bytes;
+		char *data;
+};
+
 //! Base abstract class for all entries stored in 3D Repo.
 /*!
  * Each document preserved in 3D Repo being it a scene graph node or a revision
@@ -131,7 +193,7 @@ public :
 	 * \return BSONObj representation
 	 * \sa appendDefaultFields()
 	 */
-	virtual mongo::BSONObj toBSONObj() const = 0;
+	virtual mongo::BSONObj toBSONObj(std::vector<repo::core::RepoLargeFile> * = nullptr) const = 0;
 
     //! Returns a string representation of the node, name in this case.
     virtual std::string toString() const
@@ -297,11 +359,8 @@ public :
 
 	//! Optimization mapping for vertices and triangles
     void mergeInto(const boost::uuids::uuid &mergedNode);
-    void addVertexMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to);
-    void addTriangleMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int from, int to, int offset);
-
-    void transferVertexMap(repo::core::RepoNodeAbstract *source);
-    void transferTriangleMap(repo::core::RepoNodeAbstract *source);
+    void addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom, int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id);
+    void transferMergeMap(repo::core::RepoNodeAbstract *source);
 
     //--------------------------------------------------------------------------
 	//
@@ -365,8 +424,8 @@ protected :
 	boost::uuids::uuid revisionID; //!< Revision ID
 
 	std::vector<boost::uuids::uuid> mergeMap; // Node merged into this one
-	repo::core::meshMultiVertexMap vertMergeMap; // Map to vertices of merged nodes
-	repo::core::meshMultiTriangleMap triMergeMap; // Map to triangles of merged nodes
+
+	repo::core::meshMultiMap meshMergeMap; // Map to vertices, triangles and materials
 
 	std::string name; //!< Optional name of this document.
 

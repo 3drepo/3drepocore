@@ -395,6 +395,11 @@ public:
 		const std::string &collection, 
 		const mongo::BSONObj &obj);
 
+    void insertLargeFile(
+        const std::string &database,
+        const std::string &collection,
+        const repo::core::RepoLargeFile &file);
+
 	void insertRecords(
 		const std::string &database, 
 		const std::string &collection, 
@@ -416,6 +421,11 @@ public:
                     const std::string &project,
                     const std::string &filePath);
 
+    RepoLargeFile & getLargeFile(
+        const std::string &database,
+        const std::string &collection,
+        const std::string &fileName);
+    
     //--------------------------------------------------------------------------
 	//
 	// Getters

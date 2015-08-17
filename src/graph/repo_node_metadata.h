@@ -117,7 +117,7 @@ public :
      *
      * \return BSON representation
      */
-    mongo::BSONObj toBSONObj() const;
+    mongo::BSONObj toBSONObj(std::vector<repo::core::RepoLargeFile> *) const;
 
     //! Returns string representation of the metadata object separated by new lines.
     std::string toString() const { return toString("\n"); }

@@ -104,8 +104,12 @@ repo::core::RepoNodeTransformation::RepoNodeTransformation(
 		this->addChild(child);
 		child->addParent(this);
 
+		//std::cout << "C: " << (uintptr_t)(node->mChildren[i]) << " D: " << (uintptr_t)(child) << std::endl;
+
 		assimpMap.insert(assimp_map::value_type(reinterpret_cast<uintptr_t>(node->mChildren[i]), reinterpret_cast<RepoNodeAbstract *>(child)));
 	}
+
+	//std::cout << ".";
 }
 
 repo::core::RepoNodeTransformation::RepoNodeTransformation(
@@ -188,7 +192,7 @@ bool repo::core::RepoNodeTransformation::operator==(const RepoNodeAbstract& othe
 // Export
 //
 //------------------------------------------------------------------------------
-mongo::BSONObj repo::core::RepoNodeTransformation::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeTransformation::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
 	mongo::BSONObjBuilder builder;
 

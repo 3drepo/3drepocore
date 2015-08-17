@@ -351,7 +351,7 @@ bool repo::core::RepoNodeMesh::operator==(const RepoNodeAbstract& other) const
 // Export
 //
 //------------------------------------------------------------------------------
-mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj(std::vector<repo::core::RepoLargeFile> *files) const
 {
 	mongo::BSONObjBuilder builder;
 
@@ -363,12 +363,25 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
     //--------------------------------------------------------------------------
 	// Vertices
 	if (NULL != vertices && vertices->size() > 0)
+	{
+
+		RepoLargeFile vert_data(this->getUniqueID(), REPO_NODE_LABEL_VERTICES, *vertices);
+		files->push_back(vert_data);
+
+		RepoTranscoderBSON::append(
+			REPO_NODE_LABEL_VERTICES,
+			vert_data.getFileName(),
+			builder);
+
+		/*
 		RepoTranscoderBSON::append(
 			REPO_NODE_LABEL_VERTICES,
 			vertices,
 			builder,
 			REPO_NODE_LABEL_VERTICES_BYTE_COUNT,
 			REPO_NODE_LABEL_VERTICES_COUNT);
+		*/
+	}
 
     //--------------------------------------------------------------------------
 	// Faces
@@ -387,11 +400,21 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 				facesLevel1.push_back(face.mIndices[i]);
 		}
 
+		RepoLargeFile face_data(this->getUniqueID(), REPO_NODE_LABEL_FACES, facesLevel1);
+		files->push_back(face_data);
+
+		RepoTranscoderBSON::append(
+			REPO_NODE_LABEL_FACES,
+			face_data.getFileName(),
+			builder);
+
+		/*
 		RepoTranscoderBSON::append(
 			REPO_NODE_LABEL_FACES,
 			&facesLevel1,
 			builder,
 			REPO_NODE_LABEL_FACES_BYTE_COUNT);
+		*/
 	}
 
     //--------------------------------------------------------------------------
@@ -399,11 +422,22 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
 	// TODO: modify so that the empty string does not need to be passed in.
 	// If "" is not used, this method calls the most generict append(T) method!
 	if (NULL != normals && normals->size() > 0)
+	{
+		RepoLargeFile normal_data(this->getUniqueID(), REPO_NODE_LABEL_NORMALS, *normals);
+		files->push_back(normal_data);
+
 		RepoTranscoderBSON::append(
+			REPO_NODE_LABEL_NORMALS,
+			normal_data.getFileName(),
+			builder);
+
+		/*RepoTranscoderBSON::append(
 			REPO_NODE_LABEL_NORMALS,
 			normals,
 			builder,
 			"");
+			*/
+	}
 
     //--------------------------------------------------------------------------
 	// Bounding box
@@ -434,10 +468,23 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
     //--------------------------------------------------------------------------
     // Vertex colors
     if (colors && colors->size())
+    {
+		RepoLargeFile color_data(this->getUniqueID(), REPO_NODE_LABEL_COLORS, *colors);
+
+		files->push_back(color_data);
+
+		RepoTranscoderBSON::append(
+			REPO_NODE_LABEL_COLORS,
+			color_data.getFileName(),
+			builder);
+
+		/*
         RepoTranscoderBSON::append(
                     REPO_NODE_LABEL_COLORS,
                     *colors,
                     builder);
+                    */
+    }
 
     //--------------------------------------------------------------------------
 	// UV channels
@@ -464,13 +511,23 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj() const
              }
         }
 
+        RepoLargeFile uv_data(this->getUniqueID(), REPO_NODE_LABEL_UV_CHANNELS, concatenated);
+
+        files->push_back(uv_data);
+
+		RepoTranscoderBSON::append(
+			REPO_NODE_LABEL_UV_CHANNELS,
+			uv_data.getFileName(),
+			builder);
+
+		/*
 		RepoTranscoderBSON::append(
 			REPO_NODE_LABEL_UV_CHANNELS,
 			&concatenated,
 			builder,
 			REPO_NODE_LABEL_UV_CHANNELS_BYTE_COUNT);
+			*/
 	}
-
 
 	return builder.obj();
 }

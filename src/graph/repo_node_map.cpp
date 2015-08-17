@@ -48,7 +48,7 @@ repo::core::RepoNodeMap::RepoNodeMap(const string width,
 
 }
 
-mongo::BSONObj repo::core::RepoNodeMap::toBSONObj() const
+mongo::BSONObj repo::core::RepoNodeMap::toBSONObj(std::vector<repo::core::RepoLargeFile> *) const
 {
     mongo::BSONObjBuilder map_builder;
 
