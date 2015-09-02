@@ -185,11 +185,11 @@ void repo::core::RepoNodeAbstract::mergeInto(const boost::uuids::uuid &mergedNod
 	mergeMap.push_back(mergedNode);	
 }
 
-void repo::core::RepoNodeAbstract::addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom, int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id)
+void repo::core::RepoNodeAbstract::addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom, int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id, const RepoBoundingBox &boundingBox)
 {
 	repo::core::meshMultiMap::iterator mapIT = meshMergeMap.find(mergedNode);
 
-	RepoMap newMap(mergingNode, vertFrom, vertTo, triFrom, triTo, material_id);
+	RepoMap newMap(mergingNode, vertFrom, vertTo, triFrom, triTo, material_id, boundingBox);
 
 	if (mapIT == meshMergeMap.end())
 	{
@@ -289,7 +289,10 @@ void repo::core::RepoNodeAbstract::appendDefaultFields(
     //--------------------------------------------------------------------------
 	// Merge Map
 	if (meshMergeMap.size())
+	{
+		std::cout << "Writing mesh merge map" << std::endl;
 		RepoTranscoderBSON::appendMap(REPO_LABEL_MERGE_MAP, meshMergeMap, builder);
+	}
 }
 
 //------------------------------------------------------------------------------

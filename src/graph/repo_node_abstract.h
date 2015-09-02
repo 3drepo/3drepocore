@@ -27,6 +27,7 @@
 #include <boost/tuple/tuple.hpp>
 //------------------------------------------------------------------------------
 #include "repo_merge_map.h"
+#include "repo_bounding_box.h"
 #include "../conversion/repo_transcoder_string.h"
 //------------------------------------------------------------------------------
 #include "../conversion/repo_transcoder_bson.h"
@@ -50,14 +51,20 @@ class RepoLargeFile
 
 			setData(in_data.data(), numBytes);
 			this->fileName 	= fileName;
-		}		
+		}
+
+		RepoLargeFile(RepoLargeFile&& other)
+			: fileName(other.fileName), bytes(other.bytes)
+		{
+			other.bytes = 0;
+			other.data = NULL;
+		}
 
 		RepoLargeFile(const RepoLargeFile& other)
-			: fileName(""), bytes(0), data(nullptr)
+			: fileName(other.fileName), bytes(0), data(nullptr)
 		{
 			this->setData(other.getData(), other.getLength());
-			this->fileName = other.fileName;
-		}	
+		}
 
 		RepoLargeFile () : fileName(""), bytes(0), data(nullptr) {}
 
@@ -358,9 +365,20 @@ public :
     std::set<boost::uuids::uuid> getParentSharedIDs();
 
 	//! Optimization mapping for vertices and triangles
-    void mergeInto(const boost::uuids::uuid &mergedNode);
-    void addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom, int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id);
+    void mergeInto(const boost::uuids::uuid &mergedNode); // Merge other non-mesh nodes into this one
+
+    //! Add merge map from one map to triangle and faces in this one
+    void addMergeMap(const boost::uuids::uuid &mergedNode, const boost::uuids::uuid &mergingNode, int vertFrom,
+			int vertTo, int triFrom, int triTo, const boost::uuids::uuid &material_id, const RepoBoundingBox &boundingBox);
+
+    /*! Transfer the merge map from one node to this one
+    /*  Used to transfer from aiNode in Assimp to newly 
+    /*  created Mesh node in 3D Repo
+    */
     void transferMergeMap(repo::core::RepoNodeAbstract *source);
+
+    //! Return a const reference to the mesh merge map
+	const repo::core::meshMultiMap &getMeshMergeMap() const { return meshMergeMap; };
 
     //--------------------------------------------------------------------------
 	//

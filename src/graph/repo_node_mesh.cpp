@@ -364,6 +364,7 @@ mongo::BSONObj repo::core::RepoNodeMesh::toBSONObj(std::vector<repo::core::RepoL
 	// Vertices
 	if (NULL != vertices && vertices->size() > 0)
 	{
+		builder << REPO_NODE_LABEL_VERTICES_COUNT << (unsigned int) (vertices->size());
 
 		RepoLargeFile vert_data(this->getUniqueID(), REPO_NODE_LABEL_VERTICES, *vertices);
 		files->push_back(vert_data);

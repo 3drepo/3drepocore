@@ -76,8 +76,8 @@
 #define REPO_LABEL_TRIANGLE_FROM	"t_from"
 #define REPO_LABEL_TRIANGLE_TO		"t_to"
 #define REPO_LABEL_MATERIAL_ID		"mat_id"
-
 #define REPO_LABEL_MERGE_MAP		"m_map"
+#define REPO_LABEL_BOUNDING_BOX		"bounding_box"
 
 #define REPO_COMMAND_UPDATE         "update"
 #define REPO_COMMAND_UPDATES        "updates"

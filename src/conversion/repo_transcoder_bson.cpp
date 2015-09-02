@@ -196,14 +196,18 @@ void repo::core::RepoTranscoderBSON::appendMap
 			append(REPO_LABEL_MATERIAL_ID, map.getMaterialID(), elem);
 			append(REPO_LABEL_VERTEX_FROM, map.getVertexFrom(), elem);
 			append(REPO_LABEL_VERTEX_TO, map.getVertexTo(), elem);
-			append(REPO_LABEL_TRIANGLE_FROM, map.getVertexFrom(), elem);
-			append(REPO_LABEL_TRIANGLE_TO, map.getVertexTo(), elem);
+			append(REPO_LABEL_TRIANGLE_FROM, map.getTriangleFrom(), elem);
+			append(REPO_LABEL_TRIANGLE_TO, map.getTriangleTo(), elem);
+
+			append(REPO_LABEL_BOUNDING_BOX,
+					map.getBoundingBox().toVector(),
+					elem);
 
 			append(boost::lexical_cast<string>(idx++), elem.obj(), array);
 		}
 
-		mapBuilder.append(to_string(mergeMap.first), array.obj());
+		mapBuilder.appendArray(to_string(mergeMap.first), array.obj());
 	}
 
-	builder.appendArray(label, mapBuilder.obj());
+	builder.append(label, mapBuilder.obj());
 }

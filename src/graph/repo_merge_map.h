@@ -23,7 +23,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 #include "../repocoreglobal.h"
-
+#include "repo_bounding_box.h"
 
 namespace repo {
 namespace core {
@@ -32,12 +32,22 @@ namespace core {
 	class REPO_CORE_EXPORT RepoMap {
 
 	public:
+
+		//! Basic constructor
+		/*!
+		 * \param mesh_id ID of child mesh that has been merged in
+		 * \param vertTo Start vertex index of the submesh
+		 * \param vertFrom End vertex index of the submesh
+		 * \param triTo Start triangle index of the submesh
+		 * \param triFrom End triangle index of the submesh
+		 */
 		RepoMap(const boost::uuids::uuid &mesh_id,
 		int vertFrom, int vertTo,
 		int triFrom, int triTo,
-		const boost::uuids::uuid &material_id) : mesh_id(mesh_id), 
+		const boost::uuids::uuid &material_id,
+		const RepoBoundingBox &boundingBox) : mesh_id(mesh_id),
 		material_id(material_id), vertFrom(vertFrom), vertTo(vertTo),
-		triFrom(triFrom), triTo(triTo) {};
+		triFrom(triFrom), triTo(triTo), boundingBox(boundingBox) {  };
 
 		const boost::uuids::uuid &getMeshID() const { return mesh_id; }
 		int getVertexTo() const { return vertTo; }
@@ -45,8 +55,10 @@ namespace core {
 		int getTriangleTo() const { return triTo; }
 		int getTriangleFrom() const { return triFrom; }
 		const boost::uuids::uuid &getMaterialID() const { return material_id; }
+		const RepoBoundingBox &getBoundingBox() const { return boundingBox; }
 
 	private:
+		RepoBoundingBox boundingBox;
 		boost::uuids::uuid mesh_id;
 		boost::uuids::uuid material_id;
 		int vertFrom;
