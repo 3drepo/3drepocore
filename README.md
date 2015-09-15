@@ -38,9 +38,7 @@ This library is deprecated and has been replaced by [3drepobouncer](https://gith
 
 > Then compile MongoDB running the following from within the mongo-cxx-driver folder (modify the boost path to match your setup):
 
-```
 > scons -j2 --full --64 --mute --sharedclient --dynamic-windows --use-system-boost --extrapath=c:\local\boost_1_56_0 --cpppath=c:\local\boost_1_56_0 --libpath=c:\local\boost_1_56_0\lib64-msvc-12.0 install-mongoclient
-```
 > Add --dbg=on --opt=on flags to build a debug version of the library.
 
 > Alternatively, you can include [SCons in your IDE](http://www.scons.org/wiki/IDEIntegration).
@@ -49,10 +47,8 @@ This library is deprecated and has been replaced by [3drepobouncer](https://gith
 
 > If you want to build a Qt project, first you need to generate MongoDB error codes using Python:
 
-```
 > cd submodules/mongo-cxx-driver/src/mongo/base
 > python generate_error_codes.py error_codes.err error_codes.h error_codes.cpp
-```
 
 > ### Assimp
 
@@ -70,42 +66,30 @@ This library is deprecated and has been replaced by [3drepobouncer](https://gith
 > The following instructions explain how to compile the 3drepocore library on Yosemite.
 
 > You will need boost, scons and cmake installed on your machine. You can get them from homebrew:
-
-```
 > brew install boost
 > brew install scons
 > brew install cmake
-```
 
 > ### MongoDB
 
 > To compile MongoDB, run the following command:
-
-```
 > scons -j2 --full --64 --mute --sharedclient --osx-version-min=10.9 --use-system-boost install-mongoclient
-```
 
 > ### Assimp
 
 > Assimp uses cmake. Make a folder named **build** at the root of the assimp submodule directly. Then, run the following commands:
 
-```
 > cd build
 > ccmake ..
-```
 
 > Choose the following options:
 
-```
 > ASSIMP_ENABLE_BOOST_WORKAROUND -> off
 > ASSIMP_BUILD_TESTS -> off
-```
 
 > Generate the project, and finally run:
 
-```
 > make -j8
-```
 
 > ### 3drepocore
 
