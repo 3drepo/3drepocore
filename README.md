@@ -4,6 +4,7 @@
 This library is deprecated and has been replaced by [3drepobouncer](https://github.com/3drepo/3drepobouncer).
 
 
+```
 > C++ library providing 3D Repo Scene Graph definition and repository management logic.
 
 > ## License
@@ -114,3 +115,5 @@ This library is deprecated and has been replaced by [3drepobouncer](https://gith
 
 > ## Contributing
 > We encourage continuous development of 3D Repo by the community and welcome any fixes and improvements. By sending a pull request, you agree that the modifications are solely your work and assign the copyright to 3D Repo Ltd
+
+```
